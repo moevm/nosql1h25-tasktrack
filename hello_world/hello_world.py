@@ -107,17 +107,19 @@ TEST_FIND_POSTS = (
     {'author': 'Василий', 'title': 'Путеводитель по Парижу'},
 )
 
+
 TEST_RELATION_POSTS = (
     (1, 2, 'one-to-two'),
     (1, 3, 'one-to-three'),
     (3, 4, 'three-to-four')
 )
 
+
 def main():
     load_dotenv()
-    uri = f'neo4j://localhost:{os.getenv("PORT", "7687")}'
+    uri = f'neo4j://localhost:{os.getenv("NEO4J_PORT", "7687")}'
     username = os.getenv('NEO4J_USER', 'neo4j')
-    password = os.getenv('PASSWORD')
+    password = os.getenv('NEO4J_PASSWORD')
     database = Neo4jDatabase(uri, username, password)
     for post in TEST_DATA_POSTS:
         database.create_post(*post)
@@ -129,7 +131,7 @@ def main():
 
     for relation in TEST_RELATION_POSTS:
         database.create_relation(*relation)
-        
+
     database.close()
 
 
