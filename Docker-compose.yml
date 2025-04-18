@@ -1,0 +1,15 @@
+version: '3'
+
+volumes:
+  static:
+  media:
+
+
+services:
+  gateway:
+    build: ./nginx/
+    ports:
+      - 9000:80
+    volumes:
+      - static:/static
+      - media:/media
