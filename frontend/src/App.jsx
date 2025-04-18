@@ -1,18 +1,32 @@
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
 import LoginPage from "./components/Login/LoginPage";
-import Register from "./components/Register/Register";  // Новый компонент для регистрации
+import Register from "./components/Register/Register";
 import './App.css';
 
 function GuestNav() {
+  const location = useLocation();
+  const isLogin = location.pathname === '/login';
+  const isRegister = location.pathname === '/register';
+
   return (
     <nav className="navbar navbar-guest">
-      <span>MyApp</span>
-      <div>
-        <Link to="/login" className="btn btn-link">Вход</Link>
-        <Link to="/register" className="btn btn-link">Регистрация</Link> {/* Ссылка на регистрацию */}
+      <div className="brand">TaskTracker</div>
+      <div className="nav-center">
+        <Link
+          to="/login"
+          className={`btn btn-link ${isLogin ? 'active-tab' : ''}`}
+        >
+          Вход
+        </Link>
+        <Link
+          to="/register"
+          className={`btn btn-link ${isRegister ? 'active-tab' : ''}`}
+        >
+          Регистрация
+        </Link>
       </div>
     </nav>
   );
@@ -34,12 +48,9 @@ function UserNav() {
 function Layout({ children, isAuthenticated }) {
   return (
     <div>
-      {/* Панель навигации меняется в зависимости от аутентификации */}
       <header>
         {isAuthenticated ? <UserNav /> : <GuestNav />}
       </header>
-
-      {/* Основной контент */}
       <main>{children}</main>
     </div>
   );
@@ -56,7 +67,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/register" element={<Register />} /> {}
+          <Route path="/register" element={<Register />} />
         </Routes>
       </Layout>
     </Router>

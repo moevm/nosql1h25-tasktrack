@@ -9,10 +9,8 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleRegister = () => {
-    // Логика регистрации (пока имитируем успешную регистрацию)
     console.log("Email:", email);
     console.log("Password:", password);
-    // Перенаправляем пользователя на страницу входа или личного кабинета
     navigate("/login");
   };
 
