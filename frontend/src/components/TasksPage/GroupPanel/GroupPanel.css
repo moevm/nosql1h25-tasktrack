@@ -6,9 +6,34 @@
     font-size: 20px;
 }
 
-.group-panel-container h1 {
+.group-panel-container .title-group {
     font-size: 24px;
     font-weight: 600;
-    /* margin: 0px; */
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.group-list ul {
+  list-style-type: none; 
+  padding: 0;
+  margin: 0;
+}
+
+.group-list li {
+  cursor: pointer;
+  padding: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.group-list li:hover {
+  background-color: #d4d4d4; 
+}
+
+.group-list {
+  max-height: 350px; 
+  overflow-y: auto;  
+  padding-right: 10px;
+}
+
+#group-title-id {
+    margin-top: 24px;
 }
