@@ -71,3 +71,32 @@
   .delete-icon:hover {
     color: #000; 
   }
+
+
+
+
+.add-group-button {
+    margin-top: 16px;
+    padding: 5px 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.add-group-button:hover {
+    background-color: #0056b3;
+}
+  
+.add-group-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+  

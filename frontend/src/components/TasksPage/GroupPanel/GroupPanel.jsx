@@ -120,6 +120,13 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
     setSelectedGroup(groupName);
   };
 
+  const handleAddGroup = () => {
+    console.log("Добавление новой группы");
+    const newGroupName = `Новая группа ${groupList.length + 1}`;
+    setGroupList([...groupList, newGroupName]);
+  };
+  
+
   return (
     <div className='group-panel-container'>
       <div className='title-group'>Тип интерфейса</div>
@@ -169,6 +176,14 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
           <p>Нет результатов</p>
         )}
       </div>
+      
+
+      <div className="add-group-container">
+        <button className="add-group-button" onClick={handleAddGroup}>
+          <i className="fa-solid fa-plus"></i> Добавить группу
+        </button>
+      </div>
+
 
     </div>
   );
