@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate} from "react-router-dom";
 import { useState } from "react";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
@@ -10,25 +10,25 @@ import UserNav from "./components/Routers/UserNav/UserNav";
 
 
 
-function Layout({ children, isAuthenticated }) {
-  return (
-    <div>
-      <header>
-        {isAuthenticated ? <UserNav /> : <GuestNav />}
-      </header>
-      <main>{children}</main>
-    </div>
-  );
-}
+
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  function Layout({ children, isAuthenticated }) {
+    return (
+      <div>
+        <header>
+          {isAuthenticated ? <UserNav setIsAuthenticated={setIsAuthenticated} /> : <GuestNav />}
+        </header>
+        <main>{children}</main>
+      </div>
+    );
+  }
   return (
     <Router>
       <Layout isAuthenticated={isAuthenticated}>
         <Routes>
-          <Route path="/" element={<div>Добро пожаловать на главную страницу!</div>} />
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />

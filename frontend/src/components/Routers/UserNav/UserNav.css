@@ -1,0 +1,27 @@
+.navbar-user {
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 40px;
+    background-color: white;
+    border-bottom: 1px solid #000;
+  }
+
+  
+ .nav-center-user .nav-center-user {
+    display: flex;
+    gap: 20px;
+  }
+  
+
+.btn-link-user {
+    margin: 10px 25px;
+    border: 0px;
+    padding: 0px;
+    font-size: 20px;
+}
+
+.btn-link-user:hover {
+    color: #0059d4;
+}
