@@ -29,11 +29,34 @@
 }
 
 .group-list {
-  max-height: 350px; 
-  overflow-y: auto;  
-  padding-right: 10px;
+    max-height: 350px;  
+    overflow-y: hidden;  
+    padding-right: 10px;
+    transition: overflow-y 0.3s ease;  
 }
+  
+.group-list:hover {
+    overflow-y: auto;
+}
+  
+.group-list::-webkit-scrollbar {
+    width: 8px;  
+}
+
+.group-list::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;  
+} 
+
+  
 
 #group-title-id {
     margin-top: 24px;
 }
+
+
+  .group-list li.selected {
+    background-color: #007bff;  
+    color: white;  
+    font-weight: bold;  
+  }

@@ -73,26 +73,27 @@ const GROUP_DICT = {
   };
 
 const GROUP_LIST = [
-    'Дом',
-    'Работа',
-    'Учеба',
-    'Спорт',
-    'Хобби',
-    'Дом',
-    'Работа',
-    'Учеба',
-    'Спорт',
-    'Хобби',
-    'Дом',
-    'Работа',
-    'Учеба',
-    'Спорт',
-    'Хобби',
+    'Дом 1',
+    'Работа 2',
+    'Учеба 3',
+    'Спорт 4',
+    'Хобби 5',
+    'Дом 6',
+    'Работа 7',
+    'Учеба 8',
+    'Спорт 9',
+    'Хобби 10',
+    'Дом 11',
+    'Работа 12',
+    'Учеба 13',
+    'Спорт 14',
+    'Хобби 15',
 ]
 
 export default function GroupPanel({ setIsGraphMode, isGraphMode }) { 
   const [searchQuery, setSearchQuery] = useState('');
   const [groupList, setGroupList] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null); 
 
 
   useEffect(() => {
@@ -116,6 +117,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
 
   const handleGroupClick = (groupName) => {
     console.log(`Группа ${groupName} была выбрана`);
+    setSelectedGroup(groupName);
   };
 
   return (
@@ -140,7 +142,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
         {groupList.length > 0 ? (
           <ul>
             {groupList.map((groupItem, index) => (
-              <li key={index} onClick={() => handleGroupClick(groupItem)}>
+              <li key={index} onClick={() => handleGroupClick(groupItem)} className={groupItem === selectedGroup ? 'selected' : ''}>
                 {groupItem}
               </li>
             ))}
