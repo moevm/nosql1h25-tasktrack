@@ -1,49 +1,15 @@
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import { useState } from "react";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
 import LoginPage from "./components/Login/LoginPage";
 import Register from "./components/Register/Register";
 import './App.css';
+import GuestNav from "./components/Routers/GuestNav/GuestNav";
+import UserNav from "./components/Routers/UserNav/UserNav";
 
-function GuestNav() {
-  const location = useLocation();
-  const isLogin = location.pathname === '/login';
-  const isRegister = location.pathname === '/register';
 
-  return (
-    <nav className="navbar navbar-guest">
-      <div className="brand">TaskTracker</div>
-      <div className="nav-center">
-        <Link
-          to="/login"
-          className={`btn btn-link ${isLogin ? 'active-tab' : ''}`}
-        >
-          Вход
-        </Link>
-        <Link
-          to="/register"
-          className={`btn btn-link ${isRegister ? 'active-tab' : ''}`}
-        >
-          Регистрация
-        </Link>
-      </div>
-    </nav>
-  );
-}
 
-function UserNav() {
-  return (
-    <nav className="navbar navbar-user">
-      <span>Личный кабинет</span>
-      <div>
-        <Link to="/dashboard" className="btn btn-link">Профиль</Link>
-        <Link to="/settings" className="btn btn-link">Настройки</Link>
-        <Link to="/logout" className="btn btn-link">Выйти</Link>
-      </div>
-    </nav>
-  );
-}
 
 function Layout({ children, isAuthenticated }) {
   return (
