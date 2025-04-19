@@ -1,15 +1,22 @@
 
+.login-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
   
+}
   .login-box {
-    width: 300px;
-    padding: 20px 30px;
+    padding: 16px;
     border: 1px solid #333;
     border-radius: 8px;
     text-align: center;
+    width: 398px;
+    background-color: white;
   }
   
   .login-box h2 {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    font-size: 32px;
   }
   
   .login-box form {
@@ -20,7 +27,7 @@
   .login-box label {
     text-align: left;
     margin-bottom: 5px;
-    font-size: 14px;
+    font-size: 20px;
   }
   
   .login-box input {
@@ -28,19 +35,20 @@
     margin-bottom: 15px;
     border: 1px solid #888;
     border-radius: 5px;
+    height: 38px;
   }
   
   .login-box button {
-    padding: 10px;
+    padding: 5px;
     background-color: #003cff;
     color: white;
     font-weight: bold;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    height: 38px;
   }
   
   .login-box button:hover {
     background-color: #002ccc;
   }
-  

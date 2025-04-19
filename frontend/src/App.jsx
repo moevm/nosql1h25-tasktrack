@@ -4,7 +4,6 @@ import Dashboard from "./Dashboard";
 import Settings from "./Settings";
 import LoginPage from "./components/Login/LoginPage";
 import Register from "./components/Register/Register";
-import './App.css';
 import GuestNav from "./components/Routers/GuestNav/GuestNav";
 import UserNav from "./components/Routers/UserNav/UserNav";
 
