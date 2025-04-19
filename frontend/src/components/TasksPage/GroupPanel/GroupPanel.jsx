@@ -142,8 +142,26 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
         {groupList.length > 0 ? (
           <ul>
             {groupList.map((groupItem, index) => (
-              <li key={index} onClick={() => handleGroupClick(groupItem)} className={groupItem === selectedGroup ? 'selected' : ''}>
-                {groupItem}
+              <li
+                key={index}
+                onClick={() => handleGroupClick(groupItem)}
+                className={groupItem === selectedGroup ? 'selected' : ''}
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  cursor: 'pointer', 
+                  padding: '6px 10px' 
+                }}
+              >
+                <span>{groupItem}</span>
+                <i
+                  className="fa-regular fa-trash-can delete-icon"
+                  onClick={(e) => {
+                    e.stopPropagation(); 
+                    console.log(`Удаление группы: ${groupItem}`);
+                  }}
+                ></i>
               </li>
             ))}
           </ul>
@@ -151,6 +169,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
           <p>Нет результатов</p>
         )}
       </div>
+
     </div>
   );
 }

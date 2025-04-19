@@ -16,6 +16,7 @@
   list-style-type: none; 
   padding: 0;
   margin: 0;
+
 }
 
 .group-list li {
@@ -31,8 +32,9 @@
 .group-list {
     max-height: 350px;  
     overflow-y: hidden;  
-    padding-right: 10px;
+    padding-right: 5px;
     transition: overflow-y 0.3s ease;  
+    scrollbar-gutter: stable;
 }
   
 .group-list:hover {
@@ -55,8 +57,17 @@
 }
 
 
-  .group-list li.selected {
-    background-color: #007bff;  
-    color: white;  
-    font-weight: bold;  
+.group-list li.selected {
+    background-color: #d5d5d5;  
+    color: rgb(47, 46, 46);  
+    font-weight: 500;  
+}
+
+.delete-icon {
+    color: #777;
+    font-size: 20px;
+  }
+  
+  .delete-icon:hover {
+    color: #000; 
   }
