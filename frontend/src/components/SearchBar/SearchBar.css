@@ -2,7 +2,6 @@
 .search-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     max-width: 400px;
     margin-top: 10px;
     width: 100%;
@@ -12,10 +11,11 @@
     width: 80%;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 10px 0px 0px 10px;
+    font-size: 14px;
     outline: none;
     transition: border-color 0.3s ease;
+    height: 35px;
   }
   
   .search-input:focus {
@@ -28,13 +28,13 @@
     background-color: #007bff;
     border: none;
     color: white;
-    border-radius: 5px;
+    border-radius: 0px 10px 10px 0px;
     cursor: pointer;
-    margin-left: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s ease;
+    height: 35px;
   }
   
   .search-button:hover {
