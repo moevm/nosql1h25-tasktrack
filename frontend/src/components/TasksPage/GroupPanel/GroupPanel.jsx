@@ -122,16 +122,36 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
 
   const handleAddGroup = () => {
     console.log("Добавление новой группы");
-    const newGroupName = `Новая группа ${groupList.length + 1}`;
-    setGroupList([...groupList, newGroupName]);
+    const newGroupName = prompt('Введите название новой группы:');
+
+    if (!newGroupName || newGroupName.trim() === '') {
+      alert('Название группы не может быть пустым.');
+      return;
+    }
+
+    const trimmedName = newGroupName.trim();
+
+    if (groupList.includes(trimmedName)) {
+      alert('Группа с таким названием уже существует.');
+      return;
+    }
+
+    setGroupList([...groupList, trimmedName]);
   };
 
   const handleRenameGroup = (e, index, groupItem) => {
     e.stopPropagation();
     const newName = prompt('Введите новое название группы:', groupItem);
     if (newName && newName.trim() !== '') {
+      const trimmedName = newName.trim();
+      
+      if (groupList.includes(trimmedName)) {
+        alert('Группа с таким названием уже существует.');
+        return;
+      }
+
       const updatedGroups = [...groupList];
-      updatedGroups[index] = newName.trim();
+      updatedGroups[index] = trimmedName;
       setGroupList(updatedGroups);
     }
   };
