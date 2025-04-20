@@ -63,12 +63,12 @@
     font-weight: 500;  
 }
 
-.delete-icon {
+.icon-group {
     color: #777;
     font-size: 20px;
   }
   
-  .delete-icon:hover {
+  .icon-group:hover {
     color: #000; 
   }
 
@@ -100,3 +100,11 @@
     margin-top: 16px;
 }
   
+
+.group-element {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px 10px; 
+}

@@ -125,6 +125,21 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
     const newGroupName = `Новая группа ${groupList.length + 1}`;
     setGroupList([...groupList, newGroupName]);
   };
+
+  const handleRenameGroup = (e, index, groupItem) => {
+    e.stopPropagation();
+    const newName = prompt('Введите новое название группы:', groupItem);
+    if (newName && newName.trim() !== '') {
+      const updatedGroups = [...groupList];
+      updatedGroups[index] = newName.trim();
+      setGroupList(updatedGroups);
+    }
+  };
+  
+  const handleDeleteGroup = (e, index, groupItem) => {
+    e.stopPropagation();
+    console.log(`Удаление группы: ${groupItem}`);
+  };
   
 
   return (
@@ -145,6 +160,8 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
         handleSearchSubmit={handleSearch}
       />
       <hr />
+     
+
       <div className="group-list">
         {groupList.length > 0 ? (
           <ul>
@@ -152,23 +169,20 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
               <li
                 key={index}
                 onClick={() => handleGroupClick(groupItem)}
-                className={groupItem === selectedGroup ? 'selected' : ''}
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center', 
-                  cursor: 'pointer', 
-                  padding: '6px 10px' 
-                }}
+                className={`group-element ${groupItem === selectedGroup ? 'selected' : ''}`}
               >
                 <span>{groupItem}</span>
+                <div style={{ display: 'flex', gap: '8px' }}>
                 <i
-                  className="fa-regular fa-trash-can delete-icon"
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    console.log(`Удаление группы: ${groupItem}`);
-                  }}
+                  className="fa-regular fa-pen-to-square edit-icon icon-group"
+                  onClick={(e) => handleRenameGroup(e, index, groupItem)}
                 ></i>
+
+                  <i
+                    className="fa-regular fa-trash-can icon-group"
+                    onClick={(e) => { handleDeleteGroup(e, index, groupItem) }}
+                  ></i>
+                </div>
               </li>
             ))}
           </ul>
@@ -176,7 +190,6 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
           <p>Нет результатов</p>
         )}
       </div>
-      
 
       <div className="add-group-container">
         <button className="add-group-button" onClick={handleAddGroup}>
