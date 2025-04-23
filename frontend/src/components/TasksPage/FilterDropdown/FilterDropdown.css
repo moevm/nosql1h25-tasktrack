@@ -1,0 +1,16 @@
+.filter-dropdown {
+    position: relative;
+    margin-left: 0.5rem;
+  }
+  
+  .filter-dropdown .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    min-width: 150px;
+    z-index: 1000;
+    border-radius: 4px;
+  }
+  

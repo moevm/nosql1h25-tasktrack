@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
+import FilterDropdown from "../FilterDropdown/FilterDropdown";
 import './TableGraph.css';
 
 const GROUP_DICT = {
@@ -221,12 +222,28 @@ const GROUP_DICT = {
 
 
 const ITEMS_PER_PAGE = 12;
+const STATUS_OPTIONS = ['active', 'inactive'];
+const PRIORITY_OPTIONS = ['high', 'medium', 'low'];
 
-const fetchTasksFromServer = async (searchTerm = "", page = 1) => {
+
+const fetchTasksFromServer = async (
+  searchTerm = "",
+  page = 1,
+  statuses = [],
+  priorities = []
+) => {
   const all = [];
-  GROUP_DICT.group1.graphs.forEach((graph, index) => {
+
+  GROUP_DICT.group1.graphs.forEach((graph) => {
     const name = graph.name || "";
-    if (name.toLowerCase().includes(searchTerm.toLowerCase())) {
+
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statuses.length === 0 || statuses.includes(graph.status);
+    const matchesPriority =
+      priorities.length === 0 || priorities.includes(graph.priority);
+
+    if (matchesSearch && matchesStatus && matchesPriority) {
       all.push({
         title: graph.name,
         deadline: graph.deadline,
@@ -239,25 +256,6 @@ const fetchTasksFromServer = async (searchTerm = "", page = 1) => {
       });
     }
   });
-  // Object.entries(GROUP_DICT).forEach(([key, group]) => {
-  //   const graphs = group.graphs || [];
-  //   graphs.forEach((graph, index) => {
-  //     const name = graph.name || "";
-  //     if (name.toLowerCase().includes(searchTerm.toLowerCase())) {
-  //       all.push({
-  //         id: `${key}-${index + 1}`,
-  //         title: graph.name,
-  //         deadline: graph.deadline,
-  //         createdAt: graph.createdAt,
-  //         updatedAt: graph.modifiedAt,
-  //         edges: '–',
-  //         status: graph.status,
-  //         priority: graph.priority,
-  //         time: graph.time,
-  //       });
-  //     }
-  //   });
-  // });
 
   const start = (page - 1) * ITEMS_PER_PAGE;
   const end = start + ITEMS_PER_PAGE;
@@ -269,22 +267,33 @@ const fetchTasksFromServer = async (searchTerm = "", page = 1) => {
   };
 };
 
+
 export default function TableGraph() {
   const [rows, setRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedPriorities, setSelectedPriorities] = useState([]);
+
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetchTasksFromServer(searchTerm, page);
+      const res = await fetchTasksFromServer(
+        searchTerm,
+        page,
+        selectedStatuses,
+        selectedPriorities
+      );
       setRows(res.data);
       setTotal(res.total);
     };
+  
     fetchData();
-  }, [searchTerm, page]);
+  }, [searchTerm, page, selectedStatuses, selectedPriorities]);
+  
 
   const handleSearch = (value) => {
     console.log(`Поиск по запросу: "${value}"`);
@@ -303,13 +312,30 @@ export default function TableGraph() {
 
   return (
     <div className="table-graph-container">
-      <div className="search-container-tables">
-        <SearchBar
-          className="search-bar"
-          TitleFind="Название задачи"
-          onSearch={handleSearch}
-        />
-      </div>
+      <div className="d-flex align-items-center justify-content-between mb-2 gap-2 flex-wrap">
+  <div className="search-container-tables">
+    <SearchBar
+      className="search-bar"
+      TitleFind="Название задачи"
+      onSearch={handleSearch}
+    />
+  </div>
+
+  <div className="d-flex align-items-center gap-2">
+    <FilterDropdown
+      label="Приоритет"
+      options={PRIORITY_OPTIONS}
+      selectedOptions={selectedPriorities}
+      onChange={setSelectedPriorities}
+    />
+    <FilterDropdown
+      label="Статус"
+      options={STATUS_OPTIONS}
+      selectedOptions={selectedStatuses}
+      onChange={setSelectedStatuses}
+    />
+  </div>
+</div>
 
     <div className="wrapper-paginator">
 
