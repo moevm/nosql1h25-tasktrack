@@ -14,6 +14,11 @@
   }
   
 
-.table {
+
+.pagination {
+    justify-content: end;
+}
+
+.wrapper-paginator {
     width: 95%;
 }
