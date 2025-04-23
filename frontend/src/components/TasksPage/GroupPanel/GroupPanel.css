@@ -1,6 +1,7 @@
 .group-panel-container {
     height: calc(100vh - 62px);
-    min-width: 300px;
+    /* width: 300px; */
+    flex: 0 0 16%;
     border-right: 1px solid #000;
     padding: 20px;
     font-size: 20px;

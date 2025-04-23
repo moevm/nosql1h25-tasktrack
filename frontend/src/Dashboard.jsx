@@ -11,7 +11,9 @@ export default function Dashboard() {
 
   return (    
     <div className="main-content">
-      <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} />
+       
+          <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} />
+          
 
  
 
