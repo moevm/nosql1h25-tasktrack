@@ -37,13 +37,13 @@ export default function FilterDropdown({ label, options, selectedOptions, onChan
             <div key={option} className="form-check">
               <input
                 type="checkbox"
-                className="form-check-input"
+                className="form-check-input cursor-class"
                 id={`${label}-${option}`}
                 checked={selectedOptions.includes(option)}
                 onChange={() => handleOptionToggle(option)}
               />
               <label
-                className="form-check-label"
+                className="form-check-label cursor-class"
                 htmlFor={`${label}-${option}`}
               >
                 {option}

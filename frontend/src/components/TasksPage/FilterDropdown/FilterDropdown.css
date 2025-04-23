@@ -14,3 +14,7 @@
     border-radius: 4px;
   }
   
+  .cursor-class {
+    cursor: pointer;
+    font-size: 18px;
+  }
