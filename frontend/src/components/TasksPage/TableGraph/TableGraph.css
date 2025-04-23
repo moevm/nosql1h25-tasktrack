@@ -1,0 +1,19 @@
+.table-graph-container {
+    padding: 20px;
+    flex-grow: 1;
+
+  }
+  
+  .search-container-tables {
+    width: 500px;
+  }
+
+ 
+  .search-bar {
+    width: 100% ;
+  }
+  
+
+.table {
+    width: 95%;
+}

@@ -6,71 +6,7 @@ import SearchBar from '../../SearchBar/SearchBar'; // Импортируем к�
 
 
 
-const GROUP_DICT = {
-    group1: {
-      name: 'Group 1',
-      graphs: [
-        {
-          name: 'Graph 1',
-          deadline: '2023-10-01',
-          createdAt: '2023-09-01',
-          modifiedAt: '2023-09-15',
-          description: 'Description of Graph 1',
-          status: 'active',
-          priority: 'high',
-          time: '2h',
-        },
-        {
-          name: 'Graph 2',
-          deadline: '2023-10-05',
-          createdAt: '2023-09-05',
-          modifiedAt: '2023-09-20',
-          description: 'Description of Graph 2',
-          status: 'inactive',
-          priority: 'medium',
-          time: '1h',
-        },
-        {
-          name: 'Graph 3',
-          deadline: '2023-10-10',
-          createdAt: '2023-09-10',
-          modifiedAt: '2023-09-25',
-          description: 'Description of Graph 3',
-          status: 'active',
-          priority: 'low',
-          time: '30m',
-        },
-      ],
-    },
-    group2: {
-      name: 'Group 2',
-      graphs: [
-        {
-          name: 'Graph 4',
-          deadline: '2023-10-15',
-          createdAt: '2023-09-15',
-          modifiedAt: '2023-09-30',
-          description: 'Description of Graph 4',
-          status: 'active',
-          priority: 'high',
-          time: '3h',
-        },
-        {
-          name: 'Graph 5',
-          deadline: '2023-10-20',
-          createdAt: '2023-09-20',
-          modifiedAt: '2023-10-01',
-          description: 'Description of Graph 5',
-          status: 'inactive',
-          priority: 'medium',
-          time: '1.5h',
-        },
-      ],
-    },
-    grou3: {
-        name: 'Group 3',
-    },
-  };
+
 
 const GROUP_LIST = [
     'Дом 1',

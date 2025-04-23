@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Graph from "./Graph";
 import GroupPanel from "./components/TasksPage/GroupPanel/GroupPanel";
 import './Dashboard.css'; 
+import TableGraph from "./components/TasksPage/TableGraph/TableGraph";
 
 export default function Dashboard() {
   const [showGraph, setShowGraph] = useState(false);
@@ -12,18 +13,21 @@ export default function Dashboard() {
     <div className="main-content">
       <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} />
 
-      <div>
-        <h1>{isGraphMode ? "Графы" : "Личный Кабинет"}</h1> 
+ 
 
+        {
+        isGraphMode && 
         <button
           className="btn btn-primary"
           onClick={() => setShowGraph(!showGraph)}
         >
           {showGraph ? "Скрыть граф" : "Показать граф"}
         </button>
+        }
 
         {showGraph && <Graph />}
-      </div>
+        {!isGraphMode && <TableGraph />}
+ 
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function SearchBar({ searchQuery, handleSearchChange, TitleFind, 
         placeholder={TitleFind}
       />
       <button onClick={handleSearchSubmit} className="search-button">
-        <i className="fas fa-search"></i> {/* Иконка поиска */}
+        <i className="fas fa-search"></i>
       </button>
     </div>
   );

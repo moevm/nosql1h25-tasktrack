@@ -30,7 +30,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/tasks" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/register" element={<Register />} />
         </Routes>

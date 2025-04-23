@@ -7,7 +7,7 @@ export default function LoginPage({ setIsAuthenticated }) {
 
   const handleLogin = () => {
     setIsAuthenticated(true);
-    navigate("/dashboard");
+    navigate("/tasks");
   };
 
   return (

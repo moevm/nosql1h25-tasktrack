@@ -75,7 +75,6 @@ function GraphFlow() {
   );
 }
 
-// Оборачиваем в ReactFlowProvider
 export default function Graph() {
   return (
     <ReactFlowProvider>
