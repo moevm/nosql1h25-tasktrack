@@ -6,12 +6,12 @@ import {
 } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Dashboard from './Dashboard';
-import Settings from './Settings';
 import LoginPage from './components/Login/LoginPage';
 import Register from './components/Register/Register';
 import GuestNav from './components/Routers/GuestNav/GuestNav';
 import UserNav from './components/Routers/UserNav/UserNav';
 import PrivateRoute from './PrivateRoute';
+import UserProfile from './components/UserProfile/UserProfile';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -59,10 +59,10 @@ export default function App() {
             }
           />
           <Route
-            path="/settings"
+            path="/profile"
             element={
               <PrivateRoute isAuthenticated={isAuthenticated}>
-                <Settings />
+                <UserProfile />
               </PrivateRoute>
             }
           />

@@ -229,7 +229,7 @@ export default function TableGraph() {
     // );
     // setSelectedTask(updatedTask);
     // setIsModalOpen(false);
-    alert('Добавили связь')
+    alert('Добавили связь');
   };
 
   const handleResetFilters = () => {
