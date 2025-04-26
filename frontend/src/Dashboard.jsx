@@ -12,12 +12,11 @@ export default function Dashboard() {
   return (    
     <div className="main-content">
        
-          <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} />
+        <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} />
           
 
- 
 
-        {
+        {/* {
         isGraphMode && 
         <button
           className="btn btn-primary"
@@ -25,9 +24,9 @@ export default function Dashboard() {
         >
           {showGraph ? "Скрыть граф" : "Показать граф"}
         </button>
-        }
-
-        {showGraph && <Graph />}
+        } */}
+        {isGraphMode && <h1>Тут будут графы</h1> }
+        {showGraph && <Graph /> }
         {!isGraphMode && <TableGraph />}
  
     </div>

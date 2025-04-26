@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
 import FilterDropdown from "../FilterDropdown/FilterDropdown";
 import './TableGraph.css';
+import TaskDetailsSidebar from "../TaskDetailsSidebar/TaskDetailsSidebar";
 
 const GROUP_DICT = {
   group1: {
@@ -253,6 +254,7 @@ const fetchTasksFromServer = async (
         status: graph.status,
         priority: graph.priority,
         time: graph.time,
+        description: graph.description,
       });
     }
   });
@@ -276,6 +278,8 @@ export default function TableGraph() {
 
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedPriorities, setSelectedPriorities] = useState([]);
+
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -301,18 +305,24 @@ export default function TableGraph() {
     setSearchTerm(value);
   };
 
-  const handleRowClick = async (task) => {
-    alert(`Имя задачи: ${task.title}`);
+  const handleRowClick = (task) => {
+    setSelectedTask(null);
+    setTimeout(() => {
+      setSelectedTask(task);
+    }, 100);
   };
 
-  const handleShowEdgesClick = async (task, e) => {
+  const handleShowEdgesClick = (task, e) => {
     e.stopPropagation();
     alert(`Показ связей для задачи: ${task.title}`);
   };
 
+
+
   return (
     <div className="table-graph-container">
       <div className="d-flex align-items-center justify-content-between mb-2 gap-2 flex-wrap">
+
   <div className="search-container-tables">
     <SearchBar
       className="search-bar"
@@ -402,6 +412,11 @@ export default function TableGraph() {
           </button>
       </div>
     </div>
+
+    <TaskDetailsSidebar 
+        task={selectedTask} 
+        onClose={() => setSelectedTask(null)} 
+      />
 
     </div>
   );

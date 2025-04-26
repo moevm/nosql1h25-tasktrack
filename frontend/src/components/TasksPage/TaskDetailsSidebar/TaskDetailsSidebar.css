@@ -1,0 +1,63 @@
+.task-details-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100%;
+  background: #ffffff;
+  border-left: 1px solid #ccc;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  z-index: 1050;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.task-details-sidebar.open {
+  animation: slideIn 0.4s ease forwards;
+}
+
+.task-details-sidebar.closing {
+  animation: slideOut 0.4s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    right: -320px;
+    opacity: 0;
+  }
+  to {
+    right: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    right: 0px;
+    opacity: 1;
+  }
+  to {
+    right: -320px;
+    opacity: 0;
+  }
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sidebar-content p {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
