@@ -218,17 +218,18 @@ export default function TableGraph() {
   };
 
   const handleAddConnection = (connectionName, connectedTask) => {
-    const updatedTask = {
-      ...selectedTask,
-      edges: [...selectedTask.edges, { name: connectionName, connectedTask }],
-    };
-    setRows((prevRows) =>
-      prevRows.map((task) =>
-        task.title === selectedTask.title ? updatedTask : task,
-      ),
-    );
-    setSelectedTask(updatedTask);
-    setIsModalOpen(false);
+    // const updatedTask = {
+    //   ...selectedTask,
+    //   edges: [...selectedTask.edges, { name: connectionName, connectedTask }],
+    // };
+    // setRows((prevRows) =>
+    //   prevRows.map((task) =>
+    //     task.title === selectedTask.title ? updatedTask : task,
+    //   ),
+    // );
+    // setSelectedTask(updatedTask);
+    // setIsModalOpen(false);
+    alert('Добавили связь')
   };
 
   const handleResetFilters = () => {
