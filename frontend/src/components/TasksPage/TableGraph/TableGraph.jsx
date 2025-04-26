@@ -7,6 +7,7 @@ import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import { GROUP_DICT } from '../../../temp';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
+import SortModal from '../SortModal/SortModal';
 
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['active', 'inactive'];
@@ -93,7 +94,6 @@ const fetchTasksFromServer = async (
   };
 };
 
-//   - функция для проверки фильтра даты
 function filterDate(dateString, filter) {
   if (!dateString) return false;
 
@@ -154,6 +154,10 @@ export default function TableGraph() {
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
   const [allTasks, setAllTasks] = useState([]);
 
+  const [sortField, setSortField] = useState('');
+  const [sortOrder, setSortOrder] = useState('none');
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetchTasksFromServer(
@@ -193,6 +197,16 @@ export default function TableGraph() {
     }, 100);
   };
 
+  const handleApplySort = (field, order) => {
+    setSortField(field);
+    setSortOrder(order);
+  };
+
+  const handleResetSort = () => {
+    setSortField('');
+    setSortOrder('none');
+  };
+
   const handleShowEdgesClick = (task, e) => {
     e.stopPropagation();
     setSelectedTaskForConnections(task);
@@ -222,6 +236,27 @@ export default function TableGraph() {
     setSelectedPriorities([]);
     setSearchTerm('');
     setPage(1);
+  };
+
+  const getSortedRows = () => {
+    if (!sortField || sortOrder === 'none') {
+      return rows;
+    }
+
+    const sorted = [...rows].sort((a, b) => {
+      if (a[sortField] === undefined || b[sortField] === undefined) return 0;
+      if (typeof a[sortField] === 'string') {
+        return sortOrder === 'asc'
+          ? a[sortField].localeCompare(b[sortField])
+          : b[sortField].localeCompare(a[sortField]);
+      } else {
+        return sortOrder === 'asc'
+          ? a[sortField] - b[sortField]
+          : b[sortField] - a[sortField];
+      }
+    });
+
+    return sorted;
   };
 
   return (
@@ -280,7 +315,7 @@ export default function TableGraph() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, i) => (
+            {getSortedRows().map((row, i) => (
               <tr
                 key={i}
                 className="table-row"
@@ -332,12 +367,28 @@ export default function TableGraph() {
         task={selectedTask}
         onClose={() => setSelectedTask(null)}
       />
-      <button
-        className="btn btn-primary mb-2"
-        onClick={() => setIsCreatingTask(true)}
-      >
-        + Новая задача
-      </button>
+      <div className="d-flex gap-2 mb-3 flex-wrap">
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => setIsCreatingTask(true)}
+        >
+          + Новая задача
+        </button>
+        <button
+          className="btn btn-outline-primary btn-sm"
+          onClick={() => setIsSortModalOpen(true)}
+        >
+          Сортировать
+        </button>
+        <button
+          className="btn btn-outline-danger btn-sm"
+          onClick={handleResetSort}
+          disabled={!sortField}
+        >
+          Сбросить сортировку
+        </button>
+      </div>
+
       {isCreatingTask && (
         <TaskForm
           onSubmit={(newTask) => {
@@ -345,6 +396,22 @@ export default function TableGraph() {
             setIsCreatingTask(false);
           }}
           onCancel={() => setIsCreatingTask(false)}
+        />
+      )}
+
+      {isSortModalOpen && (
+        <SortModal
+          fields={[
+            { label: 'Название', value: 'title' },
+            { label: 'Дата создания', value: 'createdAt' },
+            { label: 'Дата обновления', value: 'updatedAt' },
+            { label: 'Дата завершения', value: 'deadline' },
+            { label: 'Статус', value: 'status' },
+            { label: 'Приоритет', value: 'priority' },
+            { label: 'Время выполнения', value: 'time' },
+          ]}
+          onApply={handleApplySort}
+          onClose={() => setIsSortModalOpen(false)}
         />
       )}
 
