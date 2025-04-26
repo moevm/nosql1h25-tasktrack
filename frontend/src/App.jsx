@@ -15,7 +15,7 @@ import PrivateRoute from './PrivateRoute';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem('isAuthenticated') === 'true'
+    () => localStorage.getItem('isAuthenticated') === 'true',
   );
 
   useEffect(() => {
@@ -41,15 +41,15 @@ export default function App() {
     <Router>
       <Layout isAuthenticated={isAuthenticated}>
         <Routes>
-          <Route path="/" element={<Navigate to={isAuthenticated ? "/tasks" : "/login"} />} />
+          <Route
+            path="/"
+            element={<Navigate to={isAuthenticated ? '/tasks' : '/login'} />}
+          />
           <Route
             path="/login"
             element={<LoginPage setIsAuthenticated={setIsAuthenticated} />}
           />
-          <Route
-            path="/register"
-            element={<Register />}
-          />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/tasks"
             element={

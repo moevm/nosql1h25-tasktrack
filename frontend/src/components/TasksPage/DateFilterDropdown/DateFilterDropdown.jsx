@@ -1,0 +1,127 @@
+import React, { useState, useRef, useEffect } from 'react';
+import '../FilterDropdown/FilterDropdown.css';
+
+export default function DateFilterDropdown({ label, onChange }) {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState('between'); // 'between' | 'exact' | 'last'
+  const [dates, setDates] = useState({
+    start: '',
+    end: '',
+    exact: '',
+    lastValue: '',
+    lastUnit: 'days',
+  });
+
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleApply = () => {
+    onChange({ mode, ...dates });
+    setOpen(false);
+  };
+
+  return (
+    <div className="filter-dropdown" ref={dropdownRef}>
+      <button
+        className="btn btn-sm btn-primary dropdown-toggle"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        {label}
+      </button>
+      {open && (
+        <div
+          className="dropdown-menu show p-3 shadow"
+          style={{ width: '300px' }}
+        >
+          <div className="mb-2">
+            <select
+              className="form-select"
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
+            >
+              <option value="between">Между датами</option>
+              <option value="exact">Точная дата</option>
+              <option value="last">Последние N дней/недель/месяцев</option>
+            </select>
+          </div>
+
+          {mode === 'between' && (
+            <div>
+              <input
+                type="date"
+                className="form-control mb-2"
+                value={dates.start}
+                onChange={(e) =>
+                  setDates((prev) => ({ ...prev, start: e.target.value }))
+                }
+                placeholder="Дата начала"
+              />
+              <input
+                type="date"
+                className="form-control"
+                value={dates.end}
+                onChange={(e) =>
+                  setDates((prev) => ({ ...prev, end: e.target.value }))
+                }
+                placeholder="Дата окончания"
+              />
+            </div>
+          )}
+
+          {mode === 'exact' && (
+            <div>
+              <input
+                type="date"
+                className="form-control"
+                value={dates.exact}
+                onChange={(e) =>
+                  setDates((prev) => ({ ...prev, exact: e.target.value }))
+                }
+                placeholder="Точная дата"
+              />
+            </div>
+          )}
+
+          {mode === 'last' && (
+            <div>
+              <input
+                type="number"
+                className="form-control mb-2"
+                min="1"
+                value={dates.lastValue}
+                onChange={(e) =>
+                  setDates((prev) => ({ ...prev, lastValue: e.target.value }))
+                }
+                placeholder="Количество"
+              />
+              <select
+                className="form-select"
+                value={dates.lastUnit}
+                onChange={(e) =>
+                  setDates((prev) => ({ ...prev, lastUnit: e.target.value }))
+                }
+              >
+                <option value="days">Дней</option>
+                <option value="weeks">Недель</option>
+                <option value="months">Месяцев</option>
+              </select>
+            </div>
+          )}
+
+          <button className="btn btn-success mt-3 w-100" onClick={handleApply}>
+            Применить
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

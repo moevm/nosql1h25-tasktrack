@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../SearchBar/SearchBar';
 import FilterDropdown from '../FilterDropdown/FilterDropdown';
+import DateFilterDropdown from '../DateFilterDropdown/DateFilterDropdown';
 import './TableGraph.css';
 import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import { GROUP_DICT } from '../../../temp';
 import TaskForm from '../TaskForm/TaskForm';
-import ConnectionsModal from '../ConnectionsModal/ConnectionsModal'; // Добавляем модальное окно для связей
+import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['active', 'inactive'];
@@ -17,6 +18,8 @@ const fetchTasksFromServer = async (
   statuses = [],
   priorities = [],
   addedTasks = [],
+  createdAtFilter = null,
+  updatedAtFilter = null,
 ) => {
   const all = [];
 
@@ -29,7 +32,18 @@ const fetchTasksFromServer = async (
     const matchesPriority =
       priorities.length === 0 || priorities.includes(graph.priority);
 
-    if (matchesSearch && matchesStatus && matchesPriority) {
+    const matchesCreatedAt =
+      !createdAtFilter || filterDate(graph.createdAt, createdAtFilter);
+    const matchesUpdatedAt =
+      !updatedAtFilter || filterDate(graph.modifiedAt, updatedAtFilter);
+
+    if (
+      matchesSearch &&
+      matchesStatus &&
+      matchesPriority &&
+      matchesCreatedAt &&
+      matchesUpdatedAt
+    ) {
       all.push({
         title: graph.name,
         deadline: graph.deadline,
@@ -44,7 +58,6 @@ const fetchTasksFromServer = async (
     }
   });
 
-  // Плюс добавляем новые таски:
   addedTasks.forEach((task) => {
     const matchesSearch = task.title
       .toLowerCase()
@@ -53,8 +66,18 @@ const fetchTasksFromServer = async (
       statuses.length === 0 || statuses.includes(task.status);
     const matchesPriority =
       priorities.length === 0 || priorities.includes(task.priority);
+    const matchesCreatedAt =
+      !createdAtFilter || filterDate(task.createdAt, createdAtFilter);
+    const matchesUpdatedAt =
+      !updatedAtFilter || filterDate(task.updatedAt, updatedAtFilter);
 
-    if (matchesSearch && matchesStatus && matchesPriority) {
+    if (
+      matchesSearch &&
+      matchesStatus &&
+      matchesPriority &&
+      matchesCreatedAt &&
+      matchesUpdatedAt
+    ) {
       all.push(task);
     }
   });
@@ -70,6 +93,43 @@ const fetchTasksFromServer = async (
   };
 };
 
+//   - функция для проверки фильтра даты
+function filterDate(dateString, filter) {
+  if (!dateString) return false;
+
+  const date = new Date(dateString);
+
+  if (filter.mode === 'between') {
+    const start = new Date(filter.start);
+    const end = new Date(filter.end);
+    return date >= start && date <= end;
+  }
+  if (filter.mode === 'exact') {
+    const exact = new Date(filter.exact);
+    return (
+      date.getFullYear() === exact.getFullYear() &&
+      date.getMonth() === exact.getMonth() &&
+      date.getDate() === exact.getDate()
+    );
+  }
+  if (filter.mode === 'last') {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    if (filter.lastUnit === 'days') {
+      return diffDays <= filter.lastValue;
+    }
+    if (filter.lastUnit === 'weeks') {
+      return diffDays <= filter.lastValue * 7;
+    }
+    if (filter.lastUnit === 'months') {
+      return diffDays <= filter.lastValue * 30;
+    }
+  }
+  return true;
+}
+
 export default function TableGraph() {
   const [rows, setRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,17 +139,19 @@ export default function TableGraph() {
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedPriorities, setSelectedPriorities] = useState([]);
 
+  const [createdAtFilter, setCreatedAtFilter] = useState(null);
+  const [updatedAtFilter, setUpdatedAtFilter] = useState(null);
+
   const [addedTasks, setAddedTasks] = useState([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
 
-  const [selectedTask, setSelectedTask] = useState(null); // для сайдбара
+  const [selectedTask, setSelectedTask] = useState(null);
   const [selectedTaskForConnections, setSelectedTaskForConnections] =
-    useState(null); // для модалки связей
+    useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-
   const [allTasks, setAllTasks] = useState([]);
 
   useEffect(() => {
@@ -100,6 +162,8 @@ export default function TableGraph() {
         selectedStatuses,
         selectedPriorities,
         addedTasks,
+        createdAtFilter,
+        updatedAtFilter,
       );
       setRows(res.data);
       setTotal(res.total);
@@ -107,7 +171,15 @@ export default function TableGraph() {
     };
 
     fetchData();
-  }, [searchTerm, page, selectedStatuses, selectedPriorities, addedTasks]);
+  }, [
+    searchTerm,
+    page,
+    selectedStatuses,
+    selectedPriorities,
+    addedTasks,
+    createdAtFilter,
+    updatedAtFilter,
+  ]);
 
   const handleSearch = (value) => {
     setPage(1);
@@ -142,7 +214,14 @@ export default function TableGraph() {
       ),
     );
     setSelectedTask(updatedTask);
-    setIsModalOpen(false); // Закрыть модальное окно после добавления связи
+    setIsModalOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedStatuses([]);
+    setSelectedPriorities([]);
+    setSearchTerm('');
+    setPage(1);
   };
 
   return (
@@ -157,7 +236,7 @@ export default function TableGraph() {
             />
           </div>
 
-          <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2 flex-wrap">
             <FilterDropdown
               label="Приоритет"
               options={PRIORITY_OPTIONS}
@@ -170,6 +249,20 @@ export default function TableGraph() {
               selectedOptions={selectedStatuses}
               onChange={setSelectedStatuses}
             />
+            <DateFilterDropdown
+              label="Дата создания"
+              onChange={setCreatedAtFilter}
+            />
+            <DateFilterDropdown
+              label="Дата обновления"
+              onChange={setUpdatedAtFilter}
+            />
+            <button
+              className="btn btn-sm btn-outline-danger"
+              onClick={handleResetFilters}
+            >
+              Сбросить фильры
+            </button>
           </div>
         </div>
 
