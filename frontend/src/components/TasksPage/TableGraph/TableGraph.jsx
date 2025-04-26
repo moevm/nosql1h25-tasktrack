@@ -20,7 +20,7 @@ const fetchTasksFromServer = async (
   priorities = [],
   addedTasks = [],
   createdAtFilter = null,
-  updatedAtFilter = null,
+  deadlineFilter = null,
 ) => {
   const all = [];
 
@@ -36,7 +36,7 @@ const fetchTasksFromServer = async (
     const matchesCreatedAt =
       !createdAtFilter || filterDate(graph.createdAt, createdAtFilter);
     const matchesUpdatedAt =
-      !updatedAtFilter || filterDate(graph.modifiedAt, updatedAtFilter);
+      !deadlineFilter || filterDate(graph.deadline, deadlineFilter);
 
     if (
       matchesSearch &&
@@ -70,7 +70,7 @@ const fetchTasksFromServer = async (
     const matchesCreatedAt =
       !createdAtFilter || filterDate(task.createdAt, createdAtFilter);
     const matchesUpdatedAt =
-      !updatedAtFilter || filterDate(task.updatedAt, updatedAtFilter);
+      !deadlineFilter || filterDate(task.updatedAt, deadlineFilter);
 
     if (
       matchesSearch &&
@@ -140,7 +140,7 @@ export default function TableGraph() {
   const [selectedPriorities, setSelectedPriorities] = useState([]);
 
   const [createdAtFilter, setCreatedAtFilter] = useState(null);
-  const [updatedAtFilter, setUpdatedAtFilter] = useState(null);
+  const [deadlineFilter, setDeadlineFilter] = useState(null);
 
   const [addedTasks, setAddedTasks] = useState([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
@@ -167,7 +167,7 @@ export default function TableGraph() {
         selectedPriorities,
         addedTasks,
         createdAtFilter,
-        updatedAtFilter,
+        deadlineFilter,
       );
       setRows(res.data);
       setTotal(res.total);
@@ -182,7 +182,7 @@ export default function TableGraph() {
     selectedPriorities,
     addedTasks,
     createdAtFilter,
-    updatedAtFilter,
+    deadlineFilter,
   ]);
 
   const handleSearch = (value) => {
@@ -218,17 +218,6 @@ export default function TableGraph() {
   };
 
   const handleAddConnection = (connectionName, connectedTask) => {
-    // const updatedTask = {
-    //   ...selectedTask,
-    //   edges: [...selectedTask.edges, { name: connectionName, connectedTask }],
-    // };
-    // setRows((prevRows) =>
-    //   prevRows.map((task) =>
-    //     task.title === selectedTask.title ? updatedTask : task,
-    //   ),
-    // );
-    // setSelectedTask(updatedTask);
-    // setIsModalOpen(false);
     alert('Добавили связь');
   };
 
@@ -236,6 +225,8 @@ export default function TableGraph() {
     setSelectedStatuses([]);
     setSelectedPriorities([]);
     setSearchTerm('');
+    setDeadlineFilter(null);
+    setCreatedAtFilter(null);
     setPage(1);
   };
 
@@ -311,8 +302,8 @@ export default function TableGraph() {
               onChange={setCreatedAtFilter}
             />
             <DateFilterDropdown
-              label="Дата обновления"
-              onChange={setUpdatedAtFilter}
+              label="Дата завершения"
+              onChange={setDeadlineFilter}
             />
             <button
               className="btn btn-sm btn-outline-danger"
