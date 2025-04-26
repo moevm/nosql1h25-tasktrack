@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import './LoginPage.css';
 
@@ -7,7 +7,7 @@ export default function LoginPage({ setIsAuthenticated }) {
 
   const handleLogin = () => {
     setIsAuthenticated(true);
-    navigate("/tasks");
+    navigate('/tasks');
   };
 
   return (
@@ -21,9 +21,11 @@ export default function LoginPage({ setIsAuthenticated }) {
           <label htmlFor="password">Пароль</label>
           <input type="password" id="password" placeholder="Введите пароль" />
 
-          <button type="submit" onClick={handleLogin}>Войти</button>
+          <button type="submit" onClick={handleLogin}>
+            Войти
+          </button>
         </form>
       </div>
     </div>
   );
-};
+}

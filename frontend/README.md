@@ -1,4 +1,5 @@
 # Запуск фронтенда
+
 ```
 npm start
 ```
@@ -12,5 +13,5 @@ docker-compose up -d --build
 # Удаление контейнеров
 
 ```
-docker compose down -v 
+docker compose down -v
 ```

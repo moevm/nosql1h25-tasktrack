@@ -1,24 +1,20 @@
 .table-graph-container {
-    padding: 20px;
-    flex-grow: 1;
+  padding: 20px;
+  flex-grow: 1;
+}
 
-  }
-  
-  .search-container-tables {
-    width: 500px;
-  }
+.search-container-tables {
+  width: 500px;
+}
 
- 
-  .search-bar {
-    width: 100% ;
-  }
-  
-
+.search-bar {
+  width: 100%;
+}
 
 .pagination {
-    justify-content: end;
+  justify-content: end;
 }
 
 .wrapper-paginator {
-    width: 95%;
+  width: 95%;
 }

@@ -1,18 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
-import './UserNav.css'
+import { Link, useNavigate } from 'react-router-dom';
+import './UserNav.css';
 
 export default function UserNav({ setIsAuthenticated }) {
-
   const navigate = useNavigate();
-  
-    const handleLogout = () => {
-      setIsAuthenticated(false);
-      navigate("/login");
-    };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    navigate('/login');
+  };
 
   return (
     <div className="navbar-user">
-      <img src="task.png" alt="Avatar" className="avatar"/>
+      <img src="task.png" alt="Avatar" className="avatar" />
       <div className="brand">TaskTracker</div>
       <div className="nav-center-user">
         <Link to="/tasks" className="btn btn-link-user">

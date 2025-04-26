@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './FilterDropdown.css';
 
-export default function FilterDropdown({ label, options, selectedOptions, onChange }) {
+export default function FilterDropdown({
+  label,
+  options,
+  selectedOptions,
+  onChange,
+}) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef();
 

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import SearchBar from "../../SearchBar/SearchBar";
-import FilterDropdown from "../FilterDropdown/FilterDropdown";
+import React, { useEffect, useState } from 'react';
+import SearchBar from '../../SearchBar/SearchBar';
+import FilterDropdown from '../FilterDropdown/FilterDropdown';
 import './TableGraph.css';
-import TaskDetailsSidebar from "../TaskDetailsSidebar/TaskDetailsSidebar";
+import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 
 const GROUP_DICT = {
   group1: {
@@ -187,7 +187,7 @@ const GROUP_DICT = {
         status: 'inactive',
         priority: 'low',
         time: '3h',
-      }
+      },
     ],
   },
   group2: {
@@ -221,22 +221,20 @@ const GROUP_DICT = {
   },
 };
 
-
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['active', 'inactive'];
 const PRIORITY_OPTIONS = ['high', 'medium', 'low'];
 
-
 const fetchTasksFromServer = async (
-  searchTerm = "",
+  searchTerm = '',
   page = 1,
   statuses = [],
-  priorities = []
+  priorities = [],
 ) => {
   const all = [];
 
   GROUP_DICT.group1.graphs.forEach((graph) => {
-    const name = graph.name || "";
+    const name = graph.name || '';
 
     const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
@@ -269,10 +267,9 @@ const fetchTasksFromServer = async (
   };
 };
 
-
 export default function TableGraph() {
   const [rows, setRows] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -289,15 +286,14 @@ export default function TableGraph() {
         searchTerm,
         page,
         selectedStatuses,
-        selectedPriorities
+        selectedPriorities,
       );
       setRows(res.data);
       setTotal(res.total);
     };
-  
+
     fetchData();
   }, [searchTerm, page, selectedStatuses, selectedPriorities]);
-  
 
   const handleSearch = (value) => {
     console.log(`Поиск по запросу: "${value}"`);
@@ -317,80 +313,74 @@ export default function TableGraph() {
     alert(`Показ связей для задачи: ${task.title}`);
   };
 
-
-
   return (
     <div className="table-graph-container">
-      <div className="d-flex align-items-center justify-content-between mb-2 gap-2 flex-wrap">
+      <div className="wrapper-paginator">
+        <div className="d-flex align-items-center justify-content-between mb-2 gap-2 flex-wrap">
+          <div className="search-container-tables">
+            <SearchBar
+              className="search-bar"
+              TitleFind="Название задачи"
+              onSearch={handleSearch}
+            />
+          </div>
 
-  <div className="search-container-tables">
-    <SearchBar
-      className="search-bar"
-      TitleFind="Название задачи"
-      onSearch={handleSearch}
-    />
-  </div>
+          <div className="d-flex align-items-center gap-2">
+            <FilterDropdown
+              label="Приоритет"
+              options={PRIORITY_OPTIONS}
+              selectedOptions={selectedPriorities}
+              onChange={setSelectedPriorities}
+            />
+            <FilterDropdown
+              label="Статус"
+              options={STATUS_OPTIONS}
+              selectedOptions={selectedStatuses}
+              onChange={setSelectedStatuses}
+            />
+          </div>
+        </div>
 
-  <div className="d-flex align-items-center gap-2">
-    <FilterDropdown
-      label="Приоритет"
-      options={PRIORITY_OPTIONS}
-      selectedOptions={selectedPriorities}
-      onChange={setSelectedPriorities}
-    />
-    <FilterDropdown
-      label="Статус"
-      options={STATUS_OPTIONS}
-      selectedOptions={selectedStatuses}
-      onChange={setSelectedStatuses}
-    />
-  </div>
-</div>
-
-    <div className="wrapper-paginator">
-
-      <table className="table table-bordered table-hover mt-3">
-        <thead>
-          <tr>
-            <th>Название задания</th>
-            <th>Дата завершения</th>
-            <th>Дата создания</th>
-            <th>Дата обновления</th>
-            <th>Связи</th>
-            <th>Статус</th>
-            <th>Приоритет</th>
-            <th>Время выполнения</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr
-              key={i}
-              className="table-row"
-              onClick={() => handleRowClick(row)}
-              style={{ cursor: 'pointer' }}
-            >
-              <td>{row.title}</td>
-              <td>{row.deadline}</td>
-              <td>{row.createdAt}</td>
-              <td>{row.updatedAt}</td>
-              <td>
-                <button
-                  className="btn btn-sm btn-outline-primary"
-                  onClick={(e) => handleShowEdgesClick(row, e)}
-                >
-                  Показать
-                </button>
-              </td>
-              <td>{row.status}</td>
-              <td>{row.priority}</td>
-              <td>{row.time}</td>
+        <table className="table table-bordered table-hover mt-3">
+          <thead>
+            <tr>
+              <th>Название задания</th>
+              <th>Дата завершения</th>
+              <th>Дата создания</th>
+              <th>Дата обновления</th>
+              <th>Связи</th>
+              <th>Статус</th>
+              <th>Приоритет</th>
+              <th>Время выполнения</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr
+                key={i}
+                className="table-row"
+                onClick={() => handleRowClick(row)}
+                style={{ cursor: 'pointer' }}
+              >
+                <td>{row.title}</td>
+                <td>{row.deadline}</td>
+                <td>{row.createdAt}</td>
+                <td>{row.updatedAt}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={(e) => handleShowEdgesClick(row, e)}
+                  >
+                    Показать
+                  </button>
+                </td>
+                <td>{row.status}</td>
+                <td>{row.priority}</td>
+                <td>{row.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         <div className="pagination mt-2 mb-2 d-flex align-items-center gap-2">
           <button
@@ -410,14 +400,13 @@ export default function TableGraph() {
           >
             Вперёд
           </button>
+        </div>
       </div>
-    </div>
 
-    <TaskDetailsSidebar 
-        task={selectedTask} 
-        onClose={() => setSelectedTask(null)} 
+      <TaskDetailsSidebar
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
       />
-
     </div>
   );
 }

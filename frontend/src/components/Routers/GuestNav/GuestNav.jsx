@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import './GuestNav.css'
+import { Link, useLocation } from 'react-router-dom';
+import './GuestNav.css';
 
 export default function GuestNav() {
   const location = useLocation();
@@ -8,7 +8,7 @@ export default function GuestNav() {
 
   return (
     <nav className="navbar-guest">
-      <img src="task.png" alt="Avatar" className="avatar"/>
+      <img src="task.png" alt="Avatar" className="avatar" />
       <div className="brand">TaskTracker</div>
       <div className="nav-center">
         <Link

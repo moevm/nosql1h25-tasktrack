@@ -1,7 +1,12 @@
 import React from 'react';
 import './ToggleSwitch.css';
 
-export default function ToggleSwitch({ isOn, onToggle, labelLeft = "Off", labelRight = "On" }) {
+export default function ToggleSwitch({
+  isOn,
+  onToggle,
+  labelLeft = 'Off',
+  labelRight = 'On',
+}) {
   return (
     <div className="toggle-wrapper">
       <span>{labelLeft}</span>
