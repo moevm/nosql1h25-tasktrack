@@ -259,6 +259,27 @@ export default function TableGraph() {
     return sorted;
   };
 
+  const getFieldLabel = (field) => {
+    switch (field) {
+      case 'title':
+        return 'Название';
+      case 'createdAt':
+        return 'Дата создания';
+      case 'updatedAt':
+        return 'Дата обновления';
+      case 'deadline':
+        return 'Дата завершения';
+      case 'status':
+        return 'Статус';
+      case 'priority':
+        return 'Приоритет';
+      case 'time':
+        return 'Время выполнения';
+      default:
+        return field;
+    }
+  };
+
   return (
     <div className="table-graph-container">
       <div className="wrapper-paginator">
@@ -388,6 +409,12 @@ export default function TableGraph() {
           Сбросить сортировку
         </button>
       </div>
+      {sortField && sortOrder !== 'none' && (
+        <div className="sort-info small text-muted ms-2">
+          Сортировка: <strong>{getFieldLabel(sortField)}</strong> (
+          {sortOrder === 'asc' ? 'возрастание' : 'убывание'})
+        </div>
+      )}
 
       {isCreatingTask && (
         <TaskForm
