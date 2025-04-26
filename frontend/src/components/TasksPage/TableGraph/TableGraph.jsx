@@ -5,6 +5,7 @@ import './TableGraph.css';
 import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import { GROUP_DICT } from '../../../temp';
 import TaskForm from '../TaskForm/TaskForm';
+import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';  // Добавляем модальное окно для связей
 
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['active', 'inactive'];
@@ -34,7 +35,7 @@ const fetchTasksFromServer = async (
         deadline: graph.deadline,
         createdAt: graph.createdAt,
         updatedAt: graph.modifiedAt,
-        edges: '–',
+        edges: graph.edges,
         status: graph.status,
         priority: graph.priority,
         time: graph.time,
@@ -65,6 +66,7 @@ const fetchTasksFromServer = async (
   return {
     data: pageData,
     total: all.length,
+    allTasks: all,
   };
 };
 
@@ -81,8 +83,11 @@ export default function TableGraph() {
   const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+
+  const [allTasks, setAllTasks] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,13 +100,13 @@ export default function TableGraph() {
       );
       setRows(res.data);
       setTotal(res.total);
+      setAllTasks(res.allTasks);
     };
 
     fetchData();
   }, [searchTerm, page, selectedStatuses, selectedPriorities, addedTasks]);
 
   const handleSearch = (value) => {
-    console.log(`Поиск по запросу: "${value}"`);
     setPage(1);
     setSearchTerm(value);
   };
@@ -115,7 +120,19 @@ export default function TableGraph() {
 
   const handleShowEdgesClick = (task, e) => {
     e.stopPropagation();
-    alert(`Показ связей для задачи: ${task.title}`);
+    setSelectedTask(task);
+    setIsModalOpen(true);  // Открыть модальное окно для связей
+  };
+
+  const handleDeleteConnection = (connectionIndex) => {
+    alert(connectionIndex);
+  };
+
+  const handleAddConnection = (connectionName, connectedTask) => {
+    const updatedTask = { ...selectedTask, edges: [...selectedTask.edges, { name: connectionName, connectedTask }] };
+    setRows((prevRows) => prevRows.map((task) => (task.title === selectedTask.title ? updatedTask : task)));
+    setSelectedTask(updatedTask);
+    setIsModalOpen(false);  // Закрыть модальное окно после добавления связи
   };
 
   return (
@@ -227,6 +244,24 @@ export default function TableGraph() {
           onCancel={() => setIsCreatingTask(false)}
         />
       )}
+
+      {isModalOpen && selectedTask && (
+        // <ConnectionsModal
+        //   task={selectedTask}
+        //   onClose={() => setIsModalOpen(false)}
+        //   onAddConnection={handleAddConnection}
+        //   allTasks={allTasks}
+        // />
+        <ConnectionsModal
+          task={selectedTask}
+          onClose={() => setIsModalOpen(false)}
+          onAddConnection={handleAddConnection}
+          onDeleteConnection={handleDeleteConnection}
+          allTasks={allTasks}
+        />
+      )}
+
+
     </div>
   );
 }
