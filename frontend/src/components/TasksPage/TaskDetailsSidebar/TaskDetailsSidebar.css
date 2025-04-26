@@ -1,63 +1,162 @@
 .task-details-sidebar {
   position: fixed;
-  top: 0;
   right: 0;
-  width: 320px;
+  top: 0;
   height: 100%;
-  background: #ffffff;
-  border-left: 1px solid #ccc;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-  z-index: 1050;
-  padding: 1rem;
+  width: 600px;
+  background-color: #fff;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
   overflow-y: auto;
 }
 
 .task-details-sidebar.open {
-  animation: slideIn 0.4s ease forwards;
+  transform: translateX(0);
 }
 
 .task-details-sidebar.closing {
-  animation: slideOut 0.4s ease forwards;
-}
-
-@keyframes slideIn {
-  from {
-    right: -320px;
-    opacity: 0;
-  }
-  to {
-    right: 0px;
-    opacity: 1;
-  }
-}
-
-@keyframes slideOut {
-  from {
-    right: 0px;
-    opacity: 1;
-  }
-  to {
-    right: -320px;
-    opacity: 0;
-  }
+  transform: translateX(100%);
 }
 
 .sidebar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.status-priority-container {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.status-container,
+.priority-container {
+  width: 50%;
+}
+
+.dropdown-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.dropdown {
+  width: 100%;
+  padding-left: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  height: 35px;
+}
+
+.dropdown:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.task-details {
+  padding: 5px 10px;
+}
+
+.additional-info {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.notes-label {
+  padding: 0px 10px;
+}
+
+.notes-section {
+  padding: 0px 10px;
+
+  overflow-y: auto;
+  max-height: 340px;
+}
+
+.notes-list {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.note-card {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.note-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.edit-button,
+.delete-button,
+.add-note-button,
+.history-button {
+  padding: 5px 15px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-button {
+  background-color: #007bff;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.add-note-button {
+  background-color: #007bff;
+}
+
+.add-note-container {
+  padding: 10px;
+}
+
+.add-note-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+}
+
+.history-button {
+  background-color: #28a745;
 }
 
 .close-button {
-  background: transparent;
+  background-color: transparent;
   border: none;
-  font-size: 1.5rem;
-  line-height: 1;
+  font-size: 24px;
+  color: #666;
   cursor: pointer;
-}
-
-.sidebar-content p {
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 50%;
 }
