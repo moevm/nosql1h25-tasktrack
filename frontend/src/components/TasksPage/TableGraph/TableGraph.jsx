@@ -5,7 +5,7 @@ import './TableGraph.css';
 import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import { GROUP_DICT } from '../../../temp';
 import TaskForm from '../TaskForm/TaskForm';
-import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';  // Добавляем модальное окно для связей
+import ConnectionsModal from '../ConnectionsModal/ConnectionsModal'; // Добавляем модальное окно для связей
 
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['active', 'inactive'];
@@ -82,7 +82,10 @@ export default function TableGraph() {
   const [addedTasks, setAddedTasks] = useState([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
 
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null); // для сайдбара
+  const [selectedTaskForConnections, setSelectedTaskForConnections] =
+    useState(null); // для модалки связей
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
@@ -120,8 +123,8 @@ export default function TableGraph() {
 
   const handleShowEdgesClick = (task, e) => {
     e.stopPropagation();
-    setSelectedTask(task);
-    setIsModalOpen(true);  // Открыть модальное окно для связей
+    setSelectedTaskForConnections(task);
+    setIsModalOpen(true);
   };
 
   const handleDeleteConnection = (connectionIndex) => {
@@ -129,10 +132,17 @@ export default function TableGraph() {
   };
 
   const handleAddConnection = (connectionName, connectedTask) => {
-    const updatedTask = { ...selectedTask, edges: [...selectedTask.edges, { name: connectionName, connectedTask }] };
-    setRows((prevRows) => prevRows.map((task) => (task.title === selectedTask.title ? updatedTask : task)));
+    const updatedTask = {
+      ...selectedTask,
+      edges: [...selectedTask.edges, { name: connectionName, connectedTask }],
+    };
+    setRows((prevRows) =>
+      prevRows.map((task) =>
+        task.title === selectedTask.title ? updatedTask : task,
+      ),
+    );
     setSelectedTask(updatedTask);
-    setIsModalOpen(false);  // Закрыть модальное окно после добавления связи
+    setIsModalOpen(false); // Закрыть модальное окно после добавления связи
   };
 
   return (
@@ -245,23 +255,15 @@ export default function TableGraph() {
         />
       )}
 
-      {isModalOpen && selectedTask && (
-        // <ConnectionsModal
-        //   task={selectedTask}
-        //   onClose={() => setIsModalOpen(false)}
-        //   onAddConnection={handleAddConnection}
-        //   allTasks={allTasks}
-        // />
+      {isModalOpen && selectedTaskForConnections && (
         <ConnectionsModal
-          task={selectedTask}
+          task={selectedTaskForConnections}
           onClose={() => setIsModalOpen(false)}
           onAddConnection={handleAddConnection}
           onDeleteConnection={handleDeleteConnection}
           allTasks={allTasks}
         />
       )}
-
-
     </div>
   );
 }

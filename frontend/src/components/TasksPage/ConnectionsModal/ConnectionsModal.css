@@ -1,120 +1,120 @@
 .connections-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .connections-modal .modal-overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .connections-modal .modal-content {
-    position: relative;
-    background: #fff;
-    padding: 20px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 90%;
-    overflow-y: auto;
-    border-radius: 10px;
-    z-index: 1001;
-  }
-  
-  .connections-modal .edges-list {
-    max-height: 200px;
-    overflow-y: auto;
-    padding-left: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .connections-modal .edge-item {
-    margin-bottom: 10px;
-    word-break: break-word; /* перенос длинных слов */
-  }
-  
-  .connections-modal .edge-name {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .connections-modal .edge-tasks {
-    color: gray;
-    font-size: 0.9em;
-    word-break: break-word;
-  }
-  
-  .connections-modal .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .connections-modal .select-wrapper {
-    max-height: 150px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .connections-modal .select-wrapper select {
-    width: 100%;
-    padding: 8px;
-    font-size: 1rem;
-    border: none;
-    outline: none;
-  }
-  
-  /* Красивый скролл только внутри select */
-  .connections-modal .select-wrapper select::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .connections-modal .select-wrapper select::-webkit-scrollbar-thumb {
-    background-color: #aaa;
-    border-radius: 3px;
-  }
-  
-  .connections-modal .buttons-connection-modal {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  /* Кнопки только внутри ConnectionsModal */
-  .connections-modal button {
-    padding: 10px 15px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .connections-modal .edge-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  /* Кнопка удаления ❌ */
-  .connections-modal .delete-button {
-    background: none;
-    border: none;
-    color: red;
-    font-size: 1.2em;
-    cursor: pointer;
-    padding: 0 5px;
-    transition: transform 0.2s;
-  }
-  
-    .connections-modal .mda-close-button {
-        background-color: rgb(163, 2, 2);
-    }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.connections-modal .modal-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.connections-modal .modal-content {
+  position: relative;
+  background: #fff;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  border-radius: 10px;
+  z-index: 1001;
+}
+
+.connections-modal .edges-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.connections-modal .edge-item {
+  margin-bottom: 10px;
+  word-break: break-word; /* перенос длинных слов */
+}
+
+.connections-modal .edge-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.connections-modal .edge-tasks {
+  color: gray;
+  font-size: 0.9em;
+  word-break: break-word;
+}
+
+.connections-modal .form-group {
+  margin-bottom: 15px;
+}
+
+.connections-modal .select-wrapper {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.connections-modal .select-wrapper select {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+}
+
+/* Красивый скролл только внутри select */
+.connections-modal .select-wrapper select::-webkit-scrollbar {
+  width: 6px;
+}
+
+.connections-modal .select-wrapper select::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 3px;
+}
+
+.connections-modal .buttons-connection-modal {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Кнопки только внутри ConnectionsModal */
+.connections-modal button {
+  padding: 10px 15px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.connections-modal .edge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Кнопка удаления ❌ */
+.connections-modal .delete-button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0 5px;
+  transition: transform 0.2s;
+}
+
+.connections-modal .mda-close-button {
+  background-color: rgb(163, 2, 2);
+}

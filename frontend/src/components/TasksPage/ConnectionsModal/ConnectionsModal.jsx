@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import './ConnectionsModal.css'; // Стили
 
-const ConnectionsModal = ({ task, onClose, onAddConnection, allTasks, onDeleteConnection }) => {
+const ConnectionsModal = ({
+  task,
+  onClose,
+  onAddConnection,
+  allTasks,
+  onDeleteConnection,
+}) => {
   const [connectionName, setConnectionName] = useState('');
   const [selectedTask, setSelectedTask] = useState('');
 
@@ -43,9 +49,7 @@ const ConnectionsModal = ({ task, onClose, onAddConnection, allTasks, onDeleteCo
                     ❌
                   </button>
                 </div>
-                <div className="edge-tasks">
-                  {edge .connectedTask}
-                </div>
+                <div className="edge-tasks">{edge.connectedTask}</div>
               </li>
             ))
           ) : (
@@ -82,8 +86,10 @@ const ConnectionsModal = ({ task, onClose, onAddConnection, allTasks, onDeleteCo
 
         <div className="buttons-connection-modal">
           <button onClick={handleAddConnection}>Добавить связь</button>
-          <button className="mda-close-button" onClick={onClose}>Закрыть</button>
-        </div> 
+          <button className="mda-close-button" onClick={onClose}>
+            Закрыть
+          </button>
+        </div>
       </div>
     </div>
   );

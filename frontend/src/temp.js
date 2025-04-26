@@ -13,27 +13,27 @@ export const GROUP_DICT = {
         priority: 'high',
         time: '2h',
         edges: [
-            {
-              name: 'Norm very long Norm very long Norm very long Norm very long, Norm very long Norm very long Norm very long Norm very long', // Имя связи
-              connectedTask: 'Graph 2' // Связанные задачи
-            },
-            {
-              name: 'Norm2',
-              connectedTask: 'Graph 2'
-            },
-            {
-              name: 'Norm3',
-              connectedTask: 'Graph 2'
-            },
-            {
-              name: 'Norm4',
-              connectedTask: 'Graph 2'
-            },
-            {
-              name: 'Norm5',
-              connectedTask: 'Graph 2'
-            },
-          ]
+          {
+            name: 'Norm very long Norm very long Norm very long Norm very long, Norm very long Norm very long Norm very long Norm very long', // Имя связи
+            connectedTask: 'Graph 2', // Связанные задачи
+          },
+          {
+            name: 'Norm2',
+            connectedTask: 'Graph 2',
+          },
+          {
+            name: 'Norm3',
+            connectedTask: 'Graph 2',
+          },
+          {
+            name: 'Norm4',
+            connectedTask: 'Graph 2',
+          },
+          {
+            name: 'Norm5',
+            connectedTask: 'Graph 2',
+          },
+        ],
       },
       {
         name: 'Graph 2',
@@ -44,11 +44,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'medium',
         time: '1h',
-        edges: [
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 3',
@@ -59,11 +55,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'low',
         time: '30m',
-        edges: [
-            'Graph 2',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 6',
@@ -74,11 +66,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'high',
         time: '4h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 5'],
       },
       {
         name: 'Graph 7',
@@ -89,12 +77,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'medium',
         time: '2.5h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 8',
@@ -105,12 +88,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'low',
         time: '1h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 9',
@@ -121,12 +99,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'high',
         time: '5h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 10',
@@ -137,12 +110,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'medium',
         time: '2h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 11',
@@ -153,12 +121,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'low',
         time: '1h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 12',
@@ -169,12 +132,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'high',
         time: '3h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 13',
@@ -185,12 +143,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'medium',
         time: '1.5h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 14',
@@ -201,12 +154,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'low',
         time: '2h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 15',
@@ -217,12 +165,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'high',
         time: '4h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 16',
@@ -233,12 +176,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'medium',
         time: '1h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 17',
@@ -249,12 +187,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'low',
         time: '30m',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 18',
@@ -265,12 +198,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'high',
         time: '2.5h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 19',
@@ -281,12 +209,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'medium',
         time: '1h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 20',
@@ -297,20 +220,8 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'low',
         time: '3h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
-
-
-
-
-
-
-
 
       {
         name: 'Graph 21',
@@ -321,12 +232,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'high',
         time: '1.5h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 22',
@@ -337,12 +243,7 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'medium',
         time: '2h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 23',
@@ -353,12 +254,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'low',
         time: '4h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 24',
@@ -369,13 +265,8 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'high',
         time: '1h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5'
-          ]
-      }
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
+      },
     ],
   },
   group2: {
@@ -390,12 +281,7 @@ export const GROUP_DICT = {
         status: 'active',
         priority: 'high',
         time: '3h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
       {
         name: 'Graph 5',
@@ -406,27 +292,13 @@ export const GROUP_DICT = {
         status: 'inactive',
         priority: 'medium',
         time: '1.5h',
-        edges: [
-            'Graph 2',
-            'Graph 3',
-            'Graph 4',
-            'Graph 5',
-        ]
+        edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
       },
     ],
   },
   group3: {
     name: 'Group 3',
     graphs: [],
-    edges: [
-        'Graph 2',
-        'Graph 3',
-        'Graph 4',
-        'Graph 5',
-    ]
+    edges: ['Graph 2', 'Graph 3', 'Graph 4', 'Graph 5'],
   },
-
-
-
-  
 };
