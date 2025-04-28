@@ -152,3 +152,5 @@ sent_emails/
 Test_create/
 hello_world/
 hello_world.py
+
+neo4j/
