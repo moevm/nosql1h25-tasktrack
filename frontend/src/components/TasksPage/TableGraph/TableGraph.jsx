@@ -272,6 +272,35 @@ export default function TableGraph() {
     }
   };
 
+  const handlerTest = () => {
+      const email = 'user@example.com';
+      const password = 'securepassword123';
+
+      const requestBody = {
+          email: email,
+          password: password,
+      };
+
+      fetch('/api/login/', {
+          method: 'POST',  
+          headers: {
+              'Content-Type': 'application/json', 
+          },
+          body: JSON.stringify(requestBody),  
+      })
+      .then(response => response.json())  
+      .then(data => {
+          console.log('Response data:', data);
+          alert('Запрос успешно отправлен!');
+      })
+      .catch(error => {
+          console.error('Ошибка при отправке запроса:', error);
+          alert('Произошла ошибка!');
+      });
+  };
+
+
+
   return (
     <div className="table-graph-container">
       <div className="wrapper-paginator">
@@ -443,6 +472,8 @@ export default function TableGraph() {
           allTasks={allTasks}
         />
       )}
+      <div><button className="btn btn-primary btn-sm" onClick={handlerTest}>Test</button></div>
+      
     </div>
   );
 }

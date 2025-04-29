@@ -38,8 +38,6 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=task_track.settings
       - PYTHONUNBUFFERED=1
-    ports:
-      - "8000:8000"
     volumes:
       - ./backend:/app
       - static:/static
@@ -63,7 +61,7 @@ services:
   gateway:
     build: ./nginx/
     ports:
-      - 9000:80
+      - ${NGINX_PORT}:80
     depends_on:
       - backend
     volumes:
