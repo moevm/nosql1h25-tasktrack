@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ${COMPOSE_PROJECT_NAME}_backend
+    container_name: ${COMPOSE_PROJECT_NAME}-backend
     restart: unless-stopped
     env_file: .env
     environment:
@@ -22,14 +22,14 @@ services:
       - app_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health/"]
-      interval: 30s
+      interval: 60s
       timeout: 10s
       retries: 3
       start_period: 10s
 
   neo4j:
     image: neo4j:${NEO4J_VERSION}-${NEO4J_EDITION}
-    container_name: ${COMPOSE_PROJECT_NAME}_neo4j
+    container_name: ${COMPOSE_PROJECT_NAME}-neo4j
     restart: unless-stopped
     environment:
       - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}

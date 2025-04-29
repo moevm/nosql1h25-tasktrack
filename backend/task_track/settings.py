@@ -1,10 +1,10 @@
+from .session_manager import Neo4jSessionManager
+
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR.parent / '.env')
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
@@ -20,9 +20,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django_neomodel',
+    'django.contrib.staticfiles',
     'rest_framework',
-    'djoser',
+    'users.apps.UsersConfig',
 ]
 
 
@@ -45,15 +45,15 @@ DATABASES = {}
 
 
 # Настройки Neo4j
-NEOMODEL_NEO4J_BOLT_URL = os.getenv('DJANGO_DATABASE_URL')
-NEOMODEL_AUTO_INSTALL_LABELS = True
-NEOMODEL_SIGNALS = True
-NEOMODEL_FORCE_TIMEZONE = True
+NEO4J_URI = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
+NEO4J_USER = os.getenv('NEO4J_USER', 'neo4j')
+NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', 'DB_P@ssw0rd2023')
+DRIVER = Neo4jSessionManager(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
 
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.dummy',  # Заглушка
+        'ENGINE': 'django.db.backends.dummy',
     }
 }
 
@@ -75,4 +75,11 @@ TEMPLATES = [
 ]
 
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}

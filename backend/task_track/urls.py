@@ -1,8 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 
-from .views import drf_api_view, health_check
+from .views import HealthCheckView
 
 urlpatterns = [
-    path('api/', drf_api_view),
-    path('api/health/', health_check),
+    path('api/health/', HealthCheckView.as_view()),
+    path('api/', include('users.urls')),
+    path('api/group', include('group.urls')),
 ]
