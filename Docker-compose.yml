@@ -13,3 +13,8 @@ services:
     volumes:
       - static:/static
       - media:/media
+  frontend:
+    build: ./frontend/
+    command: cp -r /app/build/. /static/
+    volumes:
+      - static:/static

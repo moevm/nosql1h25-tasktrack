@@ -1,0 +1,48 @@
+.navbar-guest {
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: white;
+  border-bottom: 1px solid #000;
+}
+
+.brand {
+  position: absolute;
+  left: 95px;
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  top: 12px;
+}
+
+.btn-link {
+  text-decoration: none;
+  color: #020614;
+  font-weight: 500;
+  padding: 12px;
+}
+
+.active-tab {
+  border: 1px solid #00030b;
+  border-bottom: none;
+  padding: 12px;
+  border-radius: 0px;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  position: absolute;
+  left: 50px;
+}
