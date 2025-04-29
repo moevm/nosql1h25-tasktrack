@@ -1,5 +1,5 @@
 GET http://localhost:8000/api/group
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQxNDk1LCJqdGkiOiJiZWY1ZTZjODJhYWE0NTVkOTU3MzVlMjVmYzJjNWY2YSIsInVzZXJfaWQiOi05ODEzMDU1ODA4NDk1NjM0ODIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSJ9.Hemfvty381iKfezLdPR7K9zFQ7XA4RSy6BS6Du2-DxU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pa2hhaWxAZXhhbXBsZS5jb20iLCJleHAiOjE3NDU5NjkzNjcsImlhdCI6MTc0NTk2NTc2NywidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.0ttaI3FfqynMGxEiY1VpYyj88aOFvx0QqO2n78T1oHA
 Content-Type: application/json
 
 {}
@@ -8,9 +8,19 @@ Content-Type: application/json
 ###
 
 POST http://localhost:8000/api/group
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ1OTQxNDk1LCJqdGkiOiJiZWY1ZTZjODJhYWE0NTVkOTU3MzVlMjVmYzJjNWY2YSIsInVzZXJfaWQiOi05ODEzMDU1ODA4NDk1NjM0ODIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSJ9.Hemfvty381iKfezLdPR7K9zFQ7XA4RSy6BS6Du2-DxU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pa2hhaWxAZXhhbXBsZS5jb20iLCJleHAiOjE3NDU5NjkzNjcsImlhdCI6MTc0NTk2NTc2NywidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.0ttaI3FfqynMGxEiY1VpYyj88aOFvx0QqO2n78T1oHA
 Content-Type: application/json
 
 {
-    "name": "Попашка"
+    "name": "Шомашка"
+}
+
+###
+
+PUT http://localhost:8000/api/group/шомашка/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pa2hhaWxAZXhhbXBsZS5jb20iLCJleHAiOjE3NDU5NjkzNjcsImlhdCI6MTc0NTk2NTc2NywidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.0ttaI3FfqynMGxEiY1VpYyj88aOFvx0QqO2n78T1oHA
+Content-Type: application/json
+
+{
+    "name": "Шомка"
 }

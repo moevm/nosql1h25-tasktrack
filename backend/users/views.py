@@ -7,15 +7,14 @@ from .models import Neo4jUser
 from .serializers import Neo4jUserSerializer
 
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def create_jwt_token(user):
     payload = {
-        'user_id': str(user.uid),
         'email': user.email,
-        'exp': datetime.now() + timedelta(minutes=15),  # 15 минут
-        'iat': datetime.now(),
+        'exp': datetime.now(timezone.utc) + timedelta(minutes=60),
+        'iat': datetime.now(timezone.utc),
         'token_type': 'access'
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')

@@ -3,15 +3,14 @@ from django.contrib.auth.hashers import make_password, check_password
 import neomodel
 
 import datetime as dt
-import uuid
 
 
 class Neo4jUser(neomodel.StructuredNode):
-    uid = neomodel.StringProperty(unique_index=True)
     email = neomodel.StringProperty(required=True, unique_index=True)
     password_hash = neomodel.StringProperty(required=True)
     created_at = neomodel.DateTimeProperty(default=dt.datetime.now)
     modified_at = neomodel.DateTimeProperty(default=dt.datetime.now)
+    groups = neomodel.RelationshipTo('group.models.Group', 'OWNS_GROUP')
 
     def set_password(self, password):
         self.password_hash = make_password(password)

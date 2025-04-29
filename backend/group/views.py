@@ -2,52 +2,54 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from task_track.settings import DRIVER
+from .models import Group
+from .serializers import GroupSerializer
 from users.authentication import available_for_authorized
-
-from .models import Neo4jGroup, Neo4jUserGroup
 
 
 @available_for_authorized
 class GroupsAPIView(APIView):
-
     def get(self, request):
-        session = DRIVER.get_session()
-        email = request.user.email
-        groups = Neo4jUserGroup(user_email=email)\
-            .request(session).get_groups_contains()
-        return Response({'result': groups})
+        user = request.user
+        user_groups = user.groups.all()
+        serializer = GroupSerializer(user_groups, many=True)
+        return Response({'groups': serializer.data})
 
     def post(self, request):
-        group_name = request.data.get('name')
+        serializer = GroupSerializer(
+            data=request.data,
+            context={'user': request.user}
+        )
+        if serializer.is_valid():
+            group = serializer.save()
+            request.user.groups.connect(group)
 
-        if not group_name:
             return Response(
-                {'error': 'group_name of groups is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        session = DRIVER.get_session()
-        user_email = request.user.email
-        request = Neo4jGroup.request(session)
-
-        if request.get_only_single(group_name=group_name):
-            return Response(
-                {'error': 'Group with this name already exists'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            group = request.create(group_name=group_name)
-            Neo4jUserGroup(user_email=user_email, group_name=group_name).request(
-                session).save()
-            return Response(
-                {'name': group.name},
+                GroupSerializer(group).data,
                 status=status.HTTP_201_CREATED
             )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+
+@available_for_authorized
+class GroupDetailAPIView(APIView):
+    def get(self, request, name):
+        name = name.lower().strip()
+        group = request.user.groups.get(name=name)
+        serializer = GroupSerializer(group)
+        return Response(serializer.data)
+
+    # def put(self, request, name):
+    #     name = name.lower().strip()
+    #     group = request.user.groups.get(name=name)
+    #     serializer = GroupSerializer(group, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def delete(self, request, name):
+    #     name = name.lower().strip()
+    #     group = request.user.groups.get(name=name)
+    #     group.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)

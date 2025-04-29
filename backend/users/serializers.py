@@ -6,7 +6,6 @@ from .models import Neo4jUser
 
 
 class Neo4jUserSerializer(serializers.Serializer):
-    uid = serializers.CharField(read_only=True)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(
         write_only=True,
