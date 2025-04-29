@@ -1,4 +1,3 @@
-import traceback
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,7 +16,7 @@ class GroupsAPIView(APIView):
         email = request.user.email
         groups = Neo4jUserGroup(user_email=email)\
             .request(session).get_groups_contains()
-        return Response(groups)
+        return Response({'result': groups})
 
     def post(self, request):
         group_name = request.data.get('name')
@@ -48,7 +47,6 @@ class GroupsAPIView(APIView):
             )
 
         except Exception as e:
-            traceback.print_exc()
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

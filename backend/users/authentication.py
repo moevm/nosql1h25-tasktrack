@@ -1,9 +1,10 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
-import jwt
 
 from .models import Neo4jUser
+
+import jwt
 
 
 class Neo4jJWTAuthentication(BaseAuthentication):
@@ -19,30 +20,26 @@ class Neo4jJWTAuthentication(BaseAuthentication):
         token = auth_header.split(' ')[1]
 
         try:
+            # Декодирование JWT
             payload = jwt.decode(
                 token, settings.SECRET_KEY, algorithms=['HS256'])
-            session = settings.DRIVER.get_session()
 
-            query = """
-            MATCH (u)
-            WHERE u.email = $email
-            RETURN u.email as email
-            """
-            result = session.run(
-                query,
-                email=payload['email']
-            )
-            user_data = result.single()
+            if 'email' not in payload:
+                raise AuthenticationFailed('Invalid token structure')
 
-            if not user_data:
+            user = Neo4jUser.nodes.filter(email=payload['email']).first()
+
+            if not user:
                 raise AuthenticationFailed('User not found')
 
-            return (Neo4jUser(email=user_data['email']), None)
+            return (user, None)
 
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Token expired')
         except jwt.InvalidTokenError:
             raise AuthenticationFailed('Invalid token')
+        except Exception as e:
+            raise AuthenticationFailed(str(e))
 
 
 def available_for_authorized(view_cls):

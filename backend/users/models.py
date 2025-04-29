@@ -1,51 +1,24 @@
+from django.contrib.auth.hashers import make_password, check_password
+
+import neomodel
+
 import datetime as dt
+import uuid
 
 
-class Neo4jRequest:
-    def __init__(self, request):
-        self.request = request
+class Neo4jUser(neomodel.StructuredNode):
+    uid = neomodel.StringProperty(unique_index=True)
+    email = neomodel.StringProperty(required=True, unique_index=True)
+    password_hash = neomodel.StringProperty(required=True)
+    created_at = neomodel.DateTimeProperty(default=dt.datetime.now)
+    modified_at = neomodel.DateTimeProperty(default=dt.datetime.now)
 
-    def get_only_single(self, **kwargs):
-        check_query = """
-        MATCH (u:User {email: $email})
-        RETURN u.password as password, u.email as email
-        """
-        result = self.request(check_query, **kwargs)
-        return result.single()
+    def set_password(self, password):
+        self.password_hash = make_password(password)
 
-    def create(self, **kwargs):
-        create_query = """
-        CREATE (u:User {
-            email: $email,
-            password: $password,
-            created_at: datetime($created_at),
-            modified_at: datetime($modified_at)
-        })
-        RETURN u.email as email
-        """
+    def check_password(self, password):
+        return check_password(password, self.password_hash)
 
-        now = dt.datetime.now().isoformat()
-
-        result = self.request(
-            create_query,
-            created_at=now,
-            modified_at=now,
-            **kwargs
-        )
-
-        return Neo4jUser(email=result.single()['email'])
-
-
-class Neo4jUser:
-    def __init__(self, email):
-        self.id = hash(email)
-        self.email = email
-
-    def __str__(self):
-        return self.email
-
-    @classmethod
-    def request(cls, session):
-        def func(*args, **kwargs):
-            return session.run(*args, **kwargs)
-        return Neo4jRequest(func)
+    def save(self, *args, **kwargs):
+        self.modified_at = dt.datetime.now()
+        return super().save(*args, **kwargs)

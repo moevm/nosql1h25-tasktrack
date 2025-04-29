@@ -1,4 +1,4 @@
-from .session_manager import Neo4jSessionManager
+from neomodel import config
 
 from pathlib import Path
 import os
@@ -44,11 +44,9 @@ WSGI_APPLICATION = 'task_track.wsgi.application'
 DATABASES = {}
 
 
-# Настройки Neo4j
-NEO4J_URI = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
-NEO4J_USER = os.getenv('NEO4J_USER', 'neo4j')
-NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', 'DB_P@ssw0rd2023')
-DRIVER = Neo4jSessionManager(NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD)
+# Настройки Neo4jfrom
+config.DATABASE_URL = os.getenv('DJANGO_DATABASE_URL')
+config.AUTO_INSTALL_LABELS = True
 
 
 DATABASES = {
