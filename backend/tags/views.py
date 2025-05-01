@@ -2,47 +2,41 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Group
-from .serializers import GroupSerializer
 from users.authentication import available_for_authorized
+from .serializers import TagSerializer
+from .models import Tag
 
 
 @available_for_authorized
-class GroupsAPIView(APIView):
+class TagsAPIView(APIView):
     def get(self, request):
-        user = request.user
-        user_groups = user.groups.all()
-        serializer = GroupSerializer(user_groups, many=True)
-        return Response({'groups': serializer.data})
+        tags = Tag.nodes.all()
+        serializer = TagSerializer(tags, many=True)
+        return Response({'tags': serializer.data})
 
     def post(self, request):
-        serializer = GroupSerializer(
-            data=request.data,
-            context={'user': request.user}
-        )
+        serializer = TagSerializer(data=request.data)
         if serializer.is_valid():
-            group = serializer.save()
-            request.user.groups.connect(group)
-
+            tag = serializer.save()
             return Response(
-                GroupSerializer(group).data,
+                TagSerializer(tag).data,
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @available_for_authorized
-class GroupDetailAPIView(APIView):
+class TagDetailAPIView(APIView):
     def get(self, request, name):
         name = name.lower().strip()
-        group = request.user.groups.get(name=name)
-        serializer = GroupSerializer(group)
+        tag = Tag.nodes.get(name=name)
+        serializer = TagSerializer(tag)
         return Response(serializer.data)
 
     # def put(self, request, name):
     #     name = name.lower().strip()
-    #     group = request.user.groups.get(name=name)
-    #     serializer = GroupSerializer(group, data=request.data)
+    #     tag = Tag.nodes.get(name=name)
+    #     serializer = TagSerializer(tag, data=request.data)
     #     if serializer.is_valid():
     #         serializer.save()
     #         return Response(serializer.data)
@@ -50,6 +44,6 @@ class GroupDetailAPIView(APIView):
 
     # def delete(self, request, name):
     #     name = name.lower().strip()
-    #     group = request.user.groups.get(name=name)
-    #     group.delete()
+    #     tag = Tag.nodes.get(name=name)
+    #     tag.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)

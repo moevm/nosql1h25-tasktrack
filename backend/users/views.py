@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 def create_jwt_token(user):
     payload = {
         'email': user.email,
-        'exp': datetime.now(timezone.utc) + timedelta(minutes=60),
+        'exp': datetime.now(timezone.utc) + timedelta(hours=12),
         'iat': datetime.now(timezone.utc),
         'token_type': 'access'
     }

@@ -1,0 +1,16 @@
+GET http://localhost:8000/api/tag/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwNTU3NTIsImlhdCI6MTc0NjA1MjE1MiwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.VGiByeOQ8lVzRt3CKWqUoKiOS-BogRZZAv1mFWuIPLI
+Content-Type: application/json
+
+{}
+
+
+###
+
+POST http://localhost:8000/api/tag/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwNTU3NTIsImlhdCI6MTc0NjA1MjE1MiwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.VGiByeOQ8lVzRt3CKWqUoKiOS-BogRZZAv1mFWuIPLI
+Content-Type: application/json
+
+{
+    "name": "Итерация"
+}

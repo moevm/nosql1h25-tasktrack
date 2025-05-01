@@ -1,0 +1,176 @@
+from rest_framework import serializers
+
+from .models import Task
+from tags.models import Tag
+
+import datetime
+
+
+class ReadTaskSerializer(serializers.Serializer):
+    task_id = serializers.CharField(read_only=True)
+    title = serializers.CharField(read_only=True)
+    status = serializers.CharField(read_only=True)
+
+
+class TaskSerializer(serializers.Serializer):
+    task_id = serializers.CharField(read_only=True)
+    title = serializers.CharField(required=True, max_length=200)
+    content = serializers.CharField(required=False, allow_blank=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    deadline = serializers.DateTimeField(required=True)
+    updated_at = serializers.DateTimeField(read_only=True)
+    status = serializers.ChoiceField(
+        choices=Task.STATUS_CHOICES, default='todo')
+    priority = serializers.ChoiceField(
+        choices=Task.PRIORITY_CHOICES, default='medium')
+
+    tag_names = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        write_only=True,
+        required=False,
+        help_text="Список имён тегов для связи с задачей"
+    )
+
+    related_task_ids = serializers.ListField(
+        child=serializers.CharField(),
+        write_only=True,
+        required=False,
+        help_text="Список task_id связанных задач"
+    )
+
+    tags = serializers.SerializerMethodField(read_only=True)
+    related_tasks = serializers.SerializerMethodField(read_only=True)
+
+    group_name = serializers.CharField(
+        write_only=True,
+        required=True,
+        help_text="Название группы, к которой принадлежит задача"
+    )
+
+    def validate_deadline(self, value):
+        if value <= datetime.datetime.now():
+            raise serializers.ValidationError("Дедлайн должен быть в будущем")
+        return value
+
+    def validate_tag_names(self, value):
+        return [name.lower().strip() for name in value if name.strip()]
+
+    def validate_group_name(self, value):
+        from groups.models import Group
+        normalized_name = value.lower().strip()
+
+        try:
+            group = Group.nodes.get(name=normalized_name)
+            if not self.context['request'].user.groups.is_connected(group):
+                raise serializers.ValidationError(
+                    "Группа не принадлежит пользователю")
+            return normalized_name
+        except Group.DoesNotExist:
+            raise serializers.ValidationError("Группа не найдена")
+
+    def create(self, validated_data):
+        from groups.models import Group
+
+        group_name = validated_data.pop('group_name')
+        group = Group.nodes.get(name=group_name)
+
+        task = Task(**validated_data)
+        task.save()
+
+        group.tasks.connect(task)
+        task.group.connect(group)
+
+        self._process_relations(task, validated_data)
+
+        return task
+
+    def _process_relations(self, task, validated_data):
+        if 'tag_names' in validated_data:
+            for name in validated_data['tag_names']:
+                tag = Tag.nodes.get_or_none(name=name)
+                if tag is None:
+                    tag = Tag(name=name).save()
+                task.tags.connect(tag)
+
+        print(validated_data)
+        if 'related_task_ids' in validated_data:
+            for task_id in validated_data['related_task_ids']:
+                related_task = Task.nodes.get_or_none(task_id=task_id)
+                if related_task:
+                    task.related_tasks.connect(related_task)
+
+    def update(self, instance, validated_data):
+        if 'group_name' in validated_data:
+            raise serializers.ValidationError({
+                'group_name': ('Changing task group is not allowed.'
+                               'Use move-to-group endpoint instead.')
+            })
+
+        instance.title = validated_data.get('title', instance.title)
+        instance.content = validated_data.get('content', instance.content)
+        instance.deadline = validated_data.get('deadline', instance.deadline)
+        instance.status = validated_data.get('status', instance.status)
+        instance.priority = validated_data.get('priority', instance.priority)
+
+        if 'tag_names' in validated_data:
+            self._update_tags(instance, validated_data['tag_names'])
+
+        if 'related_task_ids' in validated_data:
+            self._update_related_tasks(
+                instance, validated_data['related_task_ids'])
+
+        instance.save()
+        return instance
+
+    def _update_tags(self, task, tag_names):
+        current_tags = {tag.name for tag in task.tags.all()}
+        new_tags = {name.lower().strip() for name in tag_names}
+
+        for tag_name in current_tags - new_tags:
+            tag = Tag.nodes.get(name=tag_name)
+            task.tags.disconnect(tag)
+
+        for tag_name in new_tags - current_tags:
+            tag = Tag.nodes.get_or_none(name=tag_name)
+            if tag is None:
+                tag = Tag(name=tag_name).save()
+            task.tags.connect(tag)
+
+    def _update_related_tasks(self, task, related_task_ids):
+        current_related = {t.task_id for t in task.related_tasks.all()}
+        new_related = set(related_task_ids)
+
+        for task_id in current_related - new_related:
+            try:
+                related_task = Task.nodes.get(task_id=task_id)
+                task.related_tasks.disconnect(related_task)
+            except Task.DoesNotExist:
+                continue
+
+        for task_id in new_related - current_related:
+            try:
+                related_task = Task.nodes.get(task_id=task_id)
+                task.related_tasks.connect(related_task)
+            except Task.DoesNotExist:
+                continue
+
+    def get_tags(self, obj):
+        return [str(tag) for tag in obj.tags.all()]
+
+    def get_related_tasks(self, obj):
+        return [
+            {
+                'task_id': task.task_id,
+                'title': task.title,
+                'status': task.status
+            }
+            for task in obj.related_tasks.all()
+        ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        group = instance.group.single()
+        representation['group'] = {
+            'name': group.name if group else None
+        }
+        return representation

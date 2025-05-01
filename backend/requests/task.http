@@ -1,0 +1,47 @@
+GET http://localhost:8000/api/task/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwOTYzNjgsImlhdCI6MTc0NjA1MzE2OCwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.cSVykydcb0UCj1p22YbXTs7kknj9UBc7MEW3SP_O9mA
+Content-Type: application/json
+
+{}
+
+
+###
+
+POST http://localhost:8000/api/task/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwOTYzNjgsImlhdCI6MTc0NjA1MzE2OCwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.cSVykydcb0UCj1p22YbXTs7kknj9UBc7MEW3SP_O9mA
+Content-Type: application/json
+
+{
+    "title": "Разработать API аутентификации",
+    "deadline": "2026-12-31T23:59:59",
+    "group_name": "Домашка",
+    "tag_names": ["backend", "итерация2", "api"],
+    "related_task_ids": ["task_c154cd12"]
+}
+
+###
+
+GET http://localhost:8000/api/task/task_cd1fb174/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwOTYzNjgsImlhdCI6MTc0NjA1MzE2OCwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.cSVykydcb0UCj1p22YbXTs7kknj9UBc7MEW3SP_O9mA
+Content-Type: application/json
+
+{}
+
+###
+
+PATCH http://localhost:8000/api/task/task_cd1fb174/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwOTYzNjgsImlhdCI6MTc0NjA1MzE2OCwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.cSVykydcb0UCj1p22YbXTs7kknj9UBc7MEW3SP_O9mA
+Content-Type: application/json
+
+{
+    "title": "Протестировать API аутентификации",
+    "deadline": "2027-12-31T23:59:59"
+}
+
+###
+
+DELETE http://localhost:8000/api/task/task_cd1fb174/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYwOTYzNjgsImlhdCI6MTc0NjA1MzE2OCwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.cSVykydcb0UCj1p22YbXTs7kknj9UBc7MEW3SP_O9mA
+Content-Type: application/json
+
+{}
