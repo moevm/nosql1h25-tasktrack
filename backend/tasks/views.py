@@ -7,10 +7,12 @@ from neomodel import db
 from .models import Task
 from .serializers import TaskSerializer
 from users.authentication import available_for_authorized
+from .pagination import StandardResultsSetPagination
 
 
 @available_for_authorized
 class TaskListCreateAPIView(APIView):
+    pagination_class = StandardResultsSetPagination
 
     def get(self, request):
         with db.transaction:
@@ -18,9 +20,12 @@ class TaskListCreateAPIView(APIView):
             for group in request.user.groups.all():
                 tasks.extend(group.tasks.all())
 
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(tasks, request)
+
             serializer = TaskSerializer(
-                tasks, many=True, context={'request': request})
-            return Response({'tasks': serializer.data})
+                page, many=True, context={'request': request})
+            return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         with db.transaction:
