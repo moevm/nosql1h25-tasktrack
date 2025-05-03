@@ -3,71 +3,94 @@ from django.utils import timezone
 
 
 class TaskFilter:
-    def __init__(self, data=None):
-        self.data = data or {}
-
-    def _parse_datetime(self, dt_str):
+    @staticmethod
+    def _parse_datetime(dt_str):
         try:
             naive_dt = datetime.fromisoformat(dt_str)
             return timezone.make_aware(naive_dt, timezone=timezone.utc)
-
-        except (ValueError, TypeError) as e:
-            print(f"Invalid datetime format: {e}")
+        except (ValueError, TypeError):
             return None
 
-    def filter_queryset(self, queryset):
-        if 'title' in self.data:
-            queryset = [
-                t for t in queryset
-                if self.data['title'].lower() in t.title.lower()]
+    @classmethod
+    def add_filters_to_query(cls, query, params, filters):
+        """
+        Добавляет условия фильтрации к Cypher-запросу
 
-        if 'status' in self.data:
-            queryset = [
-                t for t in queryset if t.status == self.data['status']]
+        :param query: Исходный Cypher-запрос
+        :param params: Параметры запроса
+        :param filters: Словарь параметров фильтрации
+        :return: Модифицированные query и params
+        """
+        if not filters:
+            return query, params
 
-        if 'priority' in self.data:
-            queryset = [
-                t for t in queryset if t.priority == self.data['priority']]
+        conditions = []
 
-        if 'deadline_before' in self.data:
-            deadline = self._parse_datetime(self.data['deadline_before'])
+        if 'title' in filters:
+            conditions.append("toLower(t.title) CONTAINS toLower($title)")
+            params['title'] = filters['title']
+
+        if 'status' in filters:
+            conditions.append("t.status = $status")
+            params['status'] = filters['status']
+
+        if 'priority' in filters:
+            conditions.append("t.priority = $priority")
+            params['priority'] = filters['priority']
+
+        if 'deadline_before' in filters:
+            deadline = cls._parse_datetime(filters['deadline_before'])
             if deadline:
-                queryset = [
-                    t for t in queryset
-                    if t.deadline and t.deadline <= deadline
-                ]
+                conditions.append("t.deadline <= datetime($deadline_before)")
+                params['deadline_before'] = deadline.isoformat()
 
-        if 'deadline_after' in self.data:
-            deadline = self._parse_datetime(self.data['deadline_after'])
+        if 'deadline_after' in filters:
+            deadline = cls._parse_datetime(filters['deadline_after'])
             if deadline:
-                queryset = [
-                    t for t in queryset
-                    if t.deadline and t.deadline >= deadline
-                ]
+                conditions.append("t.deadline >= datetime($deadline_after)")
+                params['deadline_after'] = deadline.isoformat()
 
-        if 'created_before' in self.data:
-            created = self._parse_datetime(self.data['created_before'])
+        if 'created_before' in filters:
+            created = cls._parse_datetime(filters['created_before'])
             if created:
-                queryset = [
-                    t for t in queryset
-                    if t.created_at and t.created_at <= created
-                ]
+                conditions.append("t.created_at <= datetime($created_before)")
+                params['created_before'] = created.isoformat()
 
-        if 'created_after' in self.data:
-            created = self._parse_datetime(self.data['created_after'])
+        if 'created_after' in filters:
+            created = cls._parse_datetime(filters['created_after'])
             if created:
-                queryset = [
-                    t for t in queryset
-                    if t.created_at and t.created_at >= created
-                ]
+                conditions.append("t.created_at >= datetime($created_after)")
+                params['created_after'] = created.isoformat()
 
-        if 'tag' in self.data:
-            tag_name = self.data['tag']
-            queryset = [
-                t for t in queryset
-                if any(
-                    tag.name.lower() == tag_name.lower()
-                    for tag in t.tags.all())
-            ]
+        if 'tag' in filters:
+            tag_names = [
+                tag.strip().lower()
+                for tag in filters['tag'].split(',') if tag.strip()]
 
-        return queryset
+            if tag_names:
+                if len(tag_names) == 1:
+                    conditions.append("""
+                    EXISTS { 
+                        MATCH (t)-[:HAS_TAG]->(tag:Tag)
+                        WHERE toLower(tag.name) CONTAINS toLower($tag_name)
+                    }
+                    """)
+                    params['tag_name'] = tag_names[0]
+                else:
+                    conditions.append("""
+                    ALL(tag_name IN $tag_names WHERE
+                        EXISTS { 
+                            MATCH (t)-[:HAS_TAG]->(tag:Tag)
+                            WHERE toLower(tag.name) CONTAINS tag_name
+                        }
+                    )
+                    """)
+                    params['tag_names'] = tag_names
+
+        if conditions:
+            if "WHERE" in query:
+                query += " AND " + " AND ".join(conditions)
+            else:
+                query += " WHERE " + " AND ".join(conditions)
+
+        return query, params
