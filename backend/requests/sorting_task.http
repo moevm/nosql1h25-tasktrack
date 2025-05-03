@@ -1,0 +1,29 @@
+GET http://localhost:8000/api/task/?sort_by=deadline&reverse=true&page_size=50
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYyMjk1MTUsImlhdCI6MTc0NjE4NjMxNSwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.kacNSC1Vj_KQqIaHwjTGLRVC1JsNAH_DBr_dvHy5Qa4
+Content-Type: application/json
+
+{}
+
+###
+
+GET http://localhost:8000/api/task/?sort_by=title&reverse=false
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYyMjk1MTUsImlhdCI6MTc0NjE4NjMxNSwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.kacNSC1Vj_KQqIaHwjTGLRVC1JsNAH_DBr_dvHy5Qa4
+Content-Type: application/json
+
+{}
+
+###
+
+GET http://localhost:8000/api/task/?sort_by=priority&reverse=false
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYyMjk1MTUsImlhdCI6MTc0NjE4NjMxNSwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.kacNSC1Vj_KQqIaHwjTGLRVC1JsNAH_DBr_dvHy5Qa4
+Content-Type: application/json
+
+{}
+
+###
+
+GET http://localhost:8000/api/task/?sort_by=status&page_size=50
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDYyMjk1MTUsImlhdCI6MTc0NjE4NjMxNSwidG9rZW5fdHlwZSI6ImFjY2VzcyJ9.kacNSC1Vj_KQqIaHwjTGLRVC1JsNAH_DBr_dvHy5Qa4
+Content-Type: application/json
+
+{}

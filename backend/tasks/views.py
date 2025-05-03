@@ -9,6 +9,7 @@ from .serializers import TaskSerializer
 from users.authentication import available_for_authorized
 from .pagination import StandardResultsSetPagination
 from .filters import TaskFilter
+from .sorting import TaskSorter
 
 
 @available_for_authorized
@@ -17,6 +18,10 @@ class TaskListCreateAPIView(APIView):
 
     def get(self, request):
         with db.transaction:
+            sort_by = request.query_params.get('sort_by')
+            reverse = request.query_params.get(
+                'reverse', 'false').lower() == 'true'
+
             tasks = []
 
             for group in request.user.groups.all():
@@ -24,10 +29,13 @@ class TaskListCreateAPIView(APIView):
 
             task_filter = TaskFilter(data=request.query_params)
             filtered_tasks = sorted(
-                task_filter.filter(tasks), key=lambda x: x.deadline)
+                task_filter.filter_queryset(tasks), key=lambda x: x.deadline)
+
+            sorted_tasks = TaskSorter.sort_queryset(
+                filtered_tasks, sort_by, reverse)
 
             paginator = self.pagination_class()
-            page = paginator.paginate_queryset(filtered_tasks, request)
+            page = paginator.paginate_queryset(sorted_tasks, request)
 
             serializer = TaskSerializer(
                 page, many=True, context={'request': request})

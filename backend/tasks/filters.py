@@ -1,11 +1,21 @@
 from datetime import datetime
+from django.utils import timezone
 
 
 class TaskFilter:
     def __init__(self, data=None):
         self.data = data or {}
 
-    def filter(self, queryset):
+    def _parse_datetime(self, dt_str):
+        try:
+            naive_dt = datetime.fromisoformat(dt_str)
+            return timezone.make_aware(naive_dt, timezone=timezone.utc)
+
+        except (ValueError, TypeError) as e:
+            print(f"Invalid datetime format: {e}")
+            return None
+
+    def filter_queryset(self, queryset):
         if 'title' in self.data:
             queryset = [
                 t for t in queryset
@@ -20,20 +30,36 @@ class TaskFilter:
                 t for t in queryset if t.priority == self.data['priority']]
 
         if 'deadline_before' in self.data:
-            deadline = datetime.fromisoformat(self.data['deadline_before'])
-            queryset = [t for t in queryset if t.deadline <= deadline]
+            deadline = self._parse_datetime(self.data['deadline_before'])
+            if deadline:
+                queryset = [
+                    t for t in queryset
+                    if t.deadline and t.deadline <= deadline
+                ]
 
         if 'deadline_after' in self.data:
-            deadline = datetime.fromisoformat(self.data['deadline_after'])
-            queryset = [t for t in queryset if t.deadline >= deadline]
+            deadline = self._parse_datetime(self.data['deadline_after'])
+            if deadline:
+                queryset = [
+                    t for t in queryset
+                    if t.deadline and t.deadline >= deadline
+                ]
 
         if 'created_before' in self.data:
-            created = datetime.fromisoformat(self.data['created_before'])
-            queryset = [t for t in queryset if t.created_at <= created]
+            created = self._parse_datetime(self.data['created_before'])
+            if created:
+                queryset = [
+                    t for t in queryset
+                    if t.created_at and t.created_at <= created
+                ]
 
         if 'created_after' in self.data:
-            created = datetime.fromisoformat(self.data['created_after'])
-            queryset = [t for t in queryset if t.created_at >= created]
+            created = self._parse_datetime(self.data['created_after'])
+            if created:
+                queryset = [
+                    t for t in queryset
+                    if t.created_at and t.created_at >= created
+                ]
 
         if 'tag' in self.data:
             tag_name = self.data['tag']
