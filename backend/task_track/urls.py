@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/group/', include('groups.urls')),
     path('api/tag/', include('tags.urls')),
     path('api/task/', include('tasks.urls')),
+    path('api/task/<str:task_id>/note/', include('notes.urls')),
 ]

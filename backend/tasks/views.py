@@ -33,9 +33,6 @@ class TaskListCreateAPIView(APIView):
         else:
             query += " RETURN t"
 
-        print(query)
-        print(params)
-
         results, _ = db.cypher_query(query, params)
         return [Task.inflate(row[0]) for row in results]
 

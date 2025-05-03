@@ -41,6 +41,7 @@ class Task(neomodel.StructuredNode):
     tags = neomodel.RelationshipTo('tags.models.Tag', 'HAS_TAG')
     related_tasks = neomodel.RelationshipTo('tasks.models.Task', 'RELATED_TO')
     group = neomodel.RelationshipFrom('groups.models.Group', 'CONTAINS_TASK')
+    notes = neomodel.RelationshipTo('notes.models.Note', 'HAS_NOTE')
 
     def clean(self):
         """Валидация перед сохранением"""
@@ -51,6 +52,10 @@ class Task(neomodel.StructuredNode):
         self.updated_at = datetime.now()
         self.clean()
         return super().save(*args, **kwargs)
+
+    def pre_delete(self):
+        for note in self.notes.all():
+            note.delete()
 
     def __str__(self):
         return f"{self.task_id}: {self.title} ({self.status})"

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Task
 from tags.models import Tag
+from notes.models import Note
 
 import datetime
 
@@ -30,6 +31,7 @@ class TaskSerializer(serializers.Serializer):
         required=False,
         help_text="Список имён тегов для связи с задачей"
     )
+    notes = serializers.SerializerMethodField()
 
     related_task_ids = serializers.ListField(
         child=serializers.CharField(),
@@ -119,6 +121,9 @@ class TaskSerializer(serializers.Serializer):
             self._update_related_tasks(
                 instance, validated_data['related_task_ids'])
 
+        if 'notes' in validated_data:
+            self._update_notes(instance, validated_data['notes'])
+
         instance.save()
         return instance
 
@@ -154,6 +159,24 @@ class TaskSerializer(serializers.Serializer):
             except Task.DoesNotExist:
                 continue
 
+    def _update_notes(self, task, notes_data):
+        current_notes = {note.note_id: note for note in task.notes.all()}
+
+        for note_data in notes_data:
+            if 'note_id' in note_data:
+                note = Note.nodes.get(note_id=note_data['note_id'])
+                note.text = note_data.get('text', note.text)
+                note.save()
+            else:
+                note = Note(text=note_data['text']).save()
+                task.notes.connect(note)
+
+        submitted_note_ids = {
+            n['note_id'] for n in notes_data if 'note_id' in n}
+        for note_id, note in current_notes.items():
+            if note_id not in submitted_note_ids:
+                note.delete()
+
     def get_tags(self, obj):
         return [str(tag) for tag in obj.tags.all()]
 
@@ -165,6 +188,16 @@ class TaskSerializer(serializers.Serializer):
                 'status': task.status
             }
             for task in obj.related_tasks.all()
+        ]
+
+    def get_notes(self, obj):
+        return [
+            {
+                'note_id': note.note_id,
+                'text': note.text,
+                'created_at': note.created_at
+            }
+            for note in obj.notes.all()
         ]
 
     def to_representation(self, instance):
