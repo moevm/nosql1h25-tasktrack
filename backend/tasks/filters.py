@@ -70,7 +70,7 @@ class TaskFilter:
             if tag_names:
                 if len(tag_names) == 1:
                     conditions.append("""
-                    EXISTS { 
+                    EXISTS {
                         MATCH (t)-[:HAS_TAG]->(tag:Tag)
                         WHERE toLower(tag.name) CONTAINS toLower($tag_name)
                     }
@@ -79,13 +79,26 @@ class TaskFilter:
                 else:
                     conditions.append("""
                     ALL(tag_name IN $tag_names WHERE
-                        EXISTS { 
+                        EXISTS {
                             MATCH (t)-[:HAS_TAG]->(tag:Tag)
                             WHERE toLower(tag.name) CONTAINS tag_name
                         }
                     )
                     """)
                     params['tag_names'] = tag_names
+
+        if 'group' in filters:
+            groups = [
+                name.strip() for name in filters['group'].split(',')
+                if name.strip()]
+
+            if groups:
+                if len(groups) == 1:
+                    conditions.append("g.name = $group")
+                    params['group'] = groups[0]
+                else:
+                    conditions.append("g.name IN $group")
+                    params['group'] = groups
 
         if conditions:
             if "WHERE" in query:
