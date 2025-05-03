@@ -5,6 +5,7 @@ from rest_framework import status
 from neomodel import db
 
 from .models import Task
+from groups.models import Group
 from .serializers import TaskSerializer
 from users.authentication import available_for_authorized
 from .pagination import StandardResultsSetPagination
@@ -16,26 +17,36 @@ from .sorting import TaskSorter
 class TaskListCreateAPIView(APIView):
     pagination_class = StandardResultsSetPagination
 
+    def _get_user_tasks(self, user, status=None, sort_by=None, reverse=False):
+        query = """
+        MATCH (u:Neo4jUser)-[:OWNS_GROUP]->(g:Group)-[:CONTAINS_TASK]->(t:Task)
+        WHERE u.email = $email
+        """
+        params = {'email': user.email}
+
+        if status:
+            query += " AND t.status = $status"
+            params['status'] = status
+
+        if sort_by:
+            query, params = TaskSorter.add_sorting_to_query(
+                query, params, sort_by, reverse)
+        else:
+            query += " RETURN t"
+
+        results, _ = db.cypher_query(query, params)
+        return [Task.inflate(row[0]) for row in results]
+
     def get(self, request):
         with db.transaction:
-            sort_by = request.query_params.get('sort_by')
-            reverse = request.query_params.get(
-                'reverse', 'false').lower() == 'true'
+            sort_by = request.query_params.get('sort_by').lower()
+            reverse = request.query_params.get('reverse').lower()
 
-            tasks = []
-
-            for group in request.user.groups.all():
-                tasks.extend(group.tasks.all())
-
-            task_filter = TaskFilter(data=request.query_params)
-            filtered_tasks = sorted(
-                task_filter.filter_queryset(tasks), key=lambda x: x.deadline)
-
-            sorted_tasks = TaskSorter.sort_queryset(
-                filtered_tasks, sort_by, reverse)
+            tasks = self._get_user_tasks(
+                request.user, sort_by=sort_by, reverse=reverse)
 
             paginator = self.pagination_class()
-            page = paginator.paginate_queryset(sorted_tasks, request)
+            page = paginator.paginate_queryset(tasks, request)
 
             serializer = TaskSerializer(
                 page, many=True, context={'request': request})
