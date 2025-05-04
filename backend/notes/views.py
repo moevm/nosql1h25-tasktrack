@@ -28,6 +28,9 @@ class NoteListCreateAPIView(APIView):
 
     def get(self, request, task_id):
         """Получение всех заметок задачи"""
+
+        reverse = request.query_params.get('reverse', '').lower() == 'true'
+
         if not self._validate_task_access(request.user.email, task_id):
             return Response(
                 {'error': 'Task not found or access denied'},
@@ -36,10 +39,11 @@ class NoteListCreateAPIView(APIView):
 
         try:
             query = """
-            MATCH (t:Task {task_id: $task_id})-[:HAS_NOTE]->(n:Note)
+            MATCH (t:Task {{task_id: $task_id}})-[:HAS_NOTE]->(n:Note)
             RETURN n
-            ORDER BY n.created_at DESC
-            """
+            ORDER BY n.created_at {order}
+            """.format(order="ASC" if reverse else "DESC")
+
             results, _ = db.cypher_query(query, {'task_id': task_id})
             notes = [Note.inflate(row[0]) for row in results]
 
