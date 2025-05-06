@@ -4,10 +4,9 @@ import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
 import SearchBar from '../../SearchBar/SearchBar'; 
 import { SERVER } from '../../../Constants';
 
-export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
+export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGroup, selectedGroup }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [groupList, setGroupList] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");

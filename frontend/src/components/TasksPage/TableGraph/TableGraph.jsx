@@ -13,7 +13,7 @@ const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['todo', 'in_progress', 'done'];
 const PRIORITY_OPTIONS = ['high', 'medium', 'low'];
 
-export default function TableGraph() {
+export default function TableGraph({ selectedGroup }) {
   const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
@@ -31,15 +31,17 @@ export default function TableGraph() {
   const [sortOrder, setSortOrder] = useState('none');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
+
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
+
     if (searchTerm) params.append('title', searchTerm);
     if (selectedStatuses.length > 0)
       params.append('status', selectedStatuses.join(','));
     if (selectedPriorities.length > 0)
       params.append('priority', selectedPriorities.join(','));
 
-    // Фильтры по дате создания
+    // Фильтр по дате создания
     if (createdAtFilter?.mode === 'exact')
       params.append('created_at', createdAtFilter.exact.split('T')[0]);
     if (createdAtFilter?.mode === 'between') {
@@ -51,7 +53,7 @@ export default function TableGraph() {
       params.append('created_last_unit', createdAtFilter.lastUnit);
     }
 
-    // Фильтры по дедлайну
+    // Фильтр по дедлайну
     if (deadlineFilter?.mode === 'exact')
       params.append('deadline', deadlineFilter.exact.split('T')[0]);
     if (deadlineFilter?.mode === 'between') {
@@ -69,15 +71,17 @@ export default function TableGraph() {
       params.append('reverse', sortOrder === 'desc');
     }
 
-    params.append('group_name', 'test');
+    // Группа
+    params.append('group', selectedGroup);
     params.append('page', page);
     params.append('page_size', ITEMS_PER_PAGE);
-
     try {
+      const token = localStorage.getItem('token');
+
       const response = await fetch(`${SERVER}/api/task/?${params}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -116,15 +120,16 @@ export default function TableGraph() {
     deadlineFilter,
     sortField,
     sortOrder,
+    selectedGroup,
   ]);
 
   const handleCreateTask = async (newTaskData) => {
+    console.log({
+      ...newTaskData,
+      group_name: selectedGroup,
+    });
     try {
       const token = localStorage.getItem('token');
-      console.log({
-        ...newTaskData,
-        group_name: 'test',
-      })
       const response = await fetch(`${SERVER}/api/task/`, {
         method: 'POST',
         headers: {
@@ -133,25 +138,18 @@ export default function TableGraph() {
         },
         body: JSON.stringify({
           ...newTaskData,
-          group_name: 'test',
+          group_name: selectedGroup,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Ошибка при создании задачи');
-      }
+      if (!response.ok) throw new Error('Ошибка при создании задачи');
 
-      await fetchTasksFromServer(); // Обновляем список задач
+      await fetchTasksFromServer(); // обновляем список
       setIsCreatingTask(false);
     } catch (error) {
       console.error('Ошибка:', error);
       alert('Не удалось создать задачу.');
     }
-  };
-
-  const handleSearch = (value) => {
-    setPage(1);
-    setSearchTerm(value);
   };
 
   const handleRowClick = (task) => {
@@ -219,7 +217,7 @@ export default function TableGraph() {
             <SearchBar
               className="search-bar"
               TitleFind="Название задачи"
-              onSearch={handleSearch}
+              onSearch={setSearchTerm}
             />
           </div>
           <div className="d-flex align-items-center gap-2 flex-wrap">
@@ -265,20 +263,27 @@ export default function TableGraph() {
             </tr>
           </thead>
           <tbody>
-            {tasks.map((row, i) => (
-              <tr key={i} className="table-row" onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
-                <td>{row.title}</td>
-                <td>{row.deadline}</td>
-                <td>{row.createdAt}</td>
-                <td>{row.updatedAt}</td>
-                <td>
-                  <button className="btn btn-sm btn-outline-primary" onClick={(e) => handleShowEdgesClick(row, e)}>Показать</button>
-                </td>
-                <td>{row.status}</td>
-                <td>{row.priority}</td>
-              </tr>
-            ))}
-          </tbody>
+  {tasks.length === 0 ? (
+    <tr>
+      <td colSpan="7" className="text-center">В группе нет заданий</td>
+    </tr>
+  ) : (
+    tasks.map((row, i) => (
+      <tr key={i} className="table-row" onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
+        <td>{row.title}</td>
+        <td>{row.deadline}</td>
+        <td>{row.createdAt}</td>
+        <td>{row.updatedAt}</td>
+        <td>
+          <button className="btn btn-sm btn-outline-primary" onClick={(e) => handleShowEdgesClick(row, e)}>Показать</button>
+        </td>
+        <td>{row.status}</td>
+        <td>{row.priority}</td>
+      </tr>
+    ))
+  )}
+</tbody>
+
         </table>
 
         <div className="pagination mt-2 mb-2 d-flex align-items-center gap-2">

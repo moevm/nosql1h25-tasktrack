@@ -8,10 +8,12 @@ import TableGraph from './components/TasksPage/TableGraph/TableGraph';
 export default function Dashboard() {
   const [showGraph, setShowGraph] = useState(false);
   const [isGraphMode, setIsGraphMode] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  
 
   return (
     <div className="main-content">
-      <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} />
+      <GroupPanel setIsGraphMode={setIsGraphMode} isGraphMode={isGraphMode} setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup} />
 
       {/* {
         isGraphMode && 
@@ -24,7 +26,7 @@ export default function Dashboard() {
         } */}
       {isGraphMode && <h1>Тут будут графы</h1>}
       {showGraph && <Graph />}
-      {!isGraphMode && <TableGraph />}
+      {!isGraphMode && <TableGraph selectedGroup={selectedGroup}/>}
     </div>
   );
 }
