@@ -8,7 +8,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
   const [status, setStatus] = useState('pending');
   const [priority, setPriority] = useState('medium');
   const [completedAt, setCompletedAt] = useState('');
-  const [hoursSpent, setHoursSpent] = useState('');
 
   const handleSubmit = (e) => {
     const today = new Date();
@@ -26,7 +25,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
       status,
       priority,
       completedAt,
-      time: hoursSpent,
       createdAt: formattedDate,
       updatedAt: formattedDate,
       notes: [],
@@ -93,16 +91,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             type="date"
             value={completedAt}
             onChange={(e) => setCompletedAt(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Часы на выполнение:</label>
-          <input
-            type="number"
-            value={hoursSpent}
-            onChange={(e) => setHoursSpent(e.target.value)}
-            min="0"
           />
         </div>
 

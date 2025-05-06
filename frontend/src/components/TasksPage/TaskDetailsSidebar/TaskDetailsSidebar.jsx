@@ -105,7 +105,6 @@ export default function TaskDetailsSidebar({ task, onClose }) {
         <h3>{currentTask.title}</h3>
         <p>{currentTask.description || 'Нет описания'}</p>
         <div className="additional-info">
-          <span>Примерное время выполнения: {currentTask.time}</span>
           <span>Дата изменения: {currentTask.updatedAt}</span>
           <span>Дата создания: {currentTask.createdAt}</span>
           <span>Дата завершения: {currentTask.deadline}</span>

@@ -54,7 +54,6 @@ const fetchTasksFromServer = async (
         edges: graph.edges,
         status: graph.status,
         priority: graph.priority,
-        time: graph.time,
         description: graph.description,
       });
     }
@@ -273,32 +272,7 @@ export default function TableGraph() {
     }
   };
 
-  const handlerTest = () => {
-      const email = 'user@example.com';
-      const password = 'securepassword123';
 
-      const requestBody = {
-          email: email,
-          password: password,
-      };
-      
-      fetch(`${SERVER}/api/user/register/`, {
-          method: 'POST',  
-          headers: {
-              'Content-Type': 'application/json', 
-          },
-          body: JSON.stringify(requestBody),  
-      })
-      .then(response => response.json())  
-      .then(data => {
-          console.log('Response data:', data);
-          alert('Запрос успешно отправлен!');
-      })
-      .catch(error => {
-          console.error('Ошибка при отправке запроса:', error);
-          alert('Произошла ошибка!');
-      });
-  };
 
 
 
@@ -354,7 +328,6 @@ export default function TableGraph() {
               <th>Связи</th>
               <th>Статус</th>
               <th>Приоритет</th>
-              <th>Время выполнения</th>
             </tr>
           </thead>
           <tbody>
@@ -379,7 +352,6 @@ export default function TableGraph() {
                 </td>
                 <td>{row.status}</td>
                 <td>{row.priority}</td>
-                <td>{row.time}</td>
               </tr>
             ))}
           </tbody>
@@ -457,7 +429,6 @@ export default function TableGraph() {
             { label: 'Дата завершения', value: 'deadline' },
             { label: 'Статус', value: 'status' },
             { label: 'Приоритет', value: 'priority' },
-            { label: 'Время выполнения', value: 'time' },
           ]}
           onApply={handleApplySort}
           onClose={() => setIsSortModalOpen(false)}
@@ -473,8 +444,6 @@ export default function TableGraph() {
           allTasks={allTasks}
         />
       )}
-      <div><button className="btn btn-primary btn-sm" onClick={handlerTest}>Test</button></div>
-      
     </div>
   );
 }
