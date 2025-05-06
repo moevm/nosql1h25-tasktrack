@@ -8,6 +8,7 @@ import { GROUP_DICT } from '../../../temp';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 import SortModal from '../SortModal/SortModal';
+import { SERVER } from '../../../Constants';
 
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['active', 'inactive'];
@@ -280,8 +281,8 @@ export default function TableGraph() {
           email: email,
           password: password,
       };
-
-      fetch('/api/login/', {
+      
+      fetch(`${SERVER}/api/register/`, {
           method: 'POST',  
           headers: {
               'Content-Type': 'application/json', 
