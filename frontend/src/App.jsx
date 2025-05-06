@@ -14,20 +14,23 @@ import PrivateRoute from './PrivateRoute';
 import UserProfile from './components/UserProfile/UserProfile';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem('isAuthenticated') === 'true',
-  );
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const isAuthenticated = Boolean(token);
 
   useEffect(() => {
-    localStorage.setItem('isAuthenticated', isAuthenticated);
-  }, [isAuthenticated]);
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
+    }
+  }, [token]);
 
-  function Layout({ children, isAuthenticated }) {
+  function Layout({ children }) {
     return (
       <div>
         <header>
           {isAuthenticated ? (
-            <UserNav setIsAuthenticated={setIsAuthenticated} />
+            <UserNav setToken={setToken} />
           ) : (
             <GuestNav />
           )}
@@ -39,16 +42,13 @@ export default function App() {
 
   return (
     <Router>
-      <Layout isAuthenticated={isAuthenticated}>
+      <Layout>
         <Routes>
           <Route
             path="/"
             element={<Navigate to={isAuthenticated ? '/tasks' : '/login'} />}
           />
-          <Route
-            path="/login"
-            element={<LoginPage setIsAuthenticated={setIsAuthenticated} />}
-          />
+          <Route path="/login" element={<LoginPage setToken={setToken} />} />
           <Route path="/register" element={<Register />} />
           <Route
             path="/tasks"
@@ -64,6 +64,12 @@ export default function App() {
               <PrivateRoute isAuthenticated={isAuthenticated}>
                 <UserProfile />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <Navigate to={isAuthenticated ? '/tasks' : '/login'} replace />
             }
           />
         </Routes>

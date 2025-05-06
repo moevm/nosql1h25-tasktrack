@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './UserNav.css';
 
-export default function UserNav({ setIsAuthenticated }) {
+export default function UserNav({ setToken }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    navigate('/login');
+    setToken(false); 
+    navigate('/login'); 
   };
 
   return (

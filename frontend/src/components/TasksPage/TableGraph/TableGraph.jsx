@@ -282,7 +282,7 @@ export default function TableGraph() {
           password: password,
       };
       
-      fetch(`${SERVER}/api/register/`, {
+      fetch(`${SERVER}/api/user/register/`, {
           method: 'POST',  
           headers: {
               'Content-Type': 'application/json', 
