@@ -4,185 +4,115 @@ import FilterDropdown from '../FilterDropdown/FilterDropdown';
 import DateFilterDropdown from '../DateFilterDropdown/DateFilterDropdown';
 import './TableGraph.css';
 import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
-import { GROUP_DICT } from '../../../temp';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 import SortModal from '../SortModal/SortModal';
-import { SERVER } from '../../../Constants';
 
 const ITEMS_PER_PAGE = 12;
-const STATUS_OPTIONS = ['active', 'inactive'];
+const STATUS_OPTIONS = ['todo', 'in_progress', 'done'];
 const PRIORITY_OPTIONS = ['high', 'medium', 'low'];
 
-const fetchTasksFromServer = async (
-  searchTerm = '',
-  page = 1,
-  statuses = [],
-  priorities = [],
-  addedTasks = [],
-  createdAtFilter = null,
-  deadlineFilter = null,
-) => {
-  const all = [];
-
-  GROUP_DICT.group1.graphs.forEach((graph) => {
-    const name = graph.name || '';
-
-    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statuses.length === 0 || statuses.includes(graph.status);
-    const matchesPriority =
-      priorities.length === 0 || priorities.includes(graph.priority);
-
-    const matchesCreatedAt =
-      !createdAtFilter || filterDate(graph.createdAt, createdAtFilter);
-    const matchesUpdatedAt =
-      !deadlineFilter || filterDate(graph.deadline, deadlineFilter);
-
-    if (
-      matchesSearch &&
-      matchesStatus &&
-      matchesPriority &&
-      matchesCreatedAt &&
-      matchesUpdatedAt
-    ) {
-      all.push({
-        title: graph.name,
-        deadline: graph.deadline,
-        createdAt: graph.createdAt,
-        updatedAt: graph.modifiedAt,
-        edges: graph.edges,
-        status: graph.status,
-        priority: graph.priority,
-        description: graph.description,
-      });
-    }
-  });
-
-  addedTasks.forEach((task) => {
-    const matchesSearch = task.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statuses.length === 0 || statuses.includes(task.status);
-    const matchesPriority =
-      priorities.length === 0 || priorities.includes(task.priority);
-    const matchesCreatedAt =
-      !createdAtFilter || filterDate(task.createdAt, createdAtFilter);
-    const matchesUpdatedAt =
-      !deadlineFilter || filterDate(task.updatedAt, deadlineFilter);
-
-    if (
-      matchesSearch &&
-      matchesStatus &&
-      matchesPriority &&
-      matchesCreatedAt &&
-      matchesUpdatedAt
-    ) {
-      all.push(task);
-    }
-  });
-
-  const start = (page - 1) * ITEMS_PER_PAGE;
-  const end = start + ITEMS_PER_PAGE;
-  const pageData = all.slice(start, end);
-
-  return {
-    data: pageData,
-    total: all.length,
-    allTasks: all,
-  };
-};
-
-function filterDate(dateString, filter) {
-  if (!dateString) return false;
-
-  const date = new Date(dateString);
-
-  if (filter.mode === 'between') {
-    const start = new Date(filter.start);
-    const end = new Date(filter.end);
-    return date >= start && date <= end;
-  }
-  if (filter.mode === 'exact') {
-    const exact = new Date(filter.exact);
-    return (
-      date.getFullYear() === exact.getFullYear() &&
-      date.getMonth() === exact.getMonth() &&
-      date.getDate() === exact.getDate()
-    );
-  }
-  if (filter.mode === 'last') {
-    const now = new Date();
-    const diffMs = now - date;
-    const diffDays = diffMs / (1000 * 60 * 60 * 24);
-
-    if (filter.lastUnit === 'days') {
-      return diffDays <= filter.lastValue;
-    }
-    if (filter.lastUnit === 'weeks') {
-      return diffDays <= filter.lastValue * 7;
-    }
-    if (filter.lastUnit === 'months') {
-      return diffDays <= filter.lastValue * 30;
-    }
-  }
-  return true;
-}
-
 export default function TableGraph() {
-  const [rows, setRows] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedPriorities, setSelectedPriorities] = useState([]);
-
   const [createdAtFilter, setCreatedAtFilter] = useState(null);
   const [deadlineFilter, setDeadlineFilter] = useState(null);
-
   const [addedTasks, setAddedTasks] = useState([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
-
   const [selectedTask, setSelectedTask] = useState(null);
-  const [selectedTaskForConnections, setSelectedTaskForConnections] =
-    useState(null);
-
+  const [selectedTaskForConnections, setSelectedTaskForConnections] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-  const [allTasks, setAllTasks] = useState([]);
-
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetchTasksFromServer(
-        searchTerm,
-        page,
-        selectedStatuses,
-        selectedPriorities,
-        addedTasks,
-        createdAtFilter,
-        deadlineFilter,
-      );
-      setRows(res.data);
-      setTotal(res.total);
-      setAllTasks(res.allTasks);
-    };
+  const fetchTasksFromServer = async () => {
+    const params = new URLSearchParams();
 
-    fetchData();
+    if (searchTerm) params.append('title', searchTerm);
+    if (selectedStatuses.length > 0)
+      params.append('status', selectedStatuses.join(','));
+    if (selectedPriorities.length > 0)
+      params.append('priority', selectedPriorities.join(','));
+
+    if (createdAtFilter?.mode === 'exact')
+      params.append('created_at', createdAtFilter.exact.split('T')[0]);
+    if (createdAtFilter?.mode === 'between') {
+      params.append('created_after', createdAtFilter.start);
+      params.append('created_before', createdAtFilter.end);
+    }
+    if (createdAtFilter?.mode === 'last') {
+      params.append('created_last_value', createdAtFilter.lastValue);
+      params.append('created_last_unit', createdAtFilter.lastUnit);
+    }
+
+    if (deadlineFilter?.mode === 'exact')
+      params.append('deadline', deadlineFilter.exact.split('T')[0]);
+    if (deadlineFilter?.mode === 'between') {
+      params.append('deadline_after', deadlineFilter.start);
+      params.append('deadline_before', deadlineFilter.end);
+    }
+    if (deadlineFilter?.mode === 'last') {
+      params.append('deadline_last_value', deadlineFilter.lastValue);
+      params.append('deadline_last_unit', deadlineFilter.lastUnit);
+    }
+
+    if (sortField && sortOrder !== 'none') {
+      params.append('sort_by', sortField);
+      params.append('reverse', sortOrder === 'desc');
+    }
+
+    params.append('group_name', 'test');
+    params.append('page', page);
+    params.append('page_size', ITEMS_PER_PAGE);
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/task/?${params}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error('Ошибка загрузки задач');
+
+      const data = await response.json();
+      const results = data.results.map((task) => ({
+        title: task.title,
+        deadline: task.deadline ? new Date(task.deadline).toLocaleDateString() : '-',
+        createdAt: task.created_at ? new Date(task.created_at).toLocaleDateString() : '-',
+        updatedAt: task.updated_at ? new Date(task.updated_at).toLocaleDateString() : '-',
+        status: task.status,
+        priority: task.priority,
+        description: task.content || '',
+        edges: task.related_tasks || [],
+        taskId: task.task_id,
+      }));
+
+      setTasks(results);
+      setTotalPages(data.total_pages);
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось загрузить задачи.');
+    }
+  };
+
+  useEffect(() => {
+    fetchTasksFromServer();
   }, [
     searchTerm,
     page,
     selectedStatuses,
     selectedPriorities,
-    addedTasks,
     createdAtFilter,
     deadlineFilter,
+    sortField,
+    sortOrder,
   ]);
 
   const handleSearch = (value) => {
@@ -191,15 +121,13 @@ export default function TableGraph() {
   };
 
   const handleRowClick = (task) => {
-    setSelectedTask(null);
-    setTimeout(() => {
-      setSelectedTask(task);
-    }, 100);
+    setSelectedTask(task);
   };
 
   const handleApplySort = (field, order) => {
     setSortField(field);
     setSortOrder(order);
+    setIsSortModalOpen(false);
   };
 
   const handleResetSort = () => {
@@ -230,27 +158,6 @@ export default function TableGraph() {
     setPage(1);
   };
 
-  const getSortedRows = () => {
-    if (!sortField || sortOrder === 'none') {
-      return rows;
-    }
-
-    const sorted = [...rows].sort((a, b) => {
-      if (a[sortField] === undefined || b[sortField] === undefined) return 0;
-      if (typeof a[sortField] === 'string') {
-        return sortOrder === 'asc'
-          ? a[sortField].localeCompare(b[sortField])
-          : b[sortField].localeCompare(a[sortField]);
-      } else {
-        return sortOrder === 'asc'
-          ? a[sortField] - b[sortField]
-          : b[sortField] - a[sortField];
-      }
-    });
-
-    return sorted;
-  };
-
   const getFieldLabel = (field) => {
     switch (field) {
       case 'title':
@@ -265,16 +172,10 @@ export default function TableGraph() {
         return 'Статус';
       case 'priority':
         return 'Приоритет';
-      case 'time':
-        return 'Время выполнения';
       default:
         return field;
     }
   };
-
-
-
-
 
   return (
     <div className="table-graph-container">
@@ -287,7 +188,6 @@ export default function TableGraph() {
               onSearch={handleSearch}
             />
           </div>
-
           <div className="d-flex align-items-center gap-2 flex-wrap">
             <FilterDropdown
               label="Приоритет"
@@ -313,7 +213,7 @@ export default function TableGraph() {
               className="btn btn-sm btn-outline-danger"
               onClick={handleResetFilters}
             >
-              Сбросить фильры
+              Сбросить фильтры
             </button>
           </div>
         </div>
@@ -331,24 +231,14 @@ export default function TableGraph() {
             </tr>
           </thead>
           <tbody>
-            {getSortedRows().map((row, i) => (
-              <tr
-                key={i}
-                className="table-row"
-                onClick={() => handleRowClick(row)}
-                style={{ cursor: 'pointer' }}
-              >
+            {tasks.map((row, i) => (
+              <tr key={i} className="table-row" onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
                 <td>{row.title}</td>
                 <td>{row.deadline}</td>
                 <td>{row.createdAt}</td>
                 <td>{row.updatedAt}</td>
                 <td>
-                  <button
-                    className="btn btn-sm btn-outline-primary"
-                    onClick={(e) => handleShowEdgesClick(row, e)}
-                  >
-                    Показать
-                  </button>
+                  <button className="btn btn-sm btn-outline-primary" onClick={(e) => handleShowEdgesClick(row, e)}>Показать</button>
                 </td>
                 <td>{row.status}</td>
                 <td>{row.priority}</td>
@@ -358,55 +248,23 @@ export default function TableGraph() {
         </table>
 
         <div className="pagination mt-2 mb-2 d-flex align-items-center gap-2">
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Назад
-          </button>
-          <span style={{ fontSize: '0.9rem' }}>
-            Страница {page} из {totalPages || 1}
-          </span>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Вперёд
-          </button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Назад</button>
+          <span style={{ fontSize: '0.9rem' }}>Страница {page} из {totalPages || 1}</span>
+          <button className="btn btn-sm btn-outline-secondary" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Вперёд</button>
         </div>
       </div>
 
-      <TaskDetailsSidebar
-        task={selectedTask}
-        onClose={() => setSelectedTask(null)}
-      />
+      <TaskDetailsSidebar task={selectedTask} onClose={() => setSelectedTask(null)} />
+
       <div className="d-flex gap-2 mb-3 flex-wrap">
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setIsCreatingTask(true)}
-        >
-          + Новая задача
-        </button>
-        <button
-          className="btn btn-outline-primary btn-sm"
-          onClick={() => setIsSortModalOpen(true)}
-        >
-          Сортировать
-        </button>
-        <button
-          className="btn btn-outline-danger btn-sm"
-          onClick={handleResetSort}
-          disabled={!sortField}
-        >
-          Сбросить сортировку
-        </button>
+        <button className="btn btn-primary btn-sm" onClick={() => setIsCreatingTask(true)}>+ Новая задача</button>
+        <button className="btn btn-outline-primary btn-sm" onClick={() => setIsSortModalOpen(true)}>Сортировать</button>
+        <button className="btn btn-outline-danger btn-sm" onClick={handleResetSort} disabled={!sortField}>Сбросить сортировку</button>
       </div>
+
       {sortField && sortOrder !== 'none' && (
         <div className="sort-info small text-muted ms-2">
-          Сортировка: <strong>{getFieldLabel(sortField)}</strong> (
-          {sortOrder === 'asc' ? 'возрастание' : 'убывание'})
+          Сортировка: <strong>{getFieldLabel(sortField)}</strong> ({sortOrder === 'asc' ? 'возрастание' : 'убывание'})
         </div>
       )}
 
@@ -441,7 +299,7 @@ export default function TableGraph() {
           onClose={() => setIsModalOpen(false)}
           onAddConnection={handleAddConnection}
           onDeleteConnection={handleDeleteConnection}
-          allTasks={allTasks}
+          allTasks={tasks}
         />
       )}
     </div>

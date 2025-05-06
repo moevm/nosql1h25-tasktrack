@@ -3,7 +3,7 @@ import '../FilterDropdown/FilterDropdown.css';
 
 export default function DateFilterDropdown({ label, onChange }) {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState('between'); // 'between' | 'exact' | 'last'
+  const [mode, setMode] = useState('between');
   const [dates, setDates] = useState({
     start: '',
     end: '',
@@ -25,7 +25,19 @@ export default function DateFilterDropdown({ label, onChange }) {
   }, []);
 
   const handleApply = () => {
-    onChange({ mode, ...dates });
+    const filter = { mode };
+
+    if (mode === 'between') {
+      filter.start = dates.start;
+      filter.end = dates.end;
+    } else if (mode === 'exact') {
+      filter.exact = dates.exact;
+    } else if (mode === 'last') {
+      filter.lastValue = dates.lastValue;
+      filter.lastUnit = dates.lastUnit;
+    }
+
+    onChange(filter); // передаём объект фильтра наверх
     setOpen(false);
   };
 
@@ -38,10 +50,7 @@ export default function DateFilterDropdown({ label, onChange }) {
         {label}
       </button>
       {open && (
-        <div
-          className="dropdown-menu show p-3 shadow"
-          style={{ width: '300px' }}
-        >
+        <div className="dropdown-menu show p-3 shadow" style={{ width: '300px' }}>
           <div className="mb-2">
             <select
               className="form-select"
