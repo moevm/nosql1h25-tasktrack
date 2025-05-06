@@ -7,6 +7,7 @@ import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 import SortModal from '../SortModal/SortModal';
+import { SERVER } from '../../../Constants';
 
 const ITEMS_PER_PAGE = 12;
 const STATUS_OPTIONS = ['todo', 'in_progress', 'done'];
@@ -32,13 +33,13 @@ export default function TableGraph() {
 
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
-
     if (searchTerm) params.append('title', searchTerm);
     if (selectedStatuses.length > 0)
       params.append('status', selectedStatuses.join(','));
     if (selectedPriorities.length > 0)
       params.append('priority', selectedPriorities.join(','));
 
+    // Фильтры по дате создания
     if (createdAtFilter?.mode === 'exact')
       params.append('created_at', createdAtFilter.exact.split('T')[0]);
     if (createdAtFilter?.mode === 'between') {
@@ -50,6 +51,7 @@ export default function TableGraph() {
       params.append('created_last_unit', createdAtFilter.lastUnit);
     }
 
+    // Фильтры по дедлайну
     if (deadlineFilter?.mode === 'exact')
       params.append('deadline', deadlineFilter.exact.split('T')[0]);
     if (deadlineFilter?.mode === 'between') {
@@ -61,6 +63,7 @@ export default function TableGraph() {
       params.append('deadline_last_unit', deadlineFilter.lastUnit);
     }
 
+    // Сортировка
     if (sortField && sortOrder !== 'none') {
       params.append('sort_by', sortField);
       params.append('reverse', sortOrder === 'desc');
@@ -71,7 +74,7 @@ export default function TableGraph() {
     params.append('page_size', ITEMS_PER_PAGE);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/task/?${params}`, {
+      const response = await fetch(`${SERVER}/api/task/?${params}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -114,6 +117,37 @@ export default function TableGraph() {
     sortField,
     sortOrder,
   ]);
+
+  const handleCreateTask = async (newTaskData) => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log({
+        ...newTaskData,
+        group_name: 'test',
+      })
+      const response = await fetch(`${SERVER}/api/task/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...newTaskData,
+          group_name: 'test',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка при создании задачи');
+      }
+
+      await fetchTasksFromServer(); // Обновляем список задач
+      setIsCreatingTask(false);
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось создать задачу.');
+    }
+  };
 
   const handleSearch = (value) => {
     setPage(1);
@@ -270,10 +304,7 @@ export default function TableGraph() {
 
       {isCreatingTask && (
         <TaskForm
-          onSubmit={(newTask) => {
-            setAddedTasks((prev) => [newTask, ...prev]);
-            setIsCreatingTask(false);
-          }}
+          onSubmit={handleCreateTask}
           onCancel={() => setIsCreatingTask(false)}
         />
       )}

@@ -3,30 +3,20 @@ import './TaskForm.css';
 
 const TaskForm = ({ onSubmit, onCancel }) => {
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [content, setContent] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [status, setStatus] = useState('pending');
+  const [status, setStatus] = useState('todo');
   const [priority, setPriority] = useState('medium');
-  const [completedAt, setCompletedAt] = useState('');
 
   const handleSubmit = (e) => {
-    const today = new Date();
-
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-
-    const formattedDate = `${year}-${month}-${day}`;
+  
     e.preventDefault();
     const newTask = {
       title,
-      description,
+      content,
       deadline,
       status,
       priority,
-      completedAt,
-      createdAt: formattedDate,
-      updatedAt: formattedDate,
       notes: [],
     };
     onSubmit(newTask);
@@ -50,8 +40,8 @@ const TaskForm = ({ onSubmit, onCancel }) => {
         <div className="form-group">
           <label>Описание:</label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
           />
         </div>
 
@@ -60,16 +50,16 @@ const TaskForm = ({ onSubmit, onCancel }) => {
           <input
             type="date"
             value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
+            onChange={(e) => setDeadline(e.target.value + 'T00:00:00')}
           />
         </div>
 
         <div className="form-group">
           <label>Статус:</label>
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="pending">Ожидает</option>
+            <option value="todo">Сделать</option>
             <option value="in_progress">В процессе</option>
-            <option value="completed">Завершено</option>
+            <option value="done">Завершено</option>
           </select>
         </div>
 
@@ -85,14 +75,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
           </select>
         </div>
 
-        <div className="form-group">
-          <label>Дата завершения:</label>
-          <input
-            type="date"
-            value={completedAt}
-            onChange={(e) => setCompletedAt(e.target.value)}
-          />
-        </div>
 
         <div className="form-actions">
           <button type="submit" className="save-button">
