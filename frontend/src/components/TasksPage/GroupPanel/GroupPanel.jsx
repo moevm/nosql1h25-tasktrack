@@ -1,26 +1,8 @@
-// GroupPanel.jsx
 import React, { useEffect, useState } from 'react';
 import './GroupPanel.css';
 import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
-import SearchBar from '../../SearchBar/SearchBar'; // Импортируем компонент поиска
-
-const GROUP_LIST = [
-  'Дом 1',
-  'Работа 2',
-  'Учеба 3',
-  'Спорт 4',
-  'Хобби 5',
-  'Дом 6',
-  'Работа 7',
-  'Учеба 8',
-  'Спорт 9',
-  'Хобби 10',
-  'Дом 11',
-  'Работа 12',
-  'Учеба 13',
-  'Спорт 14',
-  'Хобби 15',
-];
+import SearchBar from '../../SearchBar/SearchBar'; 
+import { SERVER } from '../../../Constants';
 
 export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,13 +10,31 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
   const [selectedGroup, setSelectedGroup] = useState(null);
 
   useEffect(() => {
-    setGroupList(GROUP_LIST);
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${SERVER}/api/group/`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.groups) {
+            setGroupList(data.groups); 
+          }
+        })
+        .catch((error) => console.error('Ошибка при загрузке групп:', error));
+    }
   }, []);
 
   const handleSearch = () => {
     console.log('Поиск по запросу:', searchQuery);
-    setGroupList(GROUP_LIST);
-    console.log('GROUP_LIST: ', groupList);
+    const filteredGroups = groupList.filter((group) =>
+      group.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setGroupList(filteredGroups);
   };
 
   const handleSearchChange = (e) => {
@@ -51,9 +51,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
   };
 
   const handleAddGroup = () => {
-    console.log('Добавление новой группы');
     const newGroupName = prompt('Введите название новой группы:');
-
     if (!newGroupName || newGroupName.trim() === '') {
       alert('Название группы не может быть пустым.');
       return;
@@ -61,34 +59,67 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
 
     const trimmedName = newGroupName.trim();
 
-    if (groupList.includes(trimmedName)) {
+    if (groupList.some((group) => group.name === trimmedName)) {
       alert('Группа с таким названием уже существует.');
       return;
     }
 
-    setGroupList([...groupList, trimmedName]);
+    // Добавляем группу
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${SERVER}/api/group/`, {
+        method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: trimmedName }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.name) {
+            setGroupList([...groupList, { name: data.name, tasks: [] }]);
+          }
+        })
+        .catch((error) => console.error('Ошибка при добавлении группы:', error));
+    }
   };
 
   const handleRenameGroup = (e, index, groupItem) => {
     e.stopPropagation();
-    const newName = prompt('Введите новое название группы:', groupItem);
+    const newName = prompt('Введите новое название группы:', groupItem.name);
     if (newName && newName.trim() !== '') {
       const trimmedName = newName.trim();
 
-      if (groupList.includes(trimmedName)) {
+      if (groupList.some((group) => group.name === trimmedName)) {
         alert('Группа с таким названием уже существует.');
         return;
       }
 
       const updatedGroups = [...groupList];
-      updatedGroups[index] = trimmedName;
+      updatedGroups[index] = { ...updatedGroups[index], name: trimmedName };
       setGroupList(updatedGroups);
     }
   };
 
   const handleDeleteGroup = (e, index, groupItem) => {
     e.stopPropagation();
-    console.log(`Удаление группы: ${groupItem}`);
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${SERVER}/api/group/`, {
+        method: 'DELETE',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: groupItem.name }), 
+      })
+        .then(() => {
+          const updatedGroups = groupList.filter((group, idx) => idx !== index);
+          setGroupList(updatedGroups);
+        })
+        .catch((error) => console.error('Ошибка при удалении группы:', error));
+    }
   };
 
   return (
@@ -118,10 +149,10 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
             {groupList.map((groupItem, index) => (
               <li
                 key={index}
-                onClick={() => handleGroupClick(groupItem)}
-                className={`group-element ${groupItem === selectedGroup ? 'selected' : ''}`}
+                onClick={() => handleGroupClick(groupItem.name)}
+                className={`group-element ${groupItem.name === selectedGroup ? 'selected' : ''}`}
               >
-                <span>{groupItem}</span>
+                <span>{groupItem.name}</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <i
                     className="fa-regular fa-pen-to-square edit-icon icon-group"
@@ -130,9 +161,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode }) {
 
                   <i
                     className="fa-regular fa-trash-can icon-group"
-                    onClick={(e) => {
-                      handleDeleteGroup(e, index, groupItem);
-                    }}
+                    onClick={(e) => handleDeleteGroup(e, index, groupItem)}
                   ></i>
                 </div>
               </li>
