@@ -7,7 +7,7 @@ class TaskFilter:
     def _parse_datetime(dt_str):
         try:
             naive_dt = datetime.fromisoformat(dt_str)
-            return timezone.make_aware(naive_dt, timezone=timezone.utc)
+            return naive_dt.astimezone(timezone.utc)
         except (ValueError, TypeError):
             return None
 
@@ -41,26 +41,26 @@ class TaskFilter:
         if 'deadline_before' in filters:
             deadline = cls._parse_datetime(filters['deadline_before'])
             if deadline:
-                conditions.append("t.deadline <= datetime($deadline_before)")
-                params['deadline_before'] = deadline.isoformat()
+                conditions.append("t.deadline <= $deadline_before")
+                params['deadline_before'] = deadline.timestamp()
 
         if 'deadline_after' in filters:
             deadline = cls._parse_datetime(filters['deadline_after'])
             if deadline:
-                conditions.append("t.deadline >= datetime($deadline_after)")
-                params['deadline_after'] = deadline.isoformat()
+                conditions.append("t.deadline >= $deadline_after")
+                params['deadline_after'] = deadline.timestamp()
 
         if 'created_before' in filters:
             created = cls._parse_datetime(filters['created_before'])
             if created:
-                conditions.append("t.created_at <= datetime($created_before)")
-                params['created_before'] = created.isoformat()
+                conditions.append("t.created_at <= $created_before")
+                params['created_before'] = deadline.timestamp()
 
         if 'created_after' in filters:
             created = cls._parse_datetime(filters['created_after'])
             if created:
-                conditions.append("t.created_at >= datetime($created_after)")
-                params['created_after'] = created.isoformat()
+                conditions.append("t.created_at >= $created_after")
+                params['created_after'] = deadline.timestamp()
 
         if 'tag' in filters:
             tag_names = [
