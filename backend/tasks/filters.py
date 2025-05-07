@@ -27,16 +27,30 @@ class TaskFilter:
         conditions = []
 
         if 'title' in filters:
-            conditions.append("toLower(t.title) CONTAINS toLower($title)")
-            params['title'] = filters['title']
+            conditions.append("t.title =~ $title_regex")
+            params['title_regex'] = filters['title']
 
         if 'status' in filters:
-            conditions.append("t.status = $status")
-            params['status'] = filters['status']
+            statuses = [
+                s.strip() for s in filters['status'].split(',') if s.strip()]
+            if statuses:
+                if len(statuses) == 1:
+                    conditions.append("t.status = $status")
+                    params['status'] = statuses[0]
+                else:
+                    conditions.append("t.status IN $statuses")
+                    params['statuses'] = statuses
 
         if 'priority' in filters:
-            conditions.append("t.priority = $priority")
-            params['priority'] = filters['priority']
+            priorities = [
+                p.strip() for p in filters['priority'].split(',') if p.strip()]
+            if priorities:
+                if len(priorities) == 1:
+                    conditions.append("t.priority = $priority")
+                    params['priority'] = priorities[0]
+                else:
+                    conditions.append("t.priority IN $priorities")
+                    params['priorities'] = priorities
 
         if 'deadline_before' in filters:
             deadline = cls._parse_datetime(filters['deadline_before'])
@@ -65,40 +79,43 @@ class TaskFilter:
         if 'tag' in filters:
             tag_names = [
                 tag.strip().lower()
-                for tag in filters['tag'].split(',') if tag.strip()]
+                for tag in filters['tag'].split(',') if tag.strip()
+            ]
 
             if tag_names:
                 if len(tag_names) == 1:
                     conditions.append("""
                     EXISTS {
                         MATCH (t)-[:HAS_TAG]->(tag:Tag)
-                        WHERE toLower(tag.name) CONTAINS toLower($tag_name)
+                        WHERE tag.name =~ $tag_regex
                     }
                     """)
-                    params['tag_name'] = tag_names[0]
+                    params['tag_regex'] = tag_names[0]
                 else:
                     conditions.append("""
-                    ALL(tag_name IN $tag_names WHERE
+                    ALL(tag_regex IN $tag_regexes WHERE
                         EXISTS {
                             MATCH (t)-[:HAS_TAG]->(tag:Tag)
-                            WHERE toLower(tag.name) CONTAINS tag_name
+                            WHERE tag.name =~ tag_regex
                         }
                     )
                     """)
-                    params['tag_names'] = tag_names
+                    params['tag_regexes'] = tag_names
 
         if 'group' in filters:
             groups = [
                 name.strip() for name in filters['group'].split(',')
-                if name.strip()]
+                if name.strip()
+            ]
 
             if groups:
                 if len(groups) == 1:
-                    conditions.append("g.name = $group")
-                    params['group'] = groups[0]
+                    conditions.append("g.name =~ $group_regex")
+                    params['group_regex'] = f"{groups[0]}"
                 else:
-                    conditions.append("g.name IN $group")
-                    params['group'] = groups
+                    conditions.append(
+                        "ANY(regex IN $group_regexes WHERE g.name =~ regex)")
+                    params['group_regexes'] = groups
 
         if conditions:
             if "WHERE" in query:
