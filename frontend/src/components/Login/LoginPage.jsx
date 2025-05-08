@@ -13,8 +13,8 @@ export default function LoginPage({ setToken }) {
     e.preventDefault();
     setError('');
     const requestBody = {
-        email: email,
-        password: password,
+      email: email,
+      password: password,
     };
 
     try {

@@ -68,7 +68,9 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             required
             className={errors.title ? 'input-error' : ''}
           />
-          {errors.title && <span className="error-message">{errors.title}</span>}
+          {errors.title && (
+            <span className="error-message">{errors.title}</span>
+          )}
           <div className="char-counter">{title.length}/50</div>
         </div>
 

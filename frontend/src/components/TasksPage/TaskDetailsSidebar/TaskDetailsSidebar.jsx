@@ -76,9 +76,9 @@ export default function TaskDetailsSidebar({ task, onClose }) {
             onChange={handleStatusChange}
             className="dropdown"
           >
-            <option value="pending">Ожидает</option>
-            <option value="in-progress">В процессе</option>
-            <option value="completed">Завершена</option>
+            <option value="todo">Сделать</option>
+            <option value="in_progress">В процессе</option>
+            <option value="done">Завершено</option>
           </select>
         </div>
         <div className="priority-container">

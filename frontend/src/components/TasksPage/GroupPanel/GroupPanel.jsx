@@ -4,19 +4,24 @@ import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
 import SearchBar from '../../SearchBar/SearchBar';
 import { SERVER } from '../../../Constants';
 
-export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGroup, selectedGroup }) {
+export default function GroupPanel({
+  setIsGraphMode,
+  isGraphMode,
+  setSelectedGroup,
+  selectedGroup,
+}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [allGroups, setAllGroups] = useState([]);
   const [groupList, setGroupList] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       fetch(`${SERVER}/api/group/`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       })
         .then((response) => response.json())
@@ -38,7 +43,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
     }
 
     const filteredGroups = allGroups.filter((group) =>
-      group.name.toLowerCase().includes(searchQuery.toLowerCase())
+      group.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setGroupList(filteredGroups);
   }, [searchQuery, allGroups]);
@@ -65,13 +70,13 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       fetch(`${SERVER}/api/group/`, {
         method: 'POST',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: trimmedName }),
       })
@@ -83,7 +88,9 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
             setGroupList([...groupList, newGroup]);
           }
         })
-        .catch((error) => console.error('Ошибка при добавлении группы:', error));
+        .catch((error) =>
+          console.error('Ошибка при добавлении группы:', error),
+        );
     }
   };
 
@@ -107,13 +114,13 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
 
   const handleDeleteGroup = (e, index, groupItem) => {
     e.stopPropagation();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       fetch(`${SERVER}/api/group/`, {
         method: 'DELETE',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: groupItem.name }),
       })

@@ -13,8 +13,8 @@ export default function Register() {
     e.preventDefault();
     setError('');
     const requestBody = {
-        email: email,
-        password: password,
+      email: email,
+      password: password,
     };
     try {
       const response = await fetch(`${SERVER}/api/user/register/`, {

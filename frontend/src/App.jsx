@@ -29,11 +29,7 @@ export default function App() {
     return (
       <div>
         <header>
-          {isAuthenticated ? (
-            <UserNav setToken={setToken} />
-          ) : (
-            <GuestNav />
-          )}
+          {isAuthenticated ? <UserNav setToken={setToken} /> : <GuestNav />}
         </header>
         <main>{children}</main>
       </div>

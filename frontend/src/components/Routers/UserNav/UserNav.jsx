@@ -5,8 +5,8 @@ export default function UserNav({ setToken }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setToken(false); 
-    navigate('/login'); 
+    setToken(false);
+    navigate('/login');
   };
 
   return (

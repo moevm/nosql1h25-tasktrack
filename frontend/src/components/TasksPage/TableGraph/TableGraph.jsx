@@ -25,7 +25,8 @@ export default function TableGraph({ selectedGroup }) {
   const [addedTasks, setAddedTasks] = useState([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [selectedTaskForConnections, setSelectedTaskForConnections] = useState(null);
+  const [selectedTaskForConnections, setSelectedTaskForConnections] =
+    useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
@@ -33,8 +34,9 @@ export default function TableGraph({ selectedGroup }) {
 
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
-    if (taskSearchTerm) params.append('title', "(?i).*" + taskSearchTerm + ".*"); // поиск по названию задачи
-    
+    if (taskSearchTerm)
+      params.append('title', '(?i).*' + taskSearchTerm + '.*'); // поиск по названию задачи
+
     if (selectedStatuses.length > 0)
       params.append('status', selectedStatuses.join(','));
     if (selectedPriorities.length > 0)
@@ -74,13 +76,13 @@ export default function TableGraph({ selectedGroup }) {
     params.append('group', selectedGroup);
     params.append('page', page);
     params.append('page_size', ITEMS_PER_PAGE);
-    console.log(`${SERVER}/api/task/?${params}`)
+    console.log(`${SERVER}/api/task/?${params}`);
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${SERVER}/api/task/?${params}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -90,9 +92,15 @@ export default function TableGraph({ selectedGroup }) {
 
       const results = data.results.map((task) => ({
         title: task.title,
-        deadline: task.deadline ? new Date(task.deadline).toLocaleDateString() : '-',
-        createdAt: task.created_at ? new Date(task.created_at).toLocaleDateString() : '-',
-        updatedAt: task.updated_at ? new Date(task.updated_at).toLocaleDateString() : '-',
+        deadline: task.deadline
+          ? new Date(task.deadline).toLocaleDateString()
+          : '-',
+        createdAt: task.created_at
+          ? new Date(task.created_at).toLocaleDateString()
+          : '-',
+        updatedAt: task.updated_at
+          ? new Date(task.updated_at).toLocaleDateString()
+          : '-',
         status: task.status,
         priority: task.priority,
         description: task.content || '',
@@ -123,14 +131,14 @@ export default function TableGraph({ selectedGroup }) {
   ]);
 
   const handleCreateTask = async (newTaskData) => {
-    newTaskData.deadline = newTaskData.deadline + 'T00:00:00'
+    newTaskData.deadline = newTaskData.deadline + 'T00:00:00';
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${SERVER}/api/task/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...newTaskData,
@@ -264,17 +272,33 @@ export default function TableGraph({ selectedGroup }) {
           <tbody>
             {tasks.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center">В группе нет заданий</td>
+                <td colSpan="7" className="text-center">
+                  В группе нет заданий
+                </td>
               </tr>
             ) : (
               tasks.map((row, i) => (
-                <tr key={i} className="table-row" onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
-                  <td>{row.title.length > 40 ? row.title.slice(0, 40) + '...' : row.title}</td>
+                <tr
+                  key={i}
+                  className="table-row"
+                  onClick={() => handleRowClick(row)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <td>
+                    {row.title.length > 40
+                      ? row.title.slice(0, 40) + '...'
+                      : row.title}
+                  </td>
                   <td>{row.deadline}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.updatedAt}</td>
                   <td>
-                    <button className="btn btn-sm btn-outline-primary" onClick={(e) => handleShowEdgesClick(row, e)}>Показать</button>
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={(e) => handleShowEdgesClick(row, e)}
+                    >
+                      Показать
+                    </button>
                   </td>
                   <td>{row.status}</td>
                   <td>{row.priority}</td>
@@ -286,26 +310,60 @@ export default function TableGraph({ selectedGroup }) {
 
         {/* Пагинация */}
         <div className="pagination mt-2 mb-2 d-flex align-items-center gap-2">
-          <button className="btn btn-sm btn-outline-secondary" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Назад</button>
-          <span style={{ fontSize: '0.9rem' }}>Страница {page} из {totalPages || 1}</span>
-          <button className="btn btn-sm btn-outline-secondary" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Вперёд</button>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            Назад
+          </button>
+          <span style={{ fontSize: '0.9rem' }}>
+            Страница {page} из {totalPages || 1}
+          </span>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Вперёд
+          </button>
         </div>
       </div>
 
       {/* Боковая панель деталей задачи */}
-      <TaskDetailsSidebar task={selectedTask} onClose={() => setSelectedTask(null)} />
+      <TaskDetailsSidebar
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
 
       {/* Кнопки действий */}
       <div className="d-flex gap-2 mb-3 flex-wrap">
-        <button className="btn btn-primary btn-sm" onClick={() => setIsCreatingTask(true)}>+ Новая задача</button>
-        <button className="btn btn-outline-primary btn-sm" onClick={() => setIsSortModalOpen(true)}>Сортировать</button>
-        <button className="btn btn-outline-danger btn-sm" onClick={handleResetSort} disabled={!sortField}>Сбросить сортировку</button>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => setIsCreatingTask(true)}
+        >
+          + Новая задача
+        </button>
+        <button
+          className="btn btn-outline-primary btn-sm"
+          onClick={() => setIsSortModalOpen(true)}
+        >
+          Сортировать
+        </button>
+        <button
+          className="btn btn-outline-danger btn-sm"
+          onClick={handleResetSort}
+          disabled={!sortField}
+        >
+          Сбросить сортировку
+        </button>
       </div>
 
       {/* Информация о сортировке */}
       {sortField && sortOrder !== 'none' && (
         <div className="sort-info small text-muted ms-2">
-          Сортировка: <strong>{getFieldLabel(sortField)}</strong> ({sortOrder === 'asc' ? 'возрастание' : 'убывание'})
+          Сортировка: <strong>{getFieldLabel(sortField)}</strong> (
+          {sortOrder === 'asc' ? 'возрастание' : 'убывание'})
         </div>
       )}
 
@@ -333,16 +391,18 @@ export default function TableGraph({ selectedGroup }) {
         />
       )}
 
-      {/* Модальное окно связей */
-      isModalOpen && selectedTaskForConnections && (
-        <ConnectionsModal
-          task={selectedTaskForConnections}
-          onClose={() => setIsModalOpen(false)}
-          onAddConnection={handleAddConnection}
-          onDeleteConnection={handleDeleteConnection}
-          allTasks={tasks}
-        />
-      )}
+      {
+        /* Модальное окно связей */
+        isModalOpen && selectedTaskForConnections && (
+          <ConnectionsModal
+            task={selectedTaskForConnections}
+            onClose={() => setIsModalOpen(false)}
+            onAddConnection={handleAddConnection}
+            onDeleteConnection={handleDeleteConnection}
+            allTasks={tasks}
+          />
+        )
+      }
     </div>
   );
 }

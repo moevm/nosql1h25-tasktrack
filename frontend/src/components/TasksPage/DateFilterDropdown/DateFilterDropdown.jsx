@@ -50,7 +50,10 @@ export default function DateFilterDropdown({ label, onChange }) {
         {label}
       </button>
       {open && (
-        <div className="dropdown-menu show p-3 shadow" style={{ width: '300px' }}>
+        <div
+          className="dropdown-menu show p-3 shadow"
+          style={{ width: '300px' }}
+        >
           <div className="mb-2">
             <select
               className="form-select"
