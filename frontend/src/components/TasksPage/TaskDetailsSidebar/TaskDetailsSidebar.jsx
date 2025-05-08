@@ -69,6 +69,10 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     if (newNote.trim() === '') return;
 
     const noteText = newNote.trim();
+    if (noteText.length > 200) {
+      alert('Заметка не может превышать 200 символов');
+      return;
+    }
     setNewNote('');
 
     try {
@@ -378,6 +382,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
         <textarea
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
+          maxLength={200}
           placeholder="Введите текст"
         />
       </div>
