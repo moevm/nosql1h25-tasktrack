@@ -6,10 +6,10 @@ from neomodel import db
 
 from .models import Task
 from .serializers import TaskSerializer
-from users.authentication import available_for_authorized
 from .pagination import StandardResultsSetPagination
 from .filters import TaskFilter
 from .sorting import TaskSorter
+from users.authentication import available_for_authorized
 
 
 @available_for_authorized
@@ -120,7 +120,6 @@ class TaskDetailAPIView(APIView):
             )
 
     def delete(self, request, task_id):
-
         with db.transaction:
             task = self.get_task(request.user, task_id)
             if not task:
