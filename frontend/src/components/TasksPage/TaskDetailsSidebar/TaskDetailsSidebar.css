@@ -235,9 +235,6 @@
   background-color: #a50073;
 }
 
-
-
-
 /* Теги */
 .tag-list {
   display: flex;
@@ -317,10 +314,7 @@
   }
 }
 
-
-
-
-.modal-body input[type="text"] {
+.modal-body input[type='text'] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ccc;
@@ -335,9 +329,9 @@
   margin: 0;
 }
 
-.modal-tags-list li label span{
+.modal-tags-list li label span {
   margin: 10px;
-} 
+}
 
 .modal-tags-list li:hover {
   background-color: #f1f1f1;
@@ -359,10 +353,9 @@
   line-height: 1;
 }
 
-
 .modal-tags-container {
   max-height: 400px;
-  overflow-y: auto;   
+  overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 8px;

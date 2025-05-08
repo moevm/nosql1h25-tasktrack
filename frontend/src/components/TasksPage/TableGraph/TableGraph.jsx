@@ -371,6 +371,7 @@ export default function TableGraph({ selectedGroup }) {
       <TaskDetailsSidebar
         task={selectedTask}
         onClose={() => setSelectedTask(null)}
+        onTaskUpdate={fetchTasksFromServer}
       />
 
       {/* Кнопки действий */}

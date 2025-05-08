@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import EditTaskModal from '../EditTaskModal/EditTaskModal';
 import './TaskDetailsSidebar.css';
 import { SERVER } from '../../../Constants';
 
-export default function TaskDetailsSidebar({ task, onClose }) {
+export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const [animationState, setAnimationState] = useState('');
   const [currentTask, setCurrentTask] = useState(null);
   const [notes, setNotes] = useState([]);
@@ -13,7 +14,7 @@ export default function TaskDetailsSidebar({ task, onClose }) {
   const [allTags, setAllTags] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tagSearchTerm, setTagSearchTerm] = useState('');
-
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const taskId = task?.taskId;
   const token = localStorage.getItem('token');
@@ -72,9 +73,9 @@ export default function TaskDetailsSidebar({ task, onClose }) {
   };
 
   // Фильтрация тегов по поиску
-const filteredTags = allTags.filter((tag) =>
-  tag.toLowerCase().includes(tagSearchTerm.toLowerCase())
-);
+  const filteredTags = allTags.filter((tag) =>
+    tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
+  );
 
   const handleDeleteNote = (index) => {
     const updatedNotes = [...notes];
@@ -193,26 +194,26 @@ const filteredTags = allTags.filter((tag) =>
 
         {/* Теги */}
         <div className="tags-section">
-  <strong>Теги:</strong>
-  <div className="tag-list">
-    {tags.length > 0 ? (
-      tags.map((tag, index) => (
-        <span key={index} className="tag-item">
-          {tag}
-          <button
-            onClick={() => handleRemoveTag(tag)}
-            className="delete-tag-button"
-            aria-label="Удалить тег"
-          >
-            &times;
-          </button>
-        </span>
-      ))
-    ) : (
-      <span className="no-tags">Нет тегов</span>
-    )}
-  </div>
-</div>
+          <strong>Теги:</strong>
+          <div className="tag-list">
+            {tags.length > 0 ? (
+              tags.map((tag, index) => (
+                <span key={index} className="tag-item">
+                  {tag}
+                  <button
+                    onClick={() => handleRemoveTag(tag)}
+                    className="delete-tag-button"
+                    aria-label="Удалить тег"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))
+            ) : (
+              <span className="no-tags">Нет тегов</span>
+            )}
+          </div>
+        </div>
 
         <div className="additional-info">
           <span>
@@ -260,65 +261,95 @@ const filteredTags = allTags.filter((tag) =>
 
       {/* Кнопки */}
       <div className="footer-buttons">
-        <button className="edit-button">Редактировать</button>
+        <button
+          className="edit-button"
+          onClick={() => setIsEditModalOpen(true)}
+        >
+          Редактировать
+        </button>
         <button className="delete-button">Удалить</button>
         <button className="add-note-button" onClick={handleAddNote}>
           Добавить заметку
         </button>
         <button className="history-button">История изменений</button>
-        
+
         <button className="add-tag-button" onClick={() => setIsModalOpen(true)}>
           Добавить тег
         </button>
       </div>
 
-      {/* Модальное окно выбора тегов */}
-{isModalOpen && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h4 className="modal-title">Выберите тег</h4>
-        <button id="modal-close-btn1" onClick={() => setIsModalOpen(false)}>&times;</button>
-      </div>
-
-      <div className="modal-body">
-        <input
-          type="text"
-          placeholder="Поиск по тегам..."
-          value={tagSearchTerm}
-          onChange={(e) => setTagSearchTerm(e.target.value)}
-          style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+      {/* Модальное окно редактирования задачи */}
+      {isEditModalOpen && currentTask && (
+        <EditTaskModal
+          task={{
+            task_id: currentTask.task_id,
+            title: currentTask.title,
+            content: currentTask.content,
+            deadline: currentTask.deadline,
+          }}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={(updatedTask) => {
+            setCurrentTask(updatedTask);
+            onTaskUpdate(); // Вызываем новую пропсу
+          }}
         />
-      <div className="modal-tags-container">
-        <ul className="modal-tags-list">
-          {filteredTags.length > 0 ? (
-            filteredTags.map((tag, index) => (
-              <li key={index}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={tags.includes(tag)}
-                    onChange={() => handleAddTag(tag)}
-                  />
-                  <span>{tag}</span>
-                </label>
-              </li>
-            ))
-          ) : (
-            <span>Нет подходящих тегов</span>
-          )}
-        </ul>
-      </div>
-      </div>
+      )}
 
-      <div className="modal-footer">
-        <button className="btn btn-sm btn-outline-secondary" onClick={() => setIsModalOpen(false)}>
-          Готово
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      {/* Модальное окно выбора тегов */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title">Выберите тег</h4>
+              <button
+                id="modal-close-btn1"
+                onClick={() => setIsModalOpen(false)}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <input
+                type="text"
+                placeholder="Поиск по тегам..."
+                value={tagSearchTerm}
+                onChange={(e) => setTagSearchTerm(e.target.value)}
+                style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+              />
+              <div className="modal-tags-container">
+                <ul className="modal-tags-list">
+                  {filteredTags.length > 0 ? (
+                    filteredTags.map((tag, index) => (
+                      <li key={index}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={tags.includes(tag)}
+                            onChange={() => handleAddTag(tag)}
+                          />
+                          <span>{tag}</span>
+                        </label>
+                      </li>
+                    ))
+                  ) : (
+                    <span>Нет подходящих тегов</span>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Готово
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
