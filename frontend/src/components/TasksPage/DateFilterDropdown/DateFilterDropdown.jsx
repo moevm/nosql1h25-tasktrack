@@ -62,7 +62,6 @@ export default function DateFilterDropdown({ label, onChange }) {
             >
               <option value="between">Между датами</option>
               <option value="exact">Точная дата</option>
-              <option value="last">Последние N дней/недель/месяцев</option>
             </select>
           </div>
 
@@ -103,31 +102,6 @@ export default function DateFilterDropdown({ label, onChange }) {
             </div>
           )}
 
-          {mode === 'last' && (
-            <div>
-              <input
-                type="number"
-                className="form-control mb-2"
-                min="1"
-                value={dates.lastValue}
-                onChange={(e) =>
-                  setDates((prev) => ({ ...prev, lastValue: e.target.value }))
-                }
-                placeholder="Количество"
-              />
-              <select
-                className="form-select"
-                value={dates.lastUnit}
-                onChange={(e) =>
-                  setDates((prev) => ({ ...prev, lastUnit: e.target.value }))
-                }
-              >
-                <option value="days">Дней</option>
-                <option value="weeks">Недель</option>
-                <option value="months">Месяцев</option>
-              </select>
-            </div>
-          )}
 
           <button className="btn btn-success mt-3 w-100" onClick={handleApply}>
             Применить

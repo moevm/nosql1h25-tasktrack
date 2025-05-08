@@ -163,9 +163,11 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     updateTagsOnServer(updatedTags);
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date, template='') => {
     const localDate = new Date(date);
-    localDate.setHours(localDate.getHours() + 8); // прибавляем 8 часов
+    if (template !== 'deadline') {
+      localDate.setHours(localDate.getHours() + 8); // прибавляем 8 часов
+    }
 
     return localDate.toLocaleString('ru-RU', {
       day: '2-digit',
@@ -257,7 +259,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
           </span>
           <span>
             Дата завершения:{' '}
-            {currentTask?.deadline && formatDate(currentTask.deadline)}
+            {currentTask?.deadline && formatDate(currentTask.deadline, 'deadline')}
           </span>
         </div>
       </div>

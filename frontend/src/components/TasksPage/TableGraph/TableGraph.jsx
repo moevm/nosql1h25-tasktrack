@@ -68,28 +68,32 @@ export default function TableGraph({ selectedGroup }) {
     }
 
     // Фильтр по дате создания
-    if (createdAtFilter?.mode === 'exact')
-      params.append('created_at', createdAtFilter.exact.split('T')[0]);
+    if (createdAtFilter?.mode === 'exact') {
+      const date = new Date(createdAtFilter.exact);
+      date.setDate(date.getDate() - 1);
+      const result = date.toISOString().split('T')[0];
+      params.append('created_after', result);
+      params.append('created_before', createdAtFilter.exact);
+    }
     if (createdAtFilter?.mode === 'between') {
       params.append('created_after', createdAtFilter.start);
       params.append('created_before', createdAtFilter.end);
     }
-    if (createdAtFilter?.mode === 'last') {
-      params.append('created_last_value', createdAtFilter.lastValue);
-      params.append('created_last_unit', createdAtFilter.lastUnit);
-    }
+    
 
     // Фильтр по дедлайну
-    if (deadlineFilter?.mode === 'exact')
-      params.append('deadline', deadlineFilter.exact.split('T')[0]);
+    if (deadlineFilter?.mode === 'exact') {
+      const date = new Date(deadlineFilter.exact);
+      date.setDate(date.getDate() - 1);
+      const result = date.toISOString().split('T')[0];
+      params.append('deadline_after', result);
+      params.append('deadline_before', deadlineFilter.exact);
+    }
     if (deadlineFilter?.mode === 'between') {
       params.append('deadline_after', deadlineFilter.start);
       params.append('deadline_before', deadlineFilter.end);
     }
-    if (deadlineFilter?.mode === 'last') {
-      params.append('deadline_last_value', deadlineFilter.lastValue);
-      params.append('deadline_last_unit', deadlineFilter.lastUnit);
-    }
+    
 
     // Сортировка
     if (sortField && sortOrder !== 'none') {
