@@ -52,7 +52,7 @@ export default function EditTaskModal({ task, onClose, onSave }) {
         body: JSON.stringify({
           title,
           content: description,
-          deadline: `${deadline}T23:59:59`,
+          deadline: `${deadline}T00:00:00`,
         }),
       });
 
