@@ -8,9 +8,39 @@ const TaskForm = ({ onSubmit, onCancel }) => {
   const [status, setStatus] = useState('todo');
   const [priority, setPriority] = useState('medium');
 
+  // Состояние для ошибок
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!title.trim()) {
+      newErrors.title = 'Название задачи обязательно';
+    } else if (title.length > 50) {
+      newErrors.title = 'Название не должно превышать 50 символов';
+    }
+
+    if (content.length > 500) {
+      newErrors.content = 'Описание не должно превышать 500 символов';
+    }
+
+    if (deadline) {
+      const deadlineDate = new Date(deadline);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (deadlineDate < today) {
+        newErrors.deadline = 'Дата завершения не может быть прошедшей';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
-  
     e.preventDefault();
+    if (!validateForm()) return;
     const newTask = {
       title,
       content,
@@ -19,6 +49,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
       priority,
       notes: [],
     };
+
     onSubmit(newTask);
   };
 
@@ -33,8 +64,12 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            maxLength={50}
             required
+            className={errors.title ? 'input-error' : ''}
           />
+          {errors.title && <span className="error-message">{errors.title}</span>}
+          <div className="char-counter">{title.length}/50</div>
         </div>
 
         <div className="form-group">
@@ -42,7 +77,13 @@ const TaskForm = ({ onSubmit, onCancel }) => {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            maxLength={500}
+            className={errors.content ? 'input-error' : ''}
           />
+          {errors.content && (
+            <span className="error-message">{errors.content}</span>
+          )}
+          <div className="char-counter">{content.length}/500</div>
         </div>
 
         <div className="form-group">
@@ -50,8 +91,12 @@ const TaskForm = ({ onSubmit, onCancel }) => {
           <input
             type="date"
             value={deadline}
-            onChange={(e) => setDeadline(e.target.value + 'T00:00:00')}
+            onChange={(e) => setDeadline(e.target.value)}
+            className={errors.deadline ? 'input-error' : ''}
           />
+          {errors.deadline && (
+            <span className="error-message">{errors.deadline}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -74,7 +119,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             <option value="high">Высокий</option>
           </select>
         </div>
-
 
         <div className="form-actions">
           <button type="submit" className="save-button">

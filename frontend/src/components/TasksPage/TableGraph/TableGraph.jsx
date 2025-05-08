@@ -123,6 +123,7 @@ export default function TableGraph({ selectedGroup }) {
   ]);
 
   const handleCreateTask = async (newTaskData) => {
+    newTaskData.deadline = newTaskData.deadline + 'T00:00:00'
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${SERVER}/api/task/`, {
