@@ -63,18 +63,18 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
 
   const handleClose = () => {
     setAnimationState('closing');
+    setCurrentTask(null);
+    onClose();
   };
 
   const handleAddNote = async () => {
     if (newNote.trim() === '') return;
-
     const noteText = newNote.trim();
     if (noteText.length > 200) {
       alert('Заметка не может превышать 200 символов');
       return;
     }
     setNewNote('');
-
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
@@ -88,12 +88,9 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
           body: JSON.stringify({ text: noteText }),
         },
       );
-
       if (!response.ok) throw new Error('Ошибка при добавлении заметки');
-
       const data = await response.json();
-
-      // Добавляем новую заметку в список
+  
       setNotes((prevNotes) => [
         ...prevNotes,
         {
@@ -103,7 +100,8 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
         },
       ]);
 
-      // Опционально: можно вызвать onTaskUpdate(), если нужно обновить всю задачу
+      onTaskUpdate();
+  
     } catch (error) {
       console.error('Ошибка:', error);
       alert('Не удалось добавить заметку.');
@@ -256,7 +254,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
 
   const formatDate = (date, template = '') => {
     const localDate = new Date(date);
-    if (template !== 'deadline' && template !== 'note') {
+    if (template !== 'deadline') {
       localDate.setHours(localDate.getHours() + 8); // прибавляем 8 часов
     }
 
@@ -417,7 +415,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
             content: currentTask.content,
             deadline: currentTask.deadline,
           }}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={() => {setIsEditModalOpen(false)}}
           onSave={(updatedTask) => {
             setCurrentTask(updatedTask);
             onTaskUpdate(); // Вызываем новую пропсу

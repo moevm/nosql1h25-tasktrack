@@ -23,7 +23,6 @@ export default function TableGraph({ selectedGroup }) {
   const [selectedPriorities, setSelectedPriorities] = useState([]);
   const [createdAtFilter, setCreatedAtFilter] = useState(null);
   const [deadlineFilter, setDeadlineFilter] = useState(null);
-  const [addedTasks, setAddedTasks] = useState([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedTaskForConnections, setSelectedTaskForConnections] =
@@ -371,10 +370,11 @@ export default function TableGraph({ selectedGroup }) {
 
       {/* Боковая панель деталей задачи */}
       <TaskDetailsSidebar
-        task={selectedTask}
-        onClose={() => setSelectedTask(null)}
-        onTaskUpdate={fetchTasksFromServer}
-      />
+  key={selectedTask?.taskId || 'closed'}
+  task={selectedTask}
+  onClose={() => setSelectedTask(null)}
+  onTaskUpdate={fetchTasksFromServer}
+/>
 
       {/* Кнопки действий */}
       <div className="d-flex gap-2 mb-3 flex-wrap">
