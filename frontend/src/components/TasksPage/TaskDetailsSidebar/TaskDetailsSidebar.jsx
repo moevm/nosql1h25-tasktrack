@@ -51,7 +51,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       },
     })
       .then((res) => res.json())
-      .then((data) => setAllTags(data.tags.map((t) => t.name)));
+      .then((data) => setAllTags(data.tags?.map((t) => t.name) || []));
   }, []);
 
   const handleAnimationEnd = () => {
@@ -319,7 +319,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
           <strong>Теги:</strong>
           <div className="tag-list">
             {tags.length > 0 ? (
-              tags.map((tag, index) => (
+              tags?.map((tag, index) => (
                 <span key={index} className="tag-item">
                   {tag}
                   <button
@@ -358,7 +358,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       <h4 className="notes-label">Заметки</h4>
       <div className="notes-section">
         <div className="notes-list">
-          {notes.map((note, index) => (
+          {notes?.map((note, index) => (
             <div key={note.note_id} className="note-card">
               <p>{note.text}</p>
               <small>{formatDate(note.created_at, 'note')}</small>{' '}

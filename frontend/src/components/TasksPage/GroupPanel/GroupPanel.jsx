@@ -27,8 +27,8 @@ export default function GroupPanel({
         .then((response) => response.json())
         .then((data) => {
           if (data.groups) {
-            setAllGroups(data.groups);
-            setGroupList(data.groups);
+            setAllGroups(data.groups || []);
+            setGroupList(data.groups  || []);
           }
         })
         .catch((error) => console.error('Ошибка при загрузке групп:', error));
@@ -107,8 +107,8 @@ export default function GroupPanel({
 
       const updatedGroups = [...allGroups];
       updatedGroups[index] = { ...updatedGroups[index], name: trimmedName };
-      setAllGroups(updatedGroups);
-      setGroupList(updatedGroups);
+      setAllGroups(updatedGroups || []);
+      setGroupList(updatedGroups || []);
     }
   };
 
@@ -126,8 +126,8 @@ export default function GroupPanel({
       })
         .then(() => {
           const updatedGroups = allGroups.filter((group, idx) => idx !== index);
-          setAllGroups(updatedGroups);
-          setGroupList(updatedGroups);
+          setAllGroups(updatedGroups || []);
+          setGroupList(updatedGroups || []);
         })
         .catch((error) => console.error('Ошибка при удалении группы:', error));
     }

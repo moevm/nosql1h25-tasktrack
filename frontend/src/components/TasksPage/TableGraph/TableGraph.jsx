@@ -57,12 +57,12 @@ export default function TableGraph({ selectedGroup }) {
       params.append('title', '(?i).*' + taskSearchTerm + '.*');
 
     if (selectedStatuses.length > 0) {
-      const transformedStatuses = selectedStatuses.map(transformLabels);
+      const transformedStatuses = selectedStatuses?.map(transformLabels);
       params.append('status', transformedStatuses.join(','));
     }
 
     if (selectedPriorities.length > 0) {
-      const transformedPriorities = selectedPriorities.map(transformLabels);
+      const transformedPriorities = selectedPriorities?.map(transformLabels);
       params.append('priority', transformedPriorities.join(','));
     }
 
@@ -117,7 +117,7 @@ export default function TableGraph({ selectedGroup }) {
       if (!response.ok) throw new Error('Ошибка загрузки задач');
       const data = await response.json();
 
-      const results = data.results.map((task) => ({
+      const results = data?.results?.map((task) => ({
         title: task.title,
         deadline: task.deadline
           ? new Date(task.deadline).toLocaleDateString()
@@ -135,7 +135,7 @@ export default function TableGraph({ selectedGroup }) {
         taskId: task.task_id,
       }));
 
-      setTasks(results);
+      setTasks(results || []);
       setTotalPages(data.total_pages);
     } catch (error) {
       console.error('Ошибка:', error);
@@ -315,7 +315,7 @@ export default function TableGraph({ selectedGroup }) {
                 </td>
               </tr>
             ) : (
-              tasks.map((row, i) => (
+              tasks?.map((row, i) => (
                 <tr
                   key={i}
                   className="table-row"
