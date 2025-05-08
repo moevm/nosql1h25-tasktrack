@@ -7,11 +7,9 @@ import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 import SortModal from '../SortModal/SortModal';
-import { SERVER } from '../../../Constants';
+import { SERVER, ITEMS_PER_PAGE, STATUS_OPTIONS, PRIORITY_OPTIONS } from '../../../Constants';
 
-const ITEMS_PER_PAGE = 12;
-const STATUS_OPTIONS = ['todo', 'in_progress', 'done'];
-const PRIORITY_OPTIONS = ['high', 'medium', 'low'];
+
 
 export default function TableGraph({ selectedGroup }) {
   const [tasks, setTasks] = useState([]);
@@ -32,15 +30,40 @@ export default function TableGraph({ selectedGroup }) {
   const [sortOrder, setSortOrder] = useState('none');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
+  const transformLabels = (labels) => {
+    switch(labels){
+      case 'Сделать':
+        return 'todo';
+      case 'В процессе':
+        return 'in_progress';
+      case 'Завершена':
+        return 'done';
+      case 'Высокий':
+        return 'high';
+      case 'Средний':
+        return 'medium';
+      case 'Низкий':
+        return 'low';
+      default:
+        return labels;
+    }
+  }
+
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
     if (taskSearchTerm)
-      params.append('title', '(?i).*' + taskSearchTerm + '.*'); // поиск по названию задачи
-
-    if (selectedStatuses.length > 0)
-      params.append('status', selectedStatuses.join(','));
-    if (selectedPriorities.length > 0)
-      params.append('priority', selectedPriorities.join(','));
+      params.append('title', '(?i).*' + taskSearchTerm + '.*'); 
+    
+    if (selectedStatuses.length > 0) {
+      const transformedStatuses = selectedStatuses.map(transformLabels);
+      params.append('status', transformedStatuses.join(','));
+    }
+    
+    if (selectedPriorities.length > 0) {
+      const transformedPriorities = selectedPriorities.map(transformLabels);
+      params.append('priority', transformedPriorities.join(','));
+    }
+    
 
     // Фильтр по дате создания
     if (createdAtFilter?.mode === 'exact')
@@ -206,6 +229,18 @@ export default function TableGraph({ selectedGroup }) {
         return 'Статус';
       case 'priority':
         return 'Приоритет';
+      case 'todo':
+        return 'Сделать';
+      case 'in_progress':
+        return 'В процессе';
+      case 'done':
+        return 'Завершено';
+      case 'low':
+        return 'Низкий';
+      case 'medium':
+        return 'Средний';
+      case 'high':
+        return 'Высокий';
       default:
         return field;
     }
@@ -300,8 +335,8 @@ export default function TableGraph({ selectedGroup }) {
                       Показать
                     </button>
                   </td>
-                  <td>{row.status}</td>
-                  <td>{row.priority}</td>
+                  <td>{getFieldLabel(row.status)}</td>
+                  <td>{getFieldLabel(row.priority)}</td>
                 </tr>
               ))
             )}

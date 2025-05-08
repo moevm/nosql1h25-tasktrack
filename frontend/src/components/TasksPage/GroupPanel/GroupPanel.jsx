@@ -164,10 +164,10 @@ export default function GroupPanel({
               >
                 <span>{groupItem.name}</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <i
+                  {/* <i
                     className="fa-regular fa-pen-to-square edit-icon icon-group"
                     onClick={(e) => handleRenameGroup(e, index, groupItem)}
-                  ></i>
+                  ></i> */}
 
                   <i
                     className="fa-regular fa-trash-can icon-group"
