@@ -53,37 +53,37 @@ class GroupDetailAPIView(APIView):
             serializer = GroupSerializer(group)
             return Response(serializer.data)
 
-    # def patch(self, request, name):
-    #     with db.transaction:
-    #         group = self.get_object(request.user, name)
-    #         if not group:
-    #             return Response(
-    #                 {'error': 'Group not found'},
-    #                 status=status.HTTP_404_NOT_FOUND
-    #             )
+    def patch(self, request, name):
+        with db.transaction:
+            group = self.get_object(request.user, name)
+            if not group:
+                return Response(
+                    {'error': 'Group not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
-    #         serializer = GroupSerializer(
-    #             group,
-    #             data=request.data,
-    #             partial=True,
-    #             context={'user': request.user}
-    #         )
+            serializer = GroupSerializer(
+                group,
+                data=request.data,
+                partial=True,
+                context={'user': request.user}
+            )
 
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return Response(serializer.data)
-    #         return Response(
-    #             serializer.errors,
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    # def delete(self, request, name):
-    #     with db.transaction:
-    #         group = self.get_object(request.user, name)
-    #         if not group:
-    #             return Response(
-    #                 {'error': 'Group not found'},
-    #                 status=status.HTTP_404_NOT_FOUND
-    #             )
-    #         group.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, name):
+        with db.transaction:
+            group = self.get_object(request.user, name)
+            if not group:
+                return Response(
+                    {'error': 'Group not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            group.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
