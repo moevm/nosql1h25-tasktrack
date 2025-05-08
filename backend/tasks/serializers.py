@@ -87,14 +87,22 @@ class TaskSerializer(serializers.Serializer):
         return task
 
     def _process_relations(self, task, validated_data):
+        from tags.serializers import TagSerializer
+
         if 'tag_names' in validated_data:
             for name in validated_data['tag_names']:
                 tag = Tag.nodes.get_or_none(name=name)
                 if tag is None:
-                    tag = Tag(name=name).save()
+                    serializer = TagSerializer(data={
+                                'name': name
+                            }, context={
+                                'owner': self.context['request'].user
+                            })
+                    serializer.is_valid(raise_exception=True)
+                    tag = serializer.save()
                 task.tags.connect(tag)
+                tag.tasks.connect(task)
 
-        print(validated_data)
         if 'related_task_ids' in validated_data:
             for task_id in validated_data['related_task_ids']:
                 related_task = Task.nodes.get_or_none(task_id=task_id)
@@ -128,18 +136,28 @@ class TaskSerializer(serializers.Serializer):
         return instance
 
     def _update_tags(self, task, tag_names):
+        from tags.serializers import TagSerializer
+
         current_tags = {tag.name for tag in task.tags.all()}
         new_tags = {name.lower().strip() for name in tag_names}
 
         for tag_name in current_tags - new_tags:
             tag = Tag.nodes.get(name=tag_name)
             task.tags.disconnect(tag)
+            tag.tasks.disconnect(task)
 
         for tag_name in new_tags - current_tags:
             tag = Tag.nodes.get_or_none(name=tag_name)
             if tag is None:
-                tag = Tag(name=tag_name).save()
+                serializer = TagSerializer(data={
+                            'name': tag_name
+                        }, context={
+                            'owner': self.context['request'].user
+                        })
+                serializer.is_valid(raise_exception=True)
+                tag = serializer.save()
             task.tags.connect(tag)
+            tag.tasks.connect(task)
 
     def _update_related_tasks(self, task, related_task_ids):
         current_related = {t.task_id for t in task.related_tasks.all()}

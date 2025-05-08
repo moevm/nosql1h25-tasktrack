@@ -2,48 +2,95 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from neomodel import db
+
 from users.authentication import available_for_authorized
 from .serializers import TagSerializer
-from .models import Tag
 
 
 @available_for_authorized
 class TagsAPIView(APIView):
+
     def get(self, request):
-        tags = Tag.nodes.all()
-        serializer = TagSerializer(tags, many=True)
-        return Response({'tags': serializer.data})
+        with db.transaction:
+            user_tags = request.user.tags.all()
+            serializer = TagSerializer(
+                user_tags,
+                many=True,
+                context={'owner': request.user}
+            )
+            return Response({'tags': serializer.data})
 
     def post(self, request):
-        serializer = TagSerializer(data=request.data)
-        if serializer.is_valid():
+        with db.transaction:
+            context = {'owner': request.user}
+            serializer = TagSerializer(
+                data=request.data,
+                context=context
+            )
+
+            serializer.is_valid(raise_exception=True)
             tag = serializer.save()
+
             return Response(
-                TagSerializer(tag).data,
+                TagSerializer(tag, context=context).data,
                 status=status.HTTP_201_CREATED
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @available_for_authorized
 class TagDetailAPIView(APIView):
+
+    def get_tag(self, user, name):
+        tags = user.tags.filter(name=name)
+        if tags:
+            return tags[0]
+        return None
+
     def get(self, request, name):
-        name = name.lower().strip()
-        tag = Tag.nodes.get(name=name)
-        serializer = TagSerializer(tag)
-        return Response(serializer.data)
+        with db.transaction:
+            tag = self.get_tag(request.user, name)
+            if not tag:
+                return Response(
+                    {'detail': 'Тег не найден'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
-    # def put(self, request, name):
-    #     name = name.lower().strip()
-    #     tag = Tag.nodes.get(name=name)
-    #     serializer = TagSerializer(tag, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = TagSerializer(tag, context={'owner': request.user})
+            return Response(serializer.data)
 
-    # def delete(self, request, name):
-    #     name = name.lower().strip()
-    #     tag = Tag.nodes.get(name=name)
-    #     tag.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+    def patch(self, request, name):
+        with db.transaction:
+            tag = self.get_tag(request.user, name)
+            if not tag:
+                return Response(
+                    {'detail': 'Тег не найден'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            context = {'owner': request.user}
+            serializer = TagSerializer(
+                tag,
+                data=request.data,
+                context=context,
+                partial=True
+            )
+
+            serializer.is_valid(raise_exception=True)
+            updated_tag = serializer.save()
+
+            return Response(
+                TagSerializer(updated_tag, context=context).data
+            )
+
+    def delete(self, request, name):
+        with db.transaction:
+            tag = self.get_tag(request.user, name)
+            if not tag:
+                return Response(
+                    {'detail': 'Тег не найден'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            tag.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
