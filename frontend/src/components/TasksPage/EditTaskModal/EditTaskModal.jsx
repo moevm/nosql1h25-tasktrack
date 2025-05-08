@@ -69,7 +69,10 @@ export default function EditTaskModal({ task, onClose, onSave }) {
 
   return (
     <div className="modal-overlay-edit-task" onClick={onClose}>
-      <div className="modal-content-edit-task" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-content-edit-task"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h3>Редактировать задачу</h3>
 
         <label>
@@ -91,7 +94,9 @@ export default function EditTaskModal({ task, onClose, onSave }) {
             onChange={(e) => setDescription(e.target.value)}
           />
           {errors.description && (
-            <span className="error-message-edit-task">{errors.description}</span>
+            <span className="error-message-edit-task">
+              {errors.description}
+            </span>
           )}
         </label>
 

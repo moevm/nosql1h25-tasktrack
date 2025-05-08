@@ -80,7 +80,6 @@ export default function TableGraph({ selectedGroup }) {
       params.append('created_after', createdAtFilter.start);
       params.append('created_before', createdAtFilter.end);
     }
-    
 
     // Фильтр по дедлайну
     if (deadlineFilter?.mode === 'exact') {
@@ -94,7 +93,6 @@ export default function TableGraph({ selectedGroup }) {
       params.append('deadline_after', deadlineFilter.start);
       params.append('deadline_before', deadlineFilter.end);
     }
-    
 
     // Сортировка
     if (sortField && sortOrder !== 'none') {

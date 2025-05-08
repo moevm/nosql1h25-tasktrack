@@ -1,103 +1,103 @@
 .modal-overlay-edit-task {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    backdrop-filter: blur(2px);
-  }
-  
-  .modal-content-edit-task {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    width: 500px;
-    padding: 24px;
-    animation: fadeIn 0.3s ease-out;
-    position: relative;
-  }
-  
-  .modal-content-edit-task h3 {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: #333;
-  }
-  
-  .modal-content-edit-task label {
-    display: block;
-    margin-bottom: 16px;
-    font-weight: 500;
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .modal-content-edit-task input[type='text'],
-  .modal-content-edit-task textarea,
-  .modal-content-edit-task input[type='date'] {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    resize: vertical;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .modal-content-edit-task input[type='text']:focus,
-  .modal-content-edit-task textarea:focus,
-  .modal-content-edit-task input[type='date']:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-  }
-  
-  .modal-content-edit-task textarea {
-    height: 250px;
-    line-height: 1.4;
-  }
-  
-  .modal-actions-edit-task {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 24px;
-  }
-  
-  .modal-actions-edit-task button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-  }
-  
-  .modal-actions-edit-task button:first-child {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .modal-actions-edit-task button:first-child:hover {
-    background-color: #0056b3;
-  }
-  
-  .modal-actions-edit-task button:last-child {
-    background-color: #e9ecef;
-    color: #333;
-  }
-  
-  .modal-actions-edit-task button:last-child:hover {
-    background-color: #dcdcdc;
-  }
-  
-  .error-message-edit-task {
-    color: #dc3545;
-    font-size: 13px;
-    margin-top: 4px;
-    display: block;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content-edit-task {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 500px;
+  padding: 24px;
+  animation: fadeIn 0.3s ease-out;
+  position: relative;
+}
+
+.modal-content-edit-task h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.modal-content-edit-task label {
+  display: block;
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #555;
+}
+
+.modal-content-edit-task input[type='text'],
+.modal-content-edit-task textarea,
+.modal-content-edit-task input[type='date'] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.modal-content-edit-task input[type='text']:focus,
+.modal-content-edit-task textarea:focus,
+.modal-content-edit-task input[type='date']:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.modal-content-edit-task textarea {
+  height: 250px;
+  line-height: 1.4;
+}
+
+.modal-actions-edit-task {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-actions-edit-task button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.modal-actions-edit-task button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-actions-edit-task button:first-child:hover {
+  background-color: #0056b3;
+}
+
+.modal-actions-edit-task button:last-child {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.modal-actions-edit-task button:last-child:hover {
+  background-color: #dcdcdc;
+}
+
+.error-message-edit-task {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}

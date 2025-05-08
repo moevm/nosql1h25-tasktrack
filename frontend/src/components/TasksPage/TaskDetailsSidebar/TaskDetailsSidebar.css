@@ -286,7 +286,7 @@ body {
   flex-grow: 1;
 }
 
-.modal-body input[type="text"] {
+.modal-body input[type='text'] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ccc;
@@ -319,7 +319,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 .item-tag-list li {
   width: 100%;
@@ -327,7 +326,6 @@ body {
 .item-tag-list li label span {
   margin-left: 10px;
   cursor: pointer;
-
 }
 
 #modal-close-btn1 {
@@ -352,8 +350,6 @@ body {
     transform: scale(1);
   }
 }
-
-
 
 select {
   cursor: pointer;

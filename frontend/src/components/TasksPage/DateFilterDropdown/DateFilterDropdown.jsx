@@ -102,7 +102,6 @@ export default function DateFilterDropdown({ label, onChange }) {
             </div>
           )}
 
-
           <button className="btn btn-success mt-3 w-100" onClick={handleApply}>
             Применить
           </button>

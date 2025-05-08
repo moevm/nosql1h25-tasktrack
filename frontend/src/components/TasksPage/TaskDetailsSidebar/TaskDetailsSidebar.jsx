@@ -65,10 +65,44 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     setAnimationState('closing');
   };
 
-  const handleAddNote = () => {
-    if (newNote.trim() !== '') {
-      setNotes([...notes, newNote]);
-      setNewNote('');
+  const handleAddNote = async () => {
+    if (newNote.trim() === '') return;
+
+    const noteText = newNote.trim();
+    setNewNote('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${SERVER}/api/task/${currentTask.task_id}/note/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text: noteText }),
+        },
+      );
+
+      if (!response.ok) throw new Error('Ошибка при добавлении заметки');
+
+      const data = await response.json();
+
+      // Добавляем новую заметку в список
+      setNotes((prevNotes) => [
+        ...prevNotes,
+        {
+          text: data.text,
+          created_at: data.created_at,
+          note_id: data.note_id,
+        },
+      ]);
+
+      // Опционально: можно вызвать onTaskUpdate(), если нужно обновить всю задачу
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось добавить заметку.');
     }
   };
 
@@ -79,19 +113,22 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
 
   const handleDeleteTask = async () => {
     if (!window.confirm('Вы уверены, что хотите удалить эту задачу?')) return;
-  
+
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${SERVER}/api/task/${currentTask.task_id}/`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${SERVER}/api/task/${currentTask.task_id}/`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
-  
+      );
+
       if (!response.ok) throw new Error('Ошибка при удалении задачи');
-  
+
       handleClose();
       onTaskUpdate();
     } catch (error) {
@@ -100,24 +137,47 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     }
   };
 
-  const handleDeleteNote = (index) => {
-    const updatedNotes = [...notes];
-    updatedNotes.splice(index, 1);
-    setNotes(updatedNotes);
+  const handleDeleteNote = async (index) => {
+    const noteToDelete = notes[index];
+    if (!window.confirm('Вы уверены, что хотите удалить эту заметку?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${SERVER}/api/note/${noteToDelete.note_id}/`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      if (!response.ok) throw new Error('Ошибка при удалении заметки');
+
+      // Удаляем заметку из UI
+      const updatedNotes = [...notes];
+      updatedNotes.splice(index, 1);
+      setNotes(updatedNotes);
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось удалить заметку.');
+    }
   };
 
   const handleStatusChange = (e) => {
     const newStatus = e.target.value;
     setStatus(newStatus);
-  
+
     // Отправляем PATCH-запрос с новым статусом
     updateTaskOnServer({ status: newStatus });
   };
-  
+
   const handlePriorityChange = (e) => {
     const newPriority = e.target.value;
     setPriority(newPriority);
-  
+
     // Отправляем PATCH-запрос с новым приоритетом
     updateTaskOnServer({ priority: newPriority });
   };
@@ -125,20 +185,23 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const updateTaskOnServer = async (updatedFields) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${SERVER}/api/task/${currentTask.task_id}/`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${SERVER}/api/task/${currentTask.task_id}/`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedFields),
         },
-        body: JSON.stringify(updatedFields),
-      });
-  
+      );
+
       if (!response.ok) throw new Error('Ошибка при обновлении задачи');
-  
+
       const updatedTask = await response.json();
       setCurrentTask(updatedTask); // Обновляем текущую задачу
-      onTaskUpdate(updatedTask);  // Передаем обновленную задачу наверх
+      onTaskUpdate(updatedTask); // Передаем обновленную задачу наверх
     } catch (error) {
       console.error('Ошибка обновления задачи:', error);
       alert('Не удалось сохранить изменения');
@@ -186,9 +249,9 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     updateTagsOnServer(updatedTags);
   };
 
-  const formatDate = (date, template='') => {
+  const formatDate = (date, template = '') => {
     const localDate = new Date(date);
-    if (template !== 'deadline') {
+    if (template !== 'deadline' && template !== 'note') {
       localDate.setHours(localDate.getHours() + 8); // прибавляем 8 часов
     }
 
@@ -282,7 +345,8 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
           </span>
           <span>
             Дата завершения:{' '}
-            {currentTask?.deadline && formatDate(currentTask.deadline, 'deadline')}
+            {currentTask?.deadline &&
+              formatDate(currentTask.deadline, 'deadline')}
           </span>
         </div>
       </div>
@@ -292,8 +356,10 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       <div className="notes-section">
         <div className="notes-list">
           {notes.map((note, index) => (
-            <div key={index} className="note-card">
-              <p>{note}</p>
+            <div key={note.note_id} className="note-card">
+              <p>{note.text}</p>
+              <small>{formatDate(note.created_at, 'note')}</small>{' '}
+              {/* Опционально */}
               <div className="note-actions">
                 <button
                   className="delete-button"
@@ -323,7 +389,9 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
         >
           Редактировать
         </button>
-        <button className="delete-button" onClick={handleDeleteTask}>Удалить</button>
+        <button className="delete-button" onClick={handleDeleteTask}>
+          Удалить
+        </button>
         <button className="add-note-button" onClick={handleAddNote}>
           Добавить заметку
         </button>
@@ -377,20 +445,18 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
                 <ul className="modal-tags-list">
                   {filteredTags.length > 0 ? (
                     filteredTags.map((tag, index) => (
-                      
-                        <div className='item-tag-list'>
-                      <li key={index}>
-                        <label>
-                          <input
-                            type="checkbox"
-                            checked={tags.includes(tag)}
-                            onChange={() => handleAddTag(tag)}
-                          />
-                          <span>{tag}</span>
-                        </label>
-                      </li>
-                        </div>  
-                      
+                      <div className="item-tag-list">
+                        <li key={index}>
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={tags.includes(tag)}
+                              onChange={() => handleAddTag(tag)}
+                            />
+                            <span>{tag}</span>
+                          </label>
+                        </li>
+                      </div>
                     ))
                   ) : (
                     <span>Нет подходящих тегов</span>
