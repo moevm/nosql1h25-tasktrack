@@ -142,7 +142,6 @@ export default function TableGraph({ selectedGroup }) {
       setTotalPages(data.total_pages);
     } catch (error) {
       console.error('Ошибка:', error);
-      alert('Не удалось загрузить задачи.');
     }
   };
 

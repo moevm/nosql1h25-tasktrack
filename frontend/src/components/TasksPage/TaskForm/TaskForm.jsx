@@ -28,8 +28,9 @@ const TaskForm = ({ onSubmit, onCancel }) => {
       const deadlineDate = new Date(deadline);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
-      if (deadlineDate < today) {
+      deadlineDate.setHours(0, 0, 0, 0);
+      console.log(deadlineDate, today);
+      if (deadlineDate <= today) {
         newErrors.deadline = 'Дата завершения не может быть прошедшей';
       }
     }
