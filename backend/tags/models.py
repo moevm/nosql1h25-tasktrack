@@ -2,7 +2,7 @@ import neomodel
 
 
 class Tag(neomodel.StructuredNode):
-    name = neomodel.StringProperty(required=True, unique_index=True)
+    name = neomodel.StringProperty(required=True, index=True)
     owner = neomodel.RelationshipFrom('users.models.Neo4jUser', 'OWNS_TAG')
     tasks = neomodel.RelationshipFrom('tasks.models.Task', 'HAS_TAG')
 
