@@ -4,7 +4,7 @@ import './TaskDetailsSidebar.css';
 import { SERVER } from '../../../Constants';
 
 export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
-  const [animationState, setAnimationState] = useState('');
+  const [animationState, setAnimationState] = useState('closing');
   const [currentTask, setCurrentTask] = useState(null);
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');

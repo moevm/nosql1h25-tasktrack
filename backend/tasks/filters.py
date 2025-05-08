@@ -68,13 +68,13 @@ class TaskFilter:
             created = cls._parse_datetime(filters['created_before'])
             if created:
                 conditions.append("t.created_at <= $created_before")
-                params['created_before'] = deadline.timestamp()
+                params['created_before'] = created.timestamp()
 
         if 'created_after' in filters:
             created = cls._parse_datetime(filters['created_after'])
             if created:
                 conditions.append("t.created_at >= $created_after")
-                params['created_after'] = deadline.timestamp()
+                params['created_after'] = created.timestamp()
 
         if 'tag' in filters:
             tag_names = [
@@ -111,7 +111,7 @@ class TaskFilter:
             if groups:
                 if len(groups) == 1:
                     conditions.append("g.name =~ $group_regex")
-                    params['group_regex'] = f"{groups[0]}"
+                    params['group_regex'] = groups[0]
                 else:
                     conditions.append(
                         "ANY(regex IN $group_regexes WHERE g.name =~ regex)")
