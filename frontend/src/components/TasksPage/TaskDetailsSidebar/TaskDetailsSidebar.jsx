@@ -321,6 +321,8 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
                 <ul className="modal-tags-list">
                   {filteredTags.length > 0 ? (
                     filteredTags.map((tag, index) => (
+                      
+                        <div className='item-tag-list'>
                       <li key={index}>
                         <label>
                           <input
@@ -331,6 +333,8 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
                           <span>{tag}</span>
                         </label>
                       </li>
+                        </div>  
+                      
                     ))
                   ) : (
                     <span>Нет подходящих тегов</span>

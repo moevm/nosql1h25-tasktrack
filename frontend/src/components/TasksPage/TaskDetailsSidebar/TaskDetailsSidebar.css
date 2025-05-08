@@ -1,3 +1,15 @@
+/* === Базовые настройки === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* === Боковая панель задач === */
 .task-details-sidebar {
   position: fixed;
   right: 0;
@@ -8,6 +20,7 @@
   box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
   overflow-y: auto;
+  z-index: 999;
 }
 
 .task-details-sidebar.open {
@@ -26,6 +39,7 @@
   border-bottom: 1px solid #ddd;
 }
 
+/* === Статус и приоритет === */
 .status-priority-container {
   display: flex;
   gap: 10px;
@@ -58,108 +72,9 @@
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
+/* === Детали задачи === */
 .task-details {
   padding: 5px 10px;
-}
-
-.additional-info {
-  display: flex;
-  gap: 10px;
-  font-size: 0.8rem;
-  color: #666;
-}
-
-.notes-label {
-  padding: 0px 10px;
-}
-
-.notes-section {
-  padding: 0px 10px;
-
-  overflow-y: auto;
-  max-height: 340px;
-}
-
-.notes-list {
-  max-height: 340px;
-  overflow-y: auto;
-}
-
-.note-card {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.note-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.edit-button,
-.delete-button,
-.add-note-button,
-.add-tag-button,
-.history-button {
-  padding: 5px 15px;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.edit-button {
-  background-color: #007bff;
-}
-
-.delete-button {
-  background-color: #dc3545;
-}
-
-.add-note-button {
-  background-color: #007bff;
-}
-
-.add-note-container {
-  padding: 10px;
-}
-
-.add-note-container textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: none;
-}
-
-.footer-buttons {
-  display: flex;
-  justify-content: space-between;
-  padding: 0px 10px;
-}
-
-.history-button {
-  background-color: #28a745;
-}
-
-.close-button {
-  background-color: transparent;
-  border: none;
-  font-size: 24px;
-  color: #666;
-  cursor: pointer;
-  transition:
-    color 0.3s ease,
-    background-color 0.3s ease;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  border-radius: 50%;
 }
 
 .task-details h3 {
@@ -174,72 +89,24 @@
 .task-details p {
   word-wrap: break-word;
   overflow-wrap: break-word;
-  hyphens: auto;
-  white-space: pre-wrap; /* Сохраняет форматирование (например, переводы строк) */
+  white-space: pre-wrap;
   font-size: 1rem;
   line-height: 1.4;
 }
-.note-card p {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
-}
 
-.tag-list {
+.additional-info {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 5px;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 10px;
 }
 
-.tag-item {
-  background-color: #e9ecef;
-  padding: 3px 10px !important;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  position: relative;
+/* === Теги === */
+.tags-section {
+  margin-top: 10px;
 }
 
-.delete-tag-button {
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: 0px !important;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 550px !important;
-  height: 530px !important;
-  overflow-y: auto;
-}
-
-.modal-content label textarea {
-  height: 150px;
-}
-
-.add-tag-button {
-  background-color: #a50073;
-}
-
-/* Теги */
 .tag-list {
   display: flex;
   flex-wrap: wrap;
@@ -276,12 +143,114 @@
   color: #dc3545;
 }
 
-.modal-header {
-  display: flex;
-  align-items: center;
+/* === Заметки === */
+.notes-label {
+  padding: 0px 10px;
+}
+
+.notes-section {
+  padding: 0px 10px;
+  overflow-y: auto;
+  max-height: 340px;
+}
+
+.notes-list {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.note-card {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 10px;
   margin-bottom: 10px;
 }
 
+.note-card p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.note-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+/* === Форма добавления заметки === */
+.add-note-container {
+  padding: 10px;
+}
+
+.add-note-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none;
+}
+
+/* === Кнопки === */
+.edit-button,
+.delete-button,
+.add-note-button,
+.add-tag-button,
+.history-button {
+  padding: 5px 15px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-button {
+  background-color: #007bff;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.add-note-button {
+  background-color: #007bff;
+}
+
+.history-button {
+  background-color: #28a745;
+}
+
+.add-tag-button {
+  background-color: #a50073;
+}
+
+.close-button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 50%;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+  margin-top: 10px;
+}
+
+/* === Модальное окно === */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -300,25 +269,24 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  width: 400px;
-  max-height: 80vh;
+  width: 600px;
+  max-height: 90vh;
   overflow-y: auto;
   padding: 20px;
   animation: fadeIn 0.3s ease-out;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.modal-body input[type='text'] {
+.modal-title {
+  flex-grow: 1;
+}
+
+.modal-body input[type="text"] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ccc;
@@ -327,23 +295,41 @@
   margin-bottom: 12px;
 }
 
+.modal-tags-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 8px;
+  background-color: #f9f9f9;
+}
+
 .modal-tags-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.modal-tags-list li label span {
-  margin: 10px;
-}
-
 .modal-tags-list li:hover {
   background-color: #f1f1f1;
 }
 
-.modal-tags-list label {
+.item-tag-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  font-size: 0.95rem;
+
+}
+.item-tag-list li {
+  cursor: pointer;
+  width: 100%;
+}
+.item-tag-list li label span {
+  margin-left: 10px;
+  cursor: pointer;
+
 }
 
 #modal-close-btn1 {
@@ -357,12 +343,14 @@
   line-height: 1;
 }
 
-.modal-tags-container {
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 8px;
-  margin-top: 8px;
-  background-color: #f9f9f9;
+/* === Анимация модального окна === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
