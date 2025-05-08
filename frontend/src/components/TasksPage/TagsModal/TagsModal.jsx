@@ -4,7 +4,7 @@ import './TagsModal.css';
 
 import { SERVER } from '../../../Constants'; // Используем константу SERVER
 
-export default function TagsModal({ isOpen, onClose }) {
+export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
   const [tags, setTags] = useState([]);
   const [newTagName, setNewTagName] = useState('');
   const [editingTag, setEditingTag] = useState(null);
@@ -13,6 +13,7 @@ export default function TagsModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) {
+        setSelectedTask(null); // Сбрасываем выбранную задачу при открытии модального окна
       fetchTags();
     }
   }, [isOpen]);

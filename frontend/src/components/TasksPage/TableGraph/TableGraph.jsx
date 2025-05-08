@@ -456,6 +456,7 @@ export default function TableGraph({ selectedGroup }) {
         <TagsModal
           isOpen={isTagsModalOpen}
           onClose={() => setIsTagsModalOpen(false)}
+          setSelectedTask={setSelectedTask}
         />
       )}
     </div>
