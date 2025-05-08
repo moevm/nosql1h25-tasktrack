@@ -18,3 +18,7 @@
 .wrapper-paginator {
   width: 95%;
 }
+
+.fixed-width-table {
+  table-layout: fixed;
+}

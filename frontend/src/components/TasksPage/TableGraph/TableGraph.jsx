@@ -248,10 +248,10 @@ export default function TableGraph({ selectedGroup }) {
         </div>
 
         {/* Таблица задач */}
-        <table className="table table-bordered table-hover mt-3">
+        <table className="table table-bordered table-hover mt-3 fixed-width-table">
           <thead>
             <tr>
-              <th>Название задания</th>
+              <th style={{ width: '400px' }}>Название задания</th>
               <th>Дата завершения</th>
               <th>Дата создания</th>
               <th>Дата обновления</th>
@@ -268,7 +268,7 @@ export default function TableGraph({ selectedGroup }) {
             ) : (
               tasks.map((row, i) => (
                 <tr key={i} className="table-row" onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
-                  <td>{row.title}</td>
+                  <td>{row.title.length > 40 ? row.title.slice(0, 40) + '...' : row.title}</td>
                   <td>{row.deadline}</td>
                   <td>{row.createdAt}</td>
                   <td>{row.updatedAt}</td>
