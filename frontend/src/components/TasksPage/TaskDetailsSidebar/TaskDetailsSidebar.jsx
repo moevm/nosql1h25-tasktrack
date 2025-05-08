@@ -77,6 +77,29 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
   );
 
+  const handleDeleteTask = async () => {
+    if (!window.confirm('Вы уверены, что хотите удалить эту задачу?')) return;
+  
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${SERVER}/api/task/${currentTask.task_id}/`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) throw new Error('Ошибка при удалении задачи');
+  
+      handleClose();
+      onTaskUpdate();
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось удалить задачу.');
+    }
+  };
+
   const handleDeleteNote = (index) => {
     const updatedNotes = [...notes];
     updatedNotes.splice(index, 1);
@@ -300,7 +323,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
         >
           Редактировать
         </button>
-        <button className="delete-button">Удалить</button>
+        <button className="delete-button" onClick={handleDeleteTask}>Удалить</button>
         <button className="add-note-button" onClick={handleAddNote}>
           Добавить заметку
         </button>
