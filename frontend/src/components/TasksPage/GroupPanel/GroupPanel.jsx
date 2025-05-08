@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './GroupPanel.css';
 import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
-import SearchBar from '../../SearchBar/SearchBar'; 
+import SearchBar from '../../SearchBar/SearchBar';
 import { SERVER } from '../../../Constants';
 
 export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGroup, selectedGroup }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [allGroups, setAllGroups] = useState([]); // Храним все группы
-  const [groupList, setGroupList] = useState([]); // Для отображения (может быть отфильтрован)
+  const [allGroups, setAllGroups] = useState([]);
+  const [groupList, setGroupList] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -22,17 +22,17 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
         .then((response) => response.json())
         .then((data) => {
           if (data.groups) {
-            setAllGroups(data.groups); // Сохраняем оригинальные данные
-            setGroupList(data.groups);  // Изначально отображаем все
+            setAllGroups(data.groups);
+            setGroupList(data.groups);
           }
         })
         .catch((error) => console.error('Ошибка при загрузке групп:', error));
     }
   }, []);
 
-  const handleSearch = () => {
+  // Фильтруем группы при изменении searchQuery
+  useEffect(() => {
     if (!searchQuery.trim()) {
-      // Если запрос пустой — показываем все группы
       setGroupList(allGroups);
       return;
     }
@@ -41,11 +41,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
       group.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setGroupList(filteredGroups);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  }, [searchQuery, allGroups]);
 
   const handleToggle = () => {
     setIsGraphMode(!isGraphMode);
@@ -119,7 +115,7 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: groupItem.name }), 
+        body: JSON.stringify({ name: groupItem.name }),
       })
         .then(() => {
           const updatedGroups = allGroups.filter((group, idx) => idx !== index);
@@ -145,9 +141,8 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
       <div className="find-group">Поиск по группам</div>
       <SearchBar
         searchQuery={searchQuery}
-        handleSearchChange={handleSearchChange}
+        handleSearchChange={(e) => setSearchQuery(e.target.value)}
         TitleFind="Введите название группы"
-        handleSearchSubmit={handleSearch}
       />
       <hr />
 
