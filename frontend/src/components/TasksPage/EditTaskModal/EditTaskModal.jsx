@@ -68,8 +68,8 @@ export default function EditTaskModal({ task, onClose, onSave }) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay-edit-task" onClick={onClose}>
+      <div className="modal-content-edit-task" onClick={(e) => e.stopPropagation()}>
         <h3>Редактировать задачу</h3>
 
         <label>
@@ -80,7 +80,7 @@ export default function EditTaskModal({ task, onClose, onSave }) {
             onChange={(e) => setTitle(e.target.value)}
           />
           {errors.title && (
-            <span className="error-message">{errors.title}</span>
+            <span className="error-message-edit-task">{errors.title}</span>
           )}
         </label>
 
@@ -91,7 +91,7 @@ export default function EditTaskModal({ task, onClose, onSave }) {
             onChange={(e) => setDescription(e.target.value)}
           />
           {errors.description && (
-            <span className="error-message">{errors.description}</span>
+            <span className="error-message-edit-task">{errors.description}</span>
           )}
         </label>
 
@@ -103,11 +103,11 @@ export default function EditTaskModal({ task, onClose, onSave }) {
             onChange={(e) => setDeadline(e.target.value)}
           />
           {errors.deadline && (
-            <span className="error-message">{errors.deadline}</span>
+            <span className="error-message-edit-task">{errors.deadline}</span>
           )}
         </label>
 
-        <div className="modal-actions">
+        <div className="modal-actions-edit-task">
           <button onClick={handleSubmit}>Сохранить</button>
           <button onClick={onClose}>Отмена</button>
         </div>

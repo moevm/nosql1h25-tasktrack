@@ -319,11 +319,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
 
 }
 .item-tag-list li {
-  cursor: pointer;
   width: 100%;
 }
 .item-tag-list li label span {
