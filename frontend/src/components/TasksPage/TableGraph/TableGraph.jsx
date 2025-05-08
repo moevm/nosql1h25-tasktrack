@@ -7,9 +7,12 @@ import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 import SortModal from '../SortModal/SortModal';
-import { SERVER, ITEMS_PER_PAGE, STATUS_OPTIONS, PRIORITY_OPTIONS } from '../../../Constants';
-
-
+import {
+  SERVER,
+  ITEMS_PER_PAGE,
+  STATUS_OPTIONS,
+  PRIORITY_OPTIONS,
+} from '../../../Constants';
 
 export default function TableGraph({ selectedGroup }) {
   const [tasks, setTasks] = useState([]);
@@ -31,7 +34,7 @@ export default function TableGraph({ selectedGroup }) {
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
   const transformLabels = (labels) => {
-    switch(labels){
+    switch (labels) {
       case 'Сделать':
         return 'todo';
       case 'В процессе':
@@ -47,23 +50,22 @@ export default function TableGraph({ selectedGroup }) {
       default:
         return labels;
     }
-  }
+  };
 
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
     if (taskSearchTerm)
-      params.append('title', '(?i).*' + taskSearchTerm + '.*'); 
-    
+      params.append('title', '(?i).*' + taskSearchTerm + '.*');
+
     if (selectedStatuses.length > 0) {
       const transformedStatuses = selectedStatuses.map(transformLabels);
       params.append('status', transformedStatuses.join(','));
     }
-    
+
     if (selectedPriorities.length > 0) {
       const transformedPriorities = selectedPriorities.map(transformLabels);
       params.append('priority', transformedPriorities.join(','));
     }
-    
 
     // Фильтр по дате создания
     if (createdAtFilter?.mode === 'exact')
