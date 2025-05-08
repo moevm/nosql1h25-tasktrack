@@ -90,7 +90,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       );
       if (!response.ok) throw new Error('Ошибка при добавлении заметки');
       const data = await response.json();
-  
+
       setNotes((prevNotes) => [
         ...prevNotes,
         {
@@ -101,7 +101,6 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       ]);
 
       onTaskUpdate();
-  
     } catch (error) {
       console.error('Ошибка:', error);
       alert('Не удалось добавить заметку.');
@@ -145,7 +144,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
 
     try {
       const token = localStorage.getItem('token');
-      
+
       const response = await fetch(
         `${SERVER}/api/task/${currentTask.task_id}/note/${noteToDelete.note_id}/`,
         {
@@ -415,7 +414,9 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
             content: currentTask.content,
             deadline: currentTask.deadline,
           }}
-          onClose={() => {setIsEditModalOpen(false)}}
+          onClose={() => {
+            setIsEditModalOpen(false);
+          }}
           onSave={(updatedTask) => {
             setCurrentTask(updatedTask);
             onTaskUpdate(); // Вызываем новую пропсу

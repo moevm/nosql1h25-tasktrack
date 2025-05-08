@@ -28,7 +28,7 @@ export default function GroupPanel({
         .then((data) => {
           if (data.groups) {
             setAllGroups(data.groups || []);
-            setGroupList(data.groups  || []);
+            setGroupList(data.groups || []);
           }
         })
         .catch((error) => console.error('Ошибка при загрузке групп:', error));

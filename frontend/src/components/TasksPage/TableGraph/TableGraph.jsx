@@ -372,11 +372,11 @@ export default function TableGraph({ selectedGroup }) {
 
       {/* Боковая панель деталей задачи */}
       <TaskDetailsSidebar
-  key={selectedTask?.taskId || 'closed'}
-  task={selectedTask}
-  onClose={() => setSelectedTask(null)}
-  onTaskUpdate={fetchTasksFromServer}
-/>
+        key={selectedTask?.taskId || 'closed'}
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onTaskUpdate={fetchTasksFromServer}
+      />
 
       {/* Кнопки действий */}
       <div className="d-flex gap-2 mb-3 flex-wrap">
@@ -387,12 +387,12 @@ export default function TableGraph({ selectedGroup }) {
           + Новая задача
         </button>
         {/* Кнопка управления тегами */}
-<button
-  className="btn btn-outline-secondary btn-sm"
-  onClick={() => setIsTagsModalOpen(true)}
->
-  Управление тегами
-</button>
+        <button
+          className="btn btn-outline-secondary btn-sm"
+          onClick={() => setIsTagsModalOpen(true)}
+        >
+          Управление тегами
+        </button>
         <button
           className="btn btn-outline-primary btn-sm"
           onClick={() => setIsSortModalOpen(true)}
@@ -452,14 +452,12 @@ export default function TableGraph({ selectedGroup }) {
           />
         )
       }
-      {
-  isTagsModalOpen && (
-    <TagsModal
-      isOpen={isTagsModalOpen}
-      onClose={() => setIsTagsModalOpen(false)}
-    />
-  )
-}
+      {isTagsModalOpen && (
+        <TagsModal
+          isOpen={isTagsModalOpen}
+          onClose={() => setIsTagsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

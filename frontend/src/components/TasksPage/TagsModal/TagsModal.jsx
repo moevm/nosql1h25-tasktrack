@@ -72,7 +72,7 @@ export default function TagsModal({ isOpen, onClose }) {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
       if (!response.ok) throw new Error('Ошибка при удалении тега');
       fetchTags();
@@ -95,7 +95,7 @@ export default function TagsModal({ isOpen, onClose }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ name: editingTag.newName }),
-        }
+        },
       );
       if (!response.ok) throw new Error('Ошибка при обновлении тега');
       setEditingTag(null);
@@ -108,7 +108,7 @@ export default function TagsModal({ isOpen, onClose }) {
 
   // Фильтрация тегов по searchQuery
   const filteredTags = tags.filter((tag) =>
-    tag.name.toLowerCase().includes(searchQuery.toLowerCase())
+    tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (!isOpen) return null;
@@ -148,56 +148,65 @@ export default function TagsModal({ isOpen, onClose }) {
         </div>
 
         {/* Список тегов */}
-        <ul className="tags-modal-list-group">
-          {filteredTags.map((tag, index) => (
-            <li key={index} className="tags-modal-list-group-item">
-              {editingTag?.oldName === tag.name ? (
-                <>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm me-2"
-                    value={editingTag.newName}
-                    onChange={(e) =>
-                      setEditingTag({ ...editingTag, newName: e.target.value })
-                    }
-                  />
-                  <button
-                    className="btn btn-sm btn-primary me-1"
-                    onClick={handleEditTag}
-                  >
-                    Сохранить
-                  </button>
-                  <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => setEditingTag(null)}
-                  >
-                    Отмена
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span>{tag.name}</span>
-                  <div>
-                    <button
-                      className="btn btn-sm btn-warning me-1"
-                      onClick={() =>
-                        setEditingTag({ oldName: tag.name, newName: tag.name })
+        {/* Контейнер со скроллом только для тегов */}
+        <div className="tags-modal-list-container">
+          <ul className="tags-modal-list-group">
+            {filteredTags.map((tag, index) => (
+              <li key={index} className="tags-modal-list-group-item">
+                {editingTag?.oldName === tag.name ? (
+                  <>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm me-2"
+                      value={editingTag.newName}
+                      onChange={(e) =>
+                        setEditingTag({
+                          ...editingTag,
+                          newName: e.target.value,
+                        })
                       }
+                    />
+                    <button
+                      className="btn btn-sm btn-primary me-1"
+                      onClick={handleEditTag}
                     >
-                      Редактировать
+                      Сохранить
                     </button>
                     <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDeleteTag(tag.name)}
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => setEditingTag(null)}
                     >
-                      Удалить
+                      Отмена
                     </button>
-                  </div>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+                  </>
+                ) : (
+                  <>
+                    <span>{tag.name}</span>
+                    <div>
+                      <button
+                        className="btn btn-sm btn-warning me-1"
+                        onClick={() =>
+                          setEditingTag({
+                            oldName: tag.name,
+                            newName: tag.name,
+                          })
+                        }
+                      >
+                        Редактировать
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDeleteTag(tag.name)}
+                      >
+                        Удалить
+                      </button>
+                    </div>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {/* Кнопка закрытия */}
         <button className="tags-modal-btn-close" onClick={onClose}>
