@@ -1,5 +1,6 @@
 .filter-dropdown {
   position: relative;
+  
   margin-left: 0.5rem;
 }
 
@@ -12,6 +13,7 @@
   min-width: 150px;
   z-index: 1000;
   border-radius: 4px;
+  
 }
 
 .cursor-class {

@@ -151,11 +151,11 @@ body {
 .notes-section {
   padding: 0px 10px;
   overflow-y: auto;
-  max-height: 340px;
+  max-height: 300px;
 }
 
 .notes-list {
-  max-height: 340px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
@@ -351,4 +351,10 @@ body {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+
+
+select {
+  cursor: pointer;
 }

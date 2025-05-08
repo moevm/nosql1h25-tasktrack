@@ -84,11 +84,42 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   };
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value);
+    const newStatus = e.target.value;
+    setStatus(newStatus);
+  
+    // Отправляем PATCH-запрос с новым статусом
+    updateTaskOnServer({ status: newStatus });
+  };
+  
+  const handlePriorityChange = (e) => {
+    const newPriority = e.target.value;
+    setPriority(newPriority);
+  
+    // Отправляем PATCH-запрос с новым приоритетом
+    updateTaskOnServer({ priority: newPriority });
   };
 
-  const handlePriorityChange = (e) => {
-    setPriority(e.target.value);
+  const updateTaskOnServer = async (updatedFields) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${SERVER}/api/task/${currentTask.task_id}/`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedFields),
+      });
+  
+      if (!response.ok) throw new Error('Ошибка при обновлении задачи');
+  
+      const updatedTask = await response.json();
+      setCurrentTask(updatedTask); // Обновляем текущую задачу
+      onTaskUpdate(updatedTask);  // Передаем обновленную задачу наверх
+    } catch (error) {
+      console.error('Ошибка обновления задачи:', error);
+      alert('Не удалось сохранить изменения');
+    }
   };
 
   // Функция для обновления тегов на сервере
