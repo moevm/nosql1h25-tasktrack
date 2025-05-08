@@ -12,6 +12,8 @@ export default function TaskDetailsSidebar({ task, onClose }) {
   const [tags, setTags] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tagSearchTerm, setTagSearchTerm] = useState('');
+
 
   const taskId = task?.taskId;
   const token = localStorage.getItem('token');
@@ -68,6 +70,11 @@ export default function TaskDetailsSidebar({ task, onClose }) {
       setNewNote('');
     }
   };
+
+  // Фильтрация тегов по поиску
+const filteredTags = allTags.filter((tag) =>
+  tag.toLowerCase().includes(tagSearchTerm.toLowerCase())
+);
 
   const handleDeleteNote = (index) => {
     const updatedNotes = [...notes];
@@ -186,25 +193,26 @@ export default function TaskDetailsSidebar({ task, onClose }) {
 
         {/* Теги */}
         <div className="tags-section">
-          <strong>Теги:</strong>
-          <div className="tag-list">
-            {tags.length > 0 ? (
-              tags.map((tag, index) => (
-                <span key={index} className="tag-item">
-                  {tag}
-                  <button
-                    onClick={() => handleRemoveTag(tag)}
-                    className="delete-tag-button"
-                  >
-                    &times;
-                  </button>
-                </span>
-              ))
-            ) : (
-              <span className="no-tags">Нет тегов</span>
-            )}
-          </div>
-        </div>
+  <strong>Теги:</strong>
+  <div className="tag-list">
+    {tags.length > 0 ? (
+      tags.map((tag, index) => (
+        <span key={index} className="tag-item">
+          {tag}
+          <button
+            onClick={() => handleRemoveTag(tag)}
+            className="delete-tag-button"
+            aria-label="Удалить тег"
+          >
+            &times;
+          </button>
+        </span>
+      ))
+    ) : (
+      <span className="no-tags">Нет тегов</span>
+    )}
+  </div>
+</div>
 
         <div className="additional-info">
           <span>
@@ -265,28 +273,52 @@ export default function TaskDetailsSidebar({ task, onClose }) {
       </div>
 
       {/* Модальное окно выбора тегов */}
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h4>Выберите тег</h4>
-            <ul>
-              {allTags.map((tag, index) => (
-                <li key={index}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={() => handleAddTag(tag)}
-                      checked={tags.includes(tag)}
-                    />
-                    {tag}
-                  </label>
-                </li>
-              ))}
-            </ul>
-            <button onClick={() => setIsModalOpen(false)}>Готово</button>
-          </div>
-        </div>
-      )}
+{isModalOpen && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h4 className="modal-title">Выберите тег</h4>
+        <button id="modal-close-btn1" onClick={() => setIsModalOpen(false)}>&times;</button>
+      </div>
+
+      <div className="modal-body">
+        <input
+          type="text"
+          placeholder="Поиск по тегам..."
+          value={tagSearchTerm}
+          onChange={(e) => setTagSearchTerm(e.target.value)}
+          style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+        />
+      <div className="modal-tags-container">
+        <ul className="modal-tags-list">
+          {filteredTags.length > 0 ? (
+            filteredTags.map((tag, index) => (
+              <li key={index}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={tags.includes(tag)}
+                    onChange={() => handleAddTag(tag)}
+                  />
+                  <span>{tag}</span>
+                </label>
+              </li>
+            ))
+          ) : (
+            <span>Нет подходящих тегов</span>
+          )}
+        </ul>
+      </div>
+      </div>
+
+      <div className="modal-footer">
+        <button className="btn btn-sm btn-outline-secondary" onClick={() => setIsModalOpen(false)}>
+          Готово
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
