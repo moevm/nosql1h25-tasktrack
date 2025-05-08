@@ -11,6 +11,7 @@ class Neo4jUser(neomodel.StructuredNode):
     created_at = neomodel.DateTimeProperty(default=dt.datetime.now)
     modified_at = neomodel.DateTimeProperty(default=dt.datetime.now)
     groups = neomodel.RelationshipTo('groups.models.Group', 'OWNS_GROUP')
+    tags = neomodel.RelationshipTo('tags.models.Tag', 'OWNS_TAG')
 
     def set_password(self, password):
         self.password_hash = make_password(password)
