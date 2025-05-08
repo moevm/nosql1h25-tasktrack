@@ -7,6 +7,7 @@ import TaskDetailsSidebar from '../TaskDetailsSidebar/TaskDetailsSidebar';
 import TaskForm from '../TaskForm/TaskForm';
 import ConnectionsModal from '../ConnectionsModal/ConnectionsModal';
 import SortModal from '../SortModal/SortModal';
+import TagsModal from '../TagsModal/TagsModal';
 import {
   SERVER,
   ITEMS_PER_PAGE,
@@ -31,6 +32,7 @@ export default function TableGraph({ selectedGroup }) {
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+  const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
 
   const transformLabels = (labels) => {
     switch (labels) {
@@ -384,6 +386,13 @@ export default function TableGraph({ selectedGroup }) {
         >
           + Новая задача
         </button>
+        {/* Кнопка управления тегами */}
+<button
+  className="btn btn-outline-secondary btn-sm"
+  onClick={() => setIsTagsModalOpen(true)}
+>
+  Управление тегами
+</button>
         <button
           className="btn btn-outline-primary btn-sm"
           onClick={() => setIsSortModalOpen(true)}
@@ -443,6 +452,14 @@ export default function TableGraph({ selectedGroup }) {
           />
         )
       }
+      {
+  isTagsModalOpen && (
+    <TagsModal
+      isOpen={isTagsModalOpen}
+      onClose={() => setIsTagsModalOpen(false)}
+    />
+  )
+}
     </div>
   );
 }
