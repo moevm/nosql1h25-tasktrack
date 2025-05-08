@@ -143,8 +143,9 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
 
     try {
       const token = localStorage.getItem('token');
+      
       const response = await fetch(
-        `${SERVER}/api/note/${noteToDelete.note_id}/`,
+        `${SERVER}/api/task/${currentTask.task_id}/note/${noteToDelete.note_id}/`,
         {
           method: 'DELETE',
           headers: {
