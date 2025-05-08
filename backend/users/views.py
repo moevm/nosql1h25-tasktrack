@@ -23,14 +23,13 @@ def create_jwt_token(user):
 class RegisterAPIView(APIView):
     def post(self, request):
         serializer = Neo4jUserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            token = create_jwt_token(user)
-            return Response({
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token = create_jwt_token(user)
+        return Response({
                 'user': serializer.data,
                 'token': token
             }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginAPIView(APIView):

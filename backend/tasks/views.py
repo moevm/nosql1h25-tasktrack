@@ -65,15 +65,11 @@ class TaskListCreateAPIView(APIView):
                 context={'request': request}
             )
 
-            if serializer.is_valid():
-                task = serializer.save()
-                return Response(
-                    TaskSerializer(task, context={'request': request}).data,
-                    status=status.HTTP_201_CREATED
-                )
+            serializer.is_valid(raise_exception=True)
+            task = serializer.save()
             return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
+                TaskSerializer(task, context={'request': request}).data,
+                status=status.HTTP_201_CREATED
             )
 
 
@@ -116,15 +112,11 @@ class TaskDetailAPIView(APIView):
                 context={'request': request}
             )
 
-            if serializer.is_valid():
-                updated_task = serializer.save()
-                return Response(
-                    TaskSerializer(updated_task, context={
-                                   'request': request}).data
-                )
+            serializer.is_valid(raise_exception=True)
+            updated_task = serializer.save()
             return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
+                TaskSerializer(updated_task, context={
+                                'request': request}).data
             )
 
     def delete(self, request, task_id):

@@ -24,16 +24,12 @@ class GroupsAPIView(APIView):
                 data=request.data,
                 context={'user': request.user}
             )
-            if serializer.is_valid():
-                group = serializer.save()
-                request.user.groups.connect(group)
-                return Response(
-                    GroupSerializer(group).data,
-                    status=status.HTTP_201_CREATED
-                )
+            serializer.is_valid(raise_exception=True)
+            group = serializer.save()
+            request.user.groups.connect(group)
             return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
+                GroupSerializer(group).data,
+                status=status.HTTP_201_CREATED
             )
 
 
