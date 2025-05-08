@@ -1,6 +1,5 @@
-// SearchBar.jsx
 import React from 'react';
-import './SearchBar.css'; // Стили для поискового поля
+import './SearchBar.css';
 
 export default function SearchBar({
   searchQuery,
@@ -8,12 +7,19 @@ export default function SearchBar({
   TitleFind,
   handleSearchSubmit,
 }) {
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 13) {
+      handleSearchSubmit();
+    }
+  };
+
   return (
     <div className="search-container">
       <input
         type="text"
         value={searchQuery}
         onChange={handleSearchChange}
+        onKeyDown={handleKeyDown}
         className="search-input"
         placeholder={TitleFind}
       />

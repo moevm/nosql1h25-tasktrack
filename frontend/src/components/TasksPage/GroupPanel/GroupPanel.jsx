@@ -6,7 +6,8 @@ import { SERVER } from '../../../Constants';
 
 export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGroup, selectedGroup }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [groupList, setGroupList] = useState([]);
+  const [allGroups, setAllGroups] = useState([]); // Храним все группы
+  const [groupList, setGroupList] = useState([]); // Для отображения (может быть отфильтрован)
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,7 +22,8 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
         .then((response) => response.json())
         .then((data) => {
           if (data.groups) {
-            setGroupList(data.groups); 
+            setAllGroups(data.groups); // Сохраняем оригинальные данные
+            setGroupList(data.groups);  // Изначально отображаем все
           }
         })
         .catch((error) => console.error('Ошибка при загрузке групп:', error));
@@ -29,8 +31,13 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
   }, []);
 
   const handleSearch = () => {
-    console.log('Поиск по запросу:', searchQuery);
-    const filteredGroups = groupList.filter((group) =>
+    if (!searchQuery.trim()) {
+      // Если запрос пустой — показываем все группы
+      setGroupList(allGroups);
+      return;
+    }
+
+    const filteredGroups = allGroups.filter((group) =>
       group.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setGroupList(filteredGroups);
@@ -45,7 +52,6 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
   };
 
   const handleGroupClick = (groupName) => {
-    console.log(`Группа ${groupName} была выбрана`);
     setSelectedGroup(groupName);
   };
 
@@ -58,12 +64,11 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
 
     const trimmedName = newGroupName.trim();
 
-    if (groupList.some((group) => group.name === trimmedName)) {
+    if (allGroups.some((group) => group.name === trimmedName)) {
       alert('Группа с таким названием уже существует.');
       return;
     }
 
-    // Добавляем группу
     const token = localStorage.getItem("token");
     if (token) {
       fetch(`${SERVER}/api/group/`, {
@@ -77,7 +82,9 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
         .then((response) => response.json())
         .then((data) => {
           if (data.name) {
-            setGroupList([...groupList, { name: data.name, tasks: [] }]);
+            const newGroup = { name: data.name, tasks: [] };
+            setAllGroups([...allGroups, newGroup]);
+            setGroupList([...groupList, newGroup]);
           }
         })
         .catch((error) => console.error('Ошибка при добавлении группы:', error));
@@ -90,13 +97,14 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
     if (newName && newName.trim() !== '') {
       const trimmedName = newName.trim();
 
-      if (groupList.some((group) => group.name === trimmedName)) {
+      if (allGroups.some((group) => group.name === trimmedName)) {
         alert('Группа с таким названием уже существует.');
         return;
       }
 
-      const updatedGroups = [...groupList];
+      const updatedGroups = [...allGroups];
       updatedGroups[index] = { ...updatedGroups[index], name: trimmedName };
+      setAllGroups(updatedGroups);
       setGroupList(updatedGroups);
     }
   };
@@ -114,7 +122,8 @@ export default function GroupPanel({ setIsGraphMode, isGraphMode, setSelectedGro
         body: JSON.stringify({ name: groupItem.name }), 
       })
         .then(() => {
-          const updatedGroups = groupList.filter((group, idx) => idx !== index);
+          const updatedGroups = allGroups.filter((group, idx) => idx !== index);
+          setAllGroups(updatedGroups);
           setGroupList(updatedGroups);
         })
         .catch((error) => console.error('Ошибка при удалении группы:', error));
