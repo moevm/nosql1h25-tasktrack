@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 
@@ -54,24 +54,28 @@ class TaskFilter:
 
         if 'deadline_before' in filters:
             deadline = cls._parse_datetime(filters['deadline_before'])
+            deadline = deadline - timedelta(hours=5)
             if deadline:
                 conditions.append("t.deadline <= $deadline_before")
                 params['deadline_before'] = deadline.timestamp()
 
         if 'deadline_after' in filters:
             deadline = cls._parse_datetime(filters['deadline_after'])
+            deadline = deadline - timedelta(hours=5)
             if deadline:
                 conditions.append("t.deadline >= $deadline_after")
                 params['deadline_after'] = deadline.timestamp()
 
         if 'created_before' in filters:
             created = cls._parse_datetime(filters['created_before'])
+            created = created - timedelta(hours=5)
             if created:
                 conditions.append("t.created_at <= $created_before")
                 params['created_before'] = created.timestamp()
 
         if 'created_after' in filters:
             created = cls._parse_datetime(filters['created_after'])
+            created = created - timedelta(hours=5)
             if created:
                 conditions.append("t.created_at >= $created_after")
                 params['created_after'] = created.timestamp()

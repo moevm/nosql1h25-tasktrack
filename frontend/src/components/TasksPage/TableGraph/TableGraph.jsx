@@ -74,6 +74,7 @@ export default function TableGraph({ selectedGroup }) {
       const result = date.toISOString().split('T')[0];
       date.setDate(date.getDate() + 1);
       const result2 = date.toISOString().split('T')[0];
+      console.log(createdAtFilter.exact)
       params.append('created_after', result);
       params.append('created_before', result2);
     }
