@@ -167,21 +167,27 @@ class TaskSerializer(serializers.Serializer):
     def get_related_to_tasks(self, obj):
         return [
             {
-                'task_id': task.task_id,
-                'title': task.title,
-                'status': task.status
+                'task_id': rel.end_node.task_id,
+                'title': rel.end_node.title,
+                'status': rel.end_node.status,
+                'relationship': {
+                    'title': rel.title
+                }
             }
-            for task in obj.related_to_tasks.all()
+            for rel in obj.related_to_tasks.all_relationships()
         ]
 
     def get_related_from_tasks(self, obj):
         return [
             {
-                'task_id': task.task_id,
-                'title': task.title,
-                'status': task.status
+                'task_id': rel.start_node.task_id,
+                'title': rel.start_node.title,
+                'status': rel.start_node.status,
+                'relationship': {
+                    'title': rel.title
+                }
             }
-            for task in obj.related_from_tasks.all()
+            for rel in obj.related_from_tasks.all_relationships()
         ]
 
     def get_notes(self, obj):
