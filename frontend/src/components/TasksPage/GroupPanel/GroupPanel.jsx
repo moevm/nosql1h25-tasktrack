@@ -94,43 +94,80 @@ export default function GroupPanel({
     }
   };
 
-  const handleRenameGroup = (e, index, groupItem) => {
+  const handleRenameGroup = (e, groupItem) => {
     e.stopPropagation();
     const newName = prompt('Введите новое название группы:', groupItem.name);
-    if (newName && newName.trim() !== '') {
-      const trimmedName = newName.trim();
-
-      if (allGroups.some((group) => group.name === trimmedName)) {
-        alert('Группа с таким названием уже существует.');
-        return;
-      }
-
-      const updatedGroups = [...allGroups];
-      updatedGroups[index] = { ...updatedGroups[index], name: trimmedName };
-      setAllGroups(updatedGroups || []);
-      setGroupList(updatedGroups || []);
+    if (!newName || newName.trim() === '') {
+      alert('Название группы не может быть пустым.');
+      return;
     }
-  };
 
-  const handleDeleteGroup = (e, index, groupItem) => {
-    e.stopPropagation();
+    const trimmedName = newName.trim();
+
+    if (allGroups.some((group) => group.name === trimmedName)) {
+      alert('Группа с таким названием уже существует.');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (token) {
-      fetch(`${SERVER}/api/group/`, {
-        method: 'DELETE',
+      fetch(`${SERVER}/api/group/${encodeURIComponent(groupItem.name)}/`, {
+        method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: groupItem.name }),
+        body: JSON.stringify({ name: trimmedName }),
       })
-        .then(() => {
-          const updatedGroups = allGroups.filter((group, idx) => idx !== index);
-          setAllGroups(updatedGroups || []);
-          setGroupList(updatedGroups || []);
+        .then((response) => {
+          if (!response.ok) throw new Error('Ошибка при переименовании');
+          return response.json();
         })
-        .catch((error) => console.error('Ошибка при удалении группы:', error));
+        .then(() => {
+          const updatedGroups = allGroups.map((group) =>
+            group.name === groupItem.name
+              ? { ...group, name: trimmedName }
+              : group,
+          );
+          setAllGroups(updatedGroups);
+          setGroupList(updatedGroups);
+          if (selectedGroup === groupItem.name) setSelectedGroup(trimmedName);
+        })
+        .catch(console.error);
     }
+  };
+
+  const handleDeleteGroup = (e, groupItem) => {
+    e.stopPropagation();
+
+    if (!window.confirm(`Удалить группу "${groupItem.name}"?`)) return;
+    console.log(groupList);
+    const token = localStorage.getItem('token');
+    fetch(`${SERVER}/api/group/${encodeURIComponent(groupItem.name)}/`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Ошибка при удалении группы');
+        return res.json();
+      })
+      .then(() => {
+        setAllGroups((prev) => prev.filter((g) => g.name !== groupItem.name));
+        setGroupList((prev) => prev.filter((g) => g.name !== groupItem.name));
+
+        if (selectedGroup === groupItem.name) {
+          setSelectedGroup(null);
+        }
+      })
+      .catch(console.error);
+    setGroupList((prev) => prev.filter((g) => g.name !== groupItem.name));
+    if (selectedGroup === groupItem.name) {
+      setSelectedGroup(null);
+    }
+    console.log(groupList);
   };
 
   return (
@@ -156,9 +193,9 @@ export default function GroupPanel({
       <div className="group-list">
         {groupList.length > 0 ? (
           <ul>
-            {groupList.map((groupItem, index) => (
+            {groupList.map((groupItem) => (
               <li
-                key={index}
+                key={groupItem.name}
                 onClick={() => handleGroupClick(groupItem.name)}
                 className={`group-element ${groupItem.name === selectedGroup ? 'selected' : ''}`}
               >
@@ -166,12 +203,12 @@ export default function GroupPanel({
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <i
                     className="fa-regular fa-pen-to-square edit-icon icon-group"
-                    onClick={(e) => handleRenameGroup(e, index, groupItem)}
+                    onClick={(e) => handleRenameGroup(e, groupItem)}
                   ></i>
 
                   <i
                     className="fa-regular fa-trash-can icon-group"
-                    onClick={(e) => handleDeleteGroup(e, index, groupItem)}
+                    onClick={(e) => handleDeleteGroup(e, groupItem)}
                   ></i>
                 </div>
               </li>

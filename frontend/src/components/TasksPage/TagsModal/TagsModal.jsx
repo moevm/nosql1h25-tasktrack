@@ -13,7 +13,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
 
   useEffect(() => {
     if (isOpen) {
-        setSelectedTask(null); // Сбрасываем выбранную задачу при открытии модального окна
+      setSelectedTask(null); // Сбрасываем выбранную задачу при открытии модального окна
       fetchTags();
     }
   }, [isOpen]);
@@ -139,7 +139,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
             maxLength={50}
           />
           <button
-            className="add-tag-button"
+            className="add-tag-button-settings"
             onClick={handleCreateTag}
             disabled={!newTagName.trim()}
             title="Добавить тег"
