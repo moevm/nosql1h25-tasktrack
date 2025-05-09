@@ -1,4 +1,4 @@
-.connections-modal {
+.cm-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,18 +10,18 @@
   z-index: 1000;
 }
 
-.connections-modal .modal-overlay {
+.cm-overlay {
   position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.connections-modal .modal-content {
+.cm-content {
   position: relative;
   background: #fff;
   padding: 20px;
-  max-width: 600px;
+  max-width: 1100px;
   width: 90%;
   max-height: 90%;
   overflow-y: auto;
@@ -29,41 +29,89 @@
   z-index: 1001;
 }
 
-.connections-modal .edges-list {
-  max-height: 200px;
+.cm-edges-list {
+  max-height: 250px;
   overflow-y: auto;
-  padding-left: 20px;
-  margin-bottom: 20px;
+  padding-left: 0;
+  list-style: none;
 }
 
-.connections-modal .edge-item {
-  margin-bottom: 10px;
-  word-break: break-word; /* перенос длинных слов */
+.cm-edge-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.connections-modal .edge-name {
+.cm-edge-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cm-edge-name {
   font-weight: bold;
+  flex-grow: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.cm-edge-tasks {
+
+  color: gray;
+  font-size: 0.9em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin-top: 5px;
+}
+
+.cm-delete-button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.cm-delete-button:hover {
+  transform: scale(1.2);
+}
+
+.cm-form-group {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.cm-form-group label {
+  display: block;
   margin-bottom: 5px;
 }
 
-.connections-modal .edge-tasks {
-  color: gray;
-  font-size: 0.9em;
-  word-break: break-word;
+.cm-form-control {
+
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.connections-modal .form-group {
-  margin-bottom: 15px;
-}
-
-.connections-modal .select-wrapper {
+.cm-select-wrapper {
   max-height: 150px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-.connections-modal .select-wrapper select {
+.cm-select-wrapper select {
   width: 100%;
   padding: 8px;
   font-size: 1rem;
@@ -71,24 +119,23 @@
   outline: none;
 }
 
-/* Красивый скролл только внутри select */
-.connections-modal .select-wrapper select::-webkit-scrollbar {
+.cm-select-wrapper select::-webkit-scrollbar {
   width: 6px;
 }
 
-.connections-modal .select-wrapper select::-webkit-scrollbar-thumb {
+.cm-select-wrapper select::-webkit-scrollbar-thumb {
   background-color: #aaa;
   border-radius: 3px;
 }
 
-.connections-modal .buttons-connection-modal {
+.cm-buttons-modal {
   display: flex;
+  justify-content: space-between;
   gap: 10px;
   margin-top: 20px;
 }
 
-/* Кнопки только внутри ConnectionsModal */
-.connections-modal button {
+.cm-buttons-modal button {
   padding: 10px 15px;
   background: #4caf50;
   color: white;
@@ -98,23 +145,51 @@
   transition: background 0.3s;
 }
 
-.connections-modal .edge-header {
+.cm-buttons-modal button:hover {
+  background: #45a049;
+}
+
+.cm-close-button {
+  background-color: rgb(163, 2, 2) !important;
+}
+
+.cm-close-button:hover {
+  background-color: rgb(130, 10, 10) !important;
+}
+
+.cm-two-column-layout {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
 }
 
-/* Кнопка удаления ❌ */
-.connections-modal .delete-button {
-  background: none;
-  border: none;
-  color: red;
-  font-size: 1.2em;
-  cursor: pointer;
-  padding: 0 5px;
-  transition: transform 0.2s;
+.cm-column {
+  flex: 1;
+  min-width: 250px;
 }
 
-.connections-modal .mda-close-button {
-  background-color: rgb(163, 2, 2);
+.cm-search-boxes-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
 }
+
+.cm-mb-3 {
+  margin-bottom: 1rem;
+}
+
+
+/* Перенос длинного текста */
+.cm-word-break {
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+
+.cm-form-control:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  outline: none;
+}
+
+

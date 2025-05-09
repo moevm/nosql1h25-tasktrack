@@ -4,7 +4,8 @@ import './ConnectionsModal.css';
 const ConnectionsModal = ({ task, onClose, allTasks }) => {
   const [connectionName, setConnectionName] = useState('');
   const [selectedTaskId, setSelectedTaskId] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); // Для поиска по связям
+  const [searchOutgoing, setSearchOutgoing] = useState(''); // поиск исходящих
+  const [searchIncoming, setSearchIncoming] = useState(''); // поиск входящих
 
   const SERVER = 'http://localhost:8000';
   const token = localStorage.getItem('token');
@@ -14,10 +15,10 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
 
   // Фильтрация связей по поисковому запросу
   const filteredOutgoing = relatedToTasks.filter((edge) =>
-    edge.connectedTask.toLowerCase().includes(searchTerm.toLowerCase()),
+    edge.connectedTask.toLowerCase().includes(searchOutgoing.toLowerCase())
   );
   const filteredIncoming = relatedFromTasks.filter((edge) =>
-    edge.connectedTask.toLowerCase().includes(searchTerm.toLowerCase()),
+    edge.connectedTask.toLowerCase().includes(searchIncoming.toLowerCase())
   );
 
   // Загрузка связей задачи при монтировании
@@ -31,7 +32,6 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
             'Content-Type': 'application/json',
           },
         });
-
         if (!response.ok) throw new Error('Ошибка загрузки связей');
         const data = await response.json();
 
@@ -103,8 +103,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
   const handleDeleteOutgoing = async (index) => {
     const edgeToDelete = filteredOutgoing[index];
 
-    if (!window.confirm(`Удалить связь с "${edgeToDelete.connectedTask}"?`))
-      return;
+    if (!window.confirm(`Удалить связь с "${edgeToDelete.connectedTask}"?`)) return;
 
     try {
       const response = await fetch(`${SERVER}/api/task/relationships/`, {
@@ -122,7 +121,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) throw new Error('Не удалось удалить исходящую связь');
 
       const updatedEdges = relatedToTasks.filter(
-        (e) => e.taskIdTo !== edgeToDelete.taskIdTo,
+        (e) => e.taskIdTo !== edgeToDelete.taskIdTo
       );
       setRelatedToTasks(updatedEdges);
     } catch (error) {
@@ -131,14 +130,12 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
     }
   };
 
-  // Удалить входящую связь (если разрешено бэкендом)
+  // Удалить входящую связь
   const handleDeleteIncoming = async (index) => {
     const edgeToDelete = filteredIncoming[index];
 
     if (
-      !window.confirm(
-        `Удалить входящую связь от "${edgeToDelete.connectedTask}"?`,
-      )
+      !window.confirm(`Удалить входящую связь от "${edgeToDelete.connectedTask}"?`)
     )
       return;
 
@@ -158,7 +155,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) throw new Error('Не удалось удалить входящую связь');
 
       const updatedEdges = relatedFromTasks.filter(
-        (e) => e.taskIdFrom !== edgeToDelete.taskIdFrom,
+        (e) => e.taskIdFrom !== edgeToDelete.taskIdFrom
       );
       setRelatedFromTasks(updatedEdges);
     } catch (error) {
@@ -168,96 +165,117 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
   };
 
   return (
-    <div className="connections-modal">
-      <div className="modal-overlay" onClick={onClose}></div>
-      <div className="modal-content">
+    <div className="cm-modal">
+      <div className="cm-overlay" onClick={onClose}></div>
+      <div className="cm-content">
         <h3>Связи задачи: {task.title}</h3>
 
-        {/* Поиск по связям */}
-        <div className="form-group mb-3">
-          <label>Поиск по связям:</label>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Введите название задачи..."
-            className="form-control"
-          />
+        {/* Блок поиска */}
+        <div className="cm-search-boxes-row">
+  <div className="cm-form-group cm-mb-3">
+    <label>Поиск исходящих:</label>
+    <input
+      type="text"
+      value={searchOutgoing}
+      onChange={(e) => setSearchOutgoing(e.target.value)}
+      placeholder="Введите название задачи..."
+      className="cm-form-control cm-word-break"
+    />
+  </div>
+  <div className="cm-form-group cm-mb-3">
+    <label>Поиск входящих:</label>
+    <input
+      type="text"
+      value={searchIncoming}
+      onChange={(e) => setSearchIncoming(e.target.value)}
+      placeholder="Введите название задачи..."
+      className="cm-form-control cm-word-break"
+    />
+  </div>
+</div>
+
+        {/* Колонки: исходящие + входящие */}
+        <div className="cm-two-column-layout">
+          {/* Левый столбец: исходящие */}
+          <div className="cm-column cm-outgoing">
+            <h4>Исходящие связи</h4>
+            <ul className="cm-edges-list">
+              {filteredOutgoing.length > 0 ? (
+                filteredOutgoing.map((edge, index) => (
+                  <li key={`out-${index}`} className="cm-edge-item">
+                    <div className="cm-edge-header">
+                      <div className="cm-edge-name" title={edge.name}>
+                        {edge.name}
+                      </div>
+                      <button
+                        className="cm-delete-button"
+                        onClick={() => handleDeleteOutgoing(index)}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                    <div className="cm-edge-tasks">{edge.connectedTask}</div>
+                  </li>
+                ))
+              ) : (
+                <li>Нет исходящих связей</li>
+              )}
+            </ul>
+          </div>
+
+          {/* Правый столбец: входящие */}
+          <div className="cm-column cm-incoming">
+            <h4>Входящие связи</h4>
+            <ul className="cm-edges-list">
+              {filteredIncoming.length > 0 ? (
+                filteredIncoming.map((edge, index) => (
+                  <li key={`in-${index}`} className="cm-edge-item">
+                    <div className="cm-edge-header">
+                      <div className="cm-edge-name" title={edge.name}>
+                        {edge.name}
+                      </div>
+                      <button
+                        className="cm-delete-button"
+                        onClick={() => handleDeleteIncoming(index)}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                    <div className="cm-edge-tasks">
+                      Задача "{edge.connectedTask}" ссылается на эту
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li>Нет входящих связей</li>
+              )}
+            </ul>
+          </div>
         </div>
-
-        {/* Исходящие связи */}
-        <h4>Исходящие связи</h4>
-        <ul className="edges-list">
-          {filteredOutgoing.length > 0 ? (
-            filteredOutgoing.map((edge, index) => (
-              <li key={`out-${index}`} className="edge-item">
-                <div className="edge-header">
-                  <div className="edge-name" title={edge.name}>
-                    {edge.name}
-                  </div>
-                  <button
-                    className="delete-button"
-                    onClick={() => handleDeleteOutgoing(index)}
-                  >
-                    ❌
-                  </button>
-                </div>
-                <div className="edge-tasks">{edge.connectedTask}</div>
-              </li>
-            ))
-          ) : (
-            <li>Нет исходящих связей</li>
-          )}
-        </ul>
-
-        {/* Входящие связи */}
-        <h4>Входящие связи</h4>
-        <ul className="edges-list">
-          {filteredIncoming.length > 0 ? (
-            filteredIncoming.map((edge, index) => (
-              <li key={`in-${index}`} className="edge-item">
-                <div className="edge-header">
-                  <div className="edge-name" title={edge.name}>
-                    {edge.name}
-                  </div>
-                  <button
-                    className="delete-button"
-                    onClick={() => handleDeleteIncoming(index)}
-                  >
-                    ❌
-                  </button>
-                </div>
-                <div className="edge-tasks">
-                  Задача "{edge.connectedTask}" ссылается на эту
-                </div>
-              </li>
-            ))
-          ) : (
-            <li>Нет входящих связей</li>
-          )}
-        </ul>
 
         {/* Форма для добавления исходящей связи */}
         <h4>Добавить новую исходящую связь</h4>
-        <div className="form-group">
-          <label>Название связи:</label>
-          <input
-            type="text"
-            value={connectionName}
-            onChange={(e) => setConnectionName(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
+        <div className="cm-form-group">
+  <label>Название связи:</label>
+  <input
+    type="text"
+    value={connectionName}
+    onChange={(e) => setConnectionName(e.target.value)}
+    placeholder="Введите название связи..."
+    maxLength={50}
+    className="cm-form-control cm-word-break"
+  />
+</div>
+        <div className="cm-form-group">
           <label>Выберите задачу:</label>
-          <div className="select-wrapper">
+          <div className="cm-select-wrapper">
             <select
               value={selectedTaskId}
               onChange={(e) => setSelectedTaskId(e.target.value)}
             >
               <option value="">Выберите задачу</option>
               {allTasks
-                .filter((t) => t.taskId !== task.taskId) // Не выбирать саму себя
+                .filter((t) => t.taskId !== task.taskId)
                 .map((t) => (
                   <option key={t.taskId} value={t.taskId}>
                     {t.title}
@@ -267,9 +285,9 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
           </div>
         </div>
 
-        <div className="buttons-connection-modal">
+        <div className="cm-buttons-modal">
           <button onClick={handleAddConnection}>Добавить связь</button>
-          <button className="mda-close-button" onClick={onClose}>
+          <button className="cm-close-button" onClick={onClose}>
             Закрыть
           </button>
         </div>
