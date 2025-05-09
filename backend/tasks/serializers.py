@@ -31,17 +31,11 @@ class TaskSerializer(serializers.Serializer):
         required=False,
         help_text="Список имён тегов для связи с задачей"
     )
-    notes = serializers.SerializerMethodField()
 
-    related_task_ids = serializers.ListField(
-        child=serializers.CharField(),
-        write_only=True,
-        required=False,
-        help_text="Список task_id связанных задач"
-    )
-
+    notes = serializers.SerializerMethodField(read_only=True)
     tags = serializers.SerializerMethodField(read_only=True)
-    related_tasks = serializers.SerializerMethodField(read_only=True)
+    related_to_tasks = serializers.SerializerMethodField(read_only=True)
+    related_from_tasks = serializers.SerializerMethodField(read_only=True)
 
     group_name = serializers.CharField(
         write_only=True,
@@ -82,11 +76,11 @@ class TaskSerializer(serializers.Serializer):
         group.tasks.connect(task)
         task.group.connect(group)
 
-        self._process_relations(task, validated_data)
+        self._relations_tags(task, validated_data)
 
         return task
 
-    def _process_relations(self, task, validated_data):
+    def _relations_tags(self, task, validated_data):
         from tags.serializers import TagSerializer
 
         if 'tag_names' in validated_data:
@@ -94,20 +88,14 @@ class TaskSerializer(serializers.Serializer):
                 tag = Tag.nodes.get_or_none(name=name)
                 if tag is None:
                     serializer = TagSerializer(data={
-                                'name': name
-                            }, context={
-                                'owner': self.context['request'].user
-                            })
+                        'name': name
+                    }, context={
+                        'owner': self.context['request'].user
+                    })
                     serializer.is_valid(raise_exception=True)
                     tag = serializer.save()
                 task.tags.connect(tag)
                 tag.tasks.connect(task)
-
-        if 'related_task_ids' in validated_data:
-            for task_id in validated_data['related_task_ids']:
-                related_task = Task.nodes.get_or_none(task_id=task_id)
-                if related_task:
-                    task.related_tasks.connect(related_task)
 
     def update(self, instance, validated_data):
         if 'group_name' in validated_data:
@@ -124,10 +112,6 @@ class TaskSerializer(serializers.Serializer):
 
         if 'tag_names' in validated_data:
             self._update_tags(instance, validated_data['tag_names'])
-
-        if 'related_task_ids' in validated_data:
-            self._update_related_tasks(
-                instance, validated_data['related_task_ids'])
 
         if 'notes' in validated_data:
             self._update_notes(instance, validated_data['notes'])
@@ -150,32 +134,14 @@ class TaskSerializer(serializers.Serializer):
             tag = Tag.nodes.get_or_none(name=tag_name)
             if tag is None:
                 serializer = TagSerializer(data={
-                            'name': tag_name
-                        }, context={
-                            'owner': self.context['request'].user
-                        })
+                    'name': tag_name
+                }, context={
+                    'owner': self.context['request'].user
+                })
                 serializer.is_valid(raise_exception=True)
                 tag = serializer.save()
             task.tags.connect(tag)
             tag.tasks.connect(task)
-
-    def _update_related_tasks(self, task, related_task_ids):
-        current_related = {t.task_id for t in task.related_tasks.all()}
-        new_related = set(related_task_ids)
-
-        for task_id in current_related - new_related:
-            try:
-                related_task = Task.nodes.get(task_id=task_id)
-                task.related_tasks.disconnect(related_task)
-            except Task.DoesNotExist:
-                continue
-
-        for task_id in new_related - current_related:
-            try:
-                related_task = Task.nodes.get(task_id=task_id)
-                task.related_tasks.connect(related_task)
-            except Task.DoesNotExist:
-                continue
 
     def _update_notes(self, task, notes_data):
         current_notes = {note.note_id: note for note in task.notes.all()}
@@ -198,14 +164,24 @@ class TaskSerializer(serializers.Serializer):
     def get_tags(self, obj):
         return [str(tag) for tag in obj.tags.all()]
 
-    def get_related_tasks(self, obj):
+    def get_related_to_tasks(self, obj):
         return [
             {
                 'task_id': task.task_id,
                 'title': task.title,
                 'status': task.status
             }
-            for task in obj.related_tasks.all()
+            for task in obj.related_to_tasks.all()
+        ]
+
+    def get_related_from_tasks(self, obj):
+        return [
+            {
+                'task_id': task.task_id,
+                'title': task.title,
+                'status': task.status
+            }
+            for task in obj.related_from_tasks.all()
         ]
 
     def get_notes(self, obj):

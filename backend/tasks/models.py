@@ -39,7 +39,8 @@ class Task(neomodel.StructuredNode):
     )
 
     tags = neomodel.RelationshipTo('tags.models.Tag', 'HAS_TAG')
-    related_tasks = neomodel.RelationshipTo('tasks.models.Task', 'RELATED_TO')
+    related_to_tasks = neomodel.RelationshipTo('tasks.models.Task', 'RELATED_TO')
+    related_from_tasks = neomodel.RelationshipFrom('tasks.models.Task', 'RELATED_TO')
     group = neomodel.RelationshipFrom('groups.models.Group', 'CONTAINS_TASK')
     notes = neomodel.RelationshipTo('notes.models.Note', 'HAS_NOTE')
 

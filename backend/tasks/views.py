@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import (ValidationError, NotFound,
+                                       PermissionDenied)
 
 from neomodel import db
 
@@ -116,7 +118,7 @@ class TaskDetailAPIView(APIView):
             updated_task = serializer.save()
             return Response(
                 TaskSerializer(updated_task, context={
-                                'request': request}).data
+                    'request': request}).data
             )
 
     def delete(self, request, task_id):
@@ -130,3 +132,129 @@ class TaskDetailAPIView(APIView):
 
             task.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@available_for_authorized
+class TaskRelationsAPIView(APIView):
+
+    def _get_task_ids(self, request):
+        task_id_from = request.data.get('task_id_from')
+        task_id_to = request.data.get('task_id_to')
+        if not task_id_from or not task_id_to:
+            raise ValidationError(
+                {'error': 'Both task_id_from and task_id_to are required'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        return task_id_from, task_id_to
+
+    def _get_task(self, user, task_id):
+        task = Task.nodes.get_or_none(task_id=task_id)
+        if task is None:
+            raise NotFound(
+                detail=f'Task {task_id} not found',
+                code=status.HTTP_404_NOT_FOUND
+            )
+
+        group = task.group.single()
+        if not group or not user.groups.is_connected(group):
+            raise PermissionDenied(
+                detail=f'Access denied for task {task_id}',
+                code=status.HTTP_403_FORBIDDEN
+            )
+        return task
+
+    def _get_tasks(self, user, task_id_from, task_id_to):
+        task_from = self._get_task(user, task_id_from)
+        task_to = self._get_task(user, task_id_to)
+
+        if task_from.group.single() != task_to.group.single():
+            raise ValidationError(
+                {'error': 'Tasks must be in the same group'},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+        return task_from, task_to
+
+    def _check_relation_exists(self, task_id_from, task_id_to):
+        query = """
+        MATCH (start:Task {task_id: $task_id_from})
+        MATCH (end:Task {task_id: $task_id_to})
+        RETURN EXISTS((start)-[:RELATED_TO*]->(end)) AS related
+        """
+        results, _ = db.cypher_query(query, {
+            'task_id_from': task_id_from,
+            'task_id_to': task_id_to
+        })
+        return results[0][0]
+
+    def post(self, request):
+        with db.transaction:
+            task_id_from, task_id_to = self._get_task_ids(request)
+            task_from, task_to = self._get_tasks(
+                request.user, task_id_from, task_id_to)
+
+            if task_id_from == task_id_to:
+                return Response(
+                    {'error': 'Task cannot be related to itself'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if self._check_relation_exists(task_id_to, task_id_from):
+                return Response(
+                    {'error': ('Creating a link will result '
+                               'in a cyclic dependency')},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if task_from.related_to_tasks.is_connected(task_to):
+                return Response(
+                    {'error': 'Task is already related'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            task_from.related_to_tasks.connect(task_to)
+            task_to.related_from_tasks.connect(task_from)
+
+            serializer_from = TaskSerializer(
+                task_from, context={'request': request}
+            )
+            serializer_to = TaskSerializer(
+                task_to, context={'request': request}
+            )
+
+            return Response({
+                    'task_from': serializer_from.data,
+                    'task_to': serializer_to.data
+                }, status=status.HTTP_201_CREATED)
+
+    def delete(self, request):
+        with db.transaction:
+            task_id_from, task_id_to = self._get_task_ids(request)
+            task_from, task_to = self._get_tasks(
+                request.user, task_id_from, task_id_to)
+
+            if task_id_from == task_id_to:
+                return Response(
+                    {'error': 'Task cannot be delete relationships to itself'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not task_from.related_to_tasks.is_connected(task_to):
+                return Response(
+                    {'error': 'Task is not related'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            task_from.related_to_tasks.disconnect(task_to)
+            task_to.related_from_tasks.disconnect(task_from)
+
+            serializer_from = TaskSerializer(
+                task_from, context={'request': request}
+            )
+            serializer_to = TaskSerializer(
+                task_to, context={'request': request}
+            )
+
+            return Response({
+                    'task_from': serializer_from.data,
+                    'task_to': serializer_to.data
+                }, status=status.HTTP_201_CREATED)
