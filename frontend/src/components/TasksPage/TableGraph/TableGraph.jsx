@@ -446,8 +446,6 @@ export default function TableGraph({ selectedGroup }) {
           <ConnectionsModal
             task={selectedTaskForConnections}
             onClose={() => setIsModalOpen(false)}
-            onAddConnection={handleAddConnection}
-            onDeleteConnection={handleDeleteConnection}
             allTasks={tasks}
           />
         )
