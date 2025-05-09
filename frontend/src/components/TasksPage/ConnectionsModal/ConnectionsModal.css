@@ -63,7 +63,6 @@
 }
 
 .cm-edge-tasks {
-
   color: gray;
   font-size: 0.9em;
   word-wrap: break-word;
@@ -95,13 +94,14 @@
 }
 
 .cm-form-control {
-
   width: 100%;
   padding: 8px 12px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .cm-select-wrapper {
@@ -149,11 +149,11 @@
   background: #45a049;
 }
 
-.cm-close-button {
+.cm-close-button-settings {
   background-color: rgb(163, 2, 2) !important;
 }
 
-.cm-close-button:hover {
+.cm-close-button-settings:hover {
   background-color: rgb(130, 10, 10) !important;
 }
 
@@ -178,18 +178,14 @@
   margin-bottom: 1rem;
 }
 
-
 /* Перенос длинного текста */
 .cm-word-break {
   word-wrap: break-word;
   white-space: normal;
 }
 
-
 .cm-form-control:focus {
   border-color: #4caf50;
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
   outline: none;
 }
-
-
