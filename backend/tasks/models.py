@@ -39,7 +39,8 @@ class Task(neomodel.StructuredNode):
     )
 
     tags = neomodel.RelationshipTo('tags.models.Tag', 'HAS_TAG')
-    related_tasks = neomodel.RelationshipTo('tasks.models.Task', 'RELATED_TO')
+    related_to_tasks = neomodel.RelationshipTo('tasks.models.Task', 'RELATED_TO')
+    related_from_tasks = neomodel.RelationshipFrom('tasks.models.Task', 'RELATED_TO')
     group = neomodel.RelationshipFrom('groups.models.Group', 'CONTAINS_TASK')
     notes = neomodel.RelationshipTo('notes.models.Note', 'HAS_NOTE')
 
@@ -53,9 +54,16 @@ class Task(neomodel.StructuredNode):
         self.clean()
         return super().save(*args, **kwargs)
 
-    def pre_delete(self):
-        for note in self.notes.all():
-            note.delete()
+    def delete(self):
+        query = """
+        MATCH (task:Task {task_id: $task_id})
+        OPTIONAL MATCH (task)-[:HAS_TAG]->(tag:Tag)
+        OPTIONAL MATCH (task)-[:HAS_NOTE]->(note:Note)
+        OPTIONAL MATCH (task)-[rel:RELATED_TO]-(other:Task)
+        DELETE rel
+        DETACH DELETE note, task
+        """
+        neomodel.db.cypher_query(query, {'task_id': self.task_id})
 
     def __str__(self):
         return f"{self.task_id}: {self.title} ({self.status})"
