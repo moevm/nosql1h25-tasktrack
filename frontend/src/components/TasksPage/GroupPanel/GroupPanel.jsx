@@ -15,7 +15,8 @@ export default function GroupPanel({
   const [groupList, setGroupList] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    setTimeout(() => {
+const token = localStorage.getItem('token');
     if (token) {
       fetch(`${SERVER}/api/group/`, {
         method: 'GET',
@@ -33,6 +34,8 @@ export default function GroupPanel({
         })
         .catch((error) => console.error('Ошибка при загрузке групп:', error));
     }
+    }, 0);
+    
   }, []);
 
   // Фильтруем группы при изменении searchQuery
