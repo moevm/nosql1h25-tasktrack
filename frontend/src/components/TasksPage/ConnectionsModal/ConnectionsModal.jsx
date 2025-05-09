@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './ConnectionsModal.css';
-import { SERVER } from '../../../Constants'; // Используем константу SERVER
+import { SERVER } from '../../../Constants';
 
 const ConnectionsModal = ({ task, onClose, allTasks }) => {
   const [connectionName, setConnectionName] = useState('');
   const [selectedTaskId, setSelectedTaskId] = useState('');
-  const [searchOutgoing, setSearchOutgoing] = useState(''); // поиск исходящих
-  const [searchIncoming, setSearchIncoming] = useState(''); // поиск входящих
+  const [searchOutgoing, setSearchOutgoing] = useState(''); // текст поиска исходящих
+  const [searchIncoming, setSearchIncoming] = useState(''); // текст поиска входящих
+  const [searchModeOutgoing, setSearchModeOutgoing] = useState('task'); // task / name
+  const [searchModeIncoming, setSearchModeIncoming] = useState('task');
 
   const token = localStorage.getItem('token');
-
   const [relatedToTasks, setRelatedToTasks] = useState([]);
   const [relatedFromTasks, setRelatedFromTasks] = useState([]);
 
-  // Фильтрация связей по поисковому запросу
-  const filteredOutgoing = relatedToTasks.filter((edge) =>
-    edge.connectedTask.toLowerCase().includes(searchOutgoing.toLowerCase()),
-  );
-  const filteredIncoming = relatedFromTasks.filter((edge) =>
-    edge.connectedTask.toLowerCase().includes(searchIncoming.toLowerCase()),
-  );
-
-  // Загрузка связей задачи при монтировании
+  // Загрузка связей
   useEffect(() => {
     const fetchRelatedTasks = async () => {
       try {
@@ -32,19 +25,18 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
             'Content-Type': 'application/json',
           },
         });
-        if (!response.ok) {
-          throw new Error('Ошибка загрузки связей');
-        }
+
+        if (!response.ok) throw new Error('Ошибка загрузки связей');
         const data = await response.json();
 
-        // Исходящие связи (наши задачи)
+        // Исходящие связи
         const relatedTo = data.related_to_tasks.map((rel) => ({
           name: rel.relationship?.title || rel.title,
           connectedTask: rel.title,
           taskIdTo: rel.task_id,
         }));
 
-        // Входящие связи (чужие задачи, которые ссылаются на нас)
+        // Входящие связи
         const relatedFrom = data.related_from_tasks.map((rel) => ({
           name: rel.relationship?.title || rel.title,
           connectedTask: rel.title,
@@ -63,7 +55,26 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
     }
   }, [task, SERVER, token]);
 
-  // Добавить исходящую связь
+  // Фильтрация связей по режиму поиска
+  const filteredOutgoing = relatedToTasks.filter((edge) => {
+    const searchLower = searchOutgoing.toLowerCase();
+    if (searchModeOutgoing === 'task') {
+      return edge.connectedTask.toLowerCase().includes(searchLower);
+    } else {
+      return edge.name.toLowerCase().includes(searchLower);
+    }
+  });
+
+  const filteredIncoming = relatedFromTasks.filter((edge) => {
+    const searchLower = searchIncoming.toLowerCase();
+    if (searchModeIncoming === 'task') {
+      return edge.connectedTask.toLowerCase().includes(searchLower);
+    } else {
+      return edge.name.toLowerCase().includes(searchLower);
+    }
+  });
+
+  // Добавить новую связь
   const handleAddConnection = async () => {
     if (!connectionName || !selectedTaskId) return;
 
@@ -84,25 +95,23 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) {
         let errorData;
         const contentType = response.headers.get('content-type');
-
         if (contentType && contentType.includes('application/json')) {
           errorData = await response.json();
         } else {
           errorData = await response.text();
         }
 
-        console.error('Ошибка от сервера:', errorData);
         const errorMessage = errorData.error;
         if (
-          errorMessage == 'Creating a link will result in a cyclic dependency'
+          errorMessage === 'Creating a link will result in a cyclic dependency'
         ) {
           alert('Создание связи приведет к циклической зависимости');
-        } else if (errorMessage == 'Task is already related') {
+        } else if (errorMessage === 'Task is already related') {
           alert('Связь уже существует');
         } else {
           alert('Не удалось создать связь');
         }
-        console.error(errorMessage);
+
         return;
       }
 
@@ -125,12 +134,10 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
     }
   };
 
-  // Удалить исходящую связь
+  // Удаление исходящей связи
   const handleDeleteOutgoing = async (index) => {
     const edgeToDelete = filteredOutgoing[index];
-
-    if (!window.confirm(`Удалить связь с "${edgeToDelete.connectedTask}"?`))
-      return;
+    if (!window.confirm(`Удалить связь с "${edgeToDelete.connectedTask}"?`)) return;
 
     try {
       const response = await fetch(`${SERVER}/api/task/relationships/`, {
@@ -148,7 +155,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) throw new Error('Не удалось удалить исходящую связь');
 
       const updatedEdges = relatedToTasks.filter(
-        (e) => e.taskIdTo !== edgeToDelete.taskIdTo,
+        (e) => e.taskIdTo !== edgeToDelete.taskIdTo
       );
       setRelatedToTasks(updatedEdges);
     } catch (error) {
@@ -157,14 +164,11 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
     }
   };
 
-  // Удалить входящую связь
+  // Удаление входящей связи
   const handleDeleteIncoming = async (index) => {
     const edgeToDelete = filteredIncoming[index];
-
     if (
-      !window.confirm(
-        `Удалить входящую связь от "${edgeToDelete.connectedTask}"?`,
-      )
+      !window.confirm(`Удалить входящую связь от "${edgeToDelete.connectedTask}"?`)
     )
       return;
 
@@ -184,7 +188,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) throw new Error('Не удалось удалить входящую связь');
 
       const updatedEdges = relatedFromTasks.filter(
-        (e) => e.taskIdFrom !== edgeToDelete.taskIdFrom,
+        (e) => e.taskIdFrom !== edgeToDelete.taskIdFrom
       );
       setRelatedFromTasks(updatedEdges);
     } catch (error) {
@@ -201,25 +205,48 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
 
         {/* Блок поиска */}
         <div className="cm-search-boxes-row">
+          {/* Поиск исходящих */}
           <div className="cm-form-group cm-mb-3">
             <label>Поиск исходящих:</label>
             <input
               type="text"
               value={searchOutgoing}
               onChange={(e) => setSearchOutgoing(e.target.value)}
-              placeholder="Введите название задачи..."
+              placeholder={
+                searchModeOutgoing === 'task' ? 'По названию задачи' : 'По названию связи'
+              }
               className="cm-form-control cm-word-break"
             />
+            <select
+              value={searchModeOutgoing}
+              onChange={(e) => setSearchModeOutgoing(e.target.value)}
+              className="cm-form-control mt-1"
+            >
+              <option value="task">По названию задачи</option>
+              <option value="name">По названию связи</option>
+            </select>
           </div>
+
+          {/* Поиск входящих */}
           <div className="cm-form-group cm-mb-3">
             <label>Поиск входящих:</label>
             <input
               type="text"
               value={searchIncoming}
               onChange={(e) => setSearchIncoming(e.target.value)}
-              placeholder="Введите название задачи..."
+              placeholder={
+                searchModeIncoming === 'task' ? 'По названию задачи' : 'По названию связи'
+              }
               className="cm-form-control cm-word-break"
             />
+            <select
+              value={searchModeIncoming}
+              onChange={(e) => setSearchModeIncoming(e.target.value)}
+              className="cm-form-control mt-1"
+            >
+              <option value="task">По названию задачи</option>
+              <option value="name">По названию связи</option>
+            </select>
           </div>
         </div>
 
@@ -282,7 +309,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
           </div>
         </div>
 
-        {/* Форма для добавления исходящей связи */}
+        {/* Форма для добавления связи */}
         <h4>Добавить новую исходящую связь</h4>
         <div className="cm-form-group">
           <label>Название связи:</label>
@@ -295,6 +322,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
             className="cm-form-control cm-word-break"
           />
         </div>
+
         <div className="cm-form-group">
           <label>Выберите задачу:</label>
           <div className="cm-select-wrapper">
