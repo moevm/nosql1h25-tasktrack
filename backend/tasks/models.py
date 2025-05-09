@@ -5,6 +5,10 @@ import uuid
 import re
 
 
+class TaskRelationship(neomodel.StructuredRel):
+    title = neomodel.StringProperty()
+
+
 class Task(neomodel.StructuredNode):
     STATUS_CHOICES = {
         'todo': 'To Do',
@@ -39,10 +43,18 @@ class Task(neomodel.StructuredNode):
     )
 
     tags = neomodel.RelationshipTo('tags.models.Tag', 'HAS_TAG')
-    related_to_tasks = neomodel.RelationshipTo('tasks.models.Task', 'RELATED_TO')
-    related_from_tasks = neomodel.RelationshipFrom('tasks.models.Task', 'RELATED_TO')
     group = neomodel.RelationshipFrom('groups.models.Group', 'CONTAINS_TASK')
     notes = neomodel.RelationshipTo('notes.models.Note', 'HAS_NOTE')
+    related_to_tasks = neomodel.RelationshipTo(
+        'tasks.models.Task',
+        'RELATED_TO',
+        model=TaskRelationship
+    )
+    related_from_tasks = neomodel.RelationshipFrom(
+        'tasks.models.Task',
+        'RELATED_TO',
+        model=TaskRelationship
+    )
 
     def clean(self):
         """Валидация перед сохранением"""

@@ -188,6 +188,13 @@ class TaskRelationsAPIView(APIView):
 
     def post(self, request):
         with db.transaction:
+            title = request.data.get('title')
+            if not title:
+                return Response(
+                    {'error': 'Title is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             task_id_from, task_id_to = self._get_task_ids(request)
             task_from, task_to = self._get_tasks(
                 request.user, task_id_from, task_id_to)
@@ -211,8 +218,14 @@ class TaskRelationsAPIView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            task_from.related_to_tasks.connect(task_to)
-            task_to.related_from_tasks.connect(task_from)
+            task_from.related_to_tasks.connect(
+                task_to,
+                {'title': title}
+            )
+            task_to.related_from_tasks.connect(
+                task_from,
+                {'title': title}
+            )
 
             serializer_from = TaskSerializer(
                 task_from, context={'request': request}
