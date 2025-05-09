@@ -188,3 +188,17 @@
 li {
   cursor: pointer;
 }
+
+
+.add-tag-button {
+  width: 48px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}

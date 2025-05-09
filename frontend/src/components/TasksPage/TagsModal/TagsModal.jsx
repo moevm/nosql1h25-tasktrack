@@ -144,7 +144,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
             disabled={!newTagName.trim()}
             title="Добавить тег"
           >
-            <i className="fas fa-plus"></i>
+            <i className="fas fa-plus icon-centered"></i>
           </button>
         </div>
 
