@@ -3,6 +3,7 @@ version: '3'
 volumes:
   static:
   media:
+  neo4j_data:
 
 
 services:
@@ -18,9 +19,7 @@ services:
       - "7687:7687"
       - "7474:7474"
     volumes:
-      - ./neo4j/data:/data
-      - ./neo4j/logs:/logs
-      - ./neo4j/import:/import
+      - neo4j_data:/data
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:7474"]
       interval: 20s
@@ -41,10 +40,6 @@ services:
       - PYTHONUNBUFFERED=1
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
-      - static:/static
-      - media:/app/media
     depends_on:
       db:
         condition: service_healthy
@@ -64,7 +59,7 @@ services:
   gateway:
     build: ./nginx/
     ports:
-      - 80:80
+      - 9000:80
     depends_on:
       - backend
     volumes:
