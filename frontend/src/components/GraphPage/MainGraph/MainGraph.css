@@ -1,0 +1,13 @@
+.graph-wrapper {
+  display: flex;
+  height: calc(100vh - 62px);
+  width: 100vw;
+  overflow: hidden;
+}
+
+.flow-canvas {
+  flex: 1;
+  height: 100%;
+}
+
+

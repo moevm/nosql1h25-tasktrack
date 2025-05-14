@@ -17,7 +17,7 @@ import {
 
 export default function TableGraph({ selectedGroup }) {
   const [tasks, setTasks] = useState([]);
-  const [taskSearchTerm, setTaskSearchTerm] = useState(''); 
+  const [taskSearchTerm, setTaskSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -26,14 +26,18 @@ export default function TableGraph({ selectedGroup }) {
   const [deadlineFilter, setDeadlineFilter] = useState(null);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [selectedTaskForConnections, setSelectedTaskForConnections] =
-    useState(null);
+  const [selectedTaskForConnections, setSelectedTaskForConnections] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+  const [isTagsModalOpenSearch, setIsTagsModalOpenSearch] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [tagSearchTerm, setTagSearchTerm] = useState('');
+  const [filteredTags, setFilteredTags] = useState([]);
   const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
 
+  // Трансформация меток для API
   const transformLabels = (labels) => {
     switch (labels) {
       case 'Сделать':
@@ -53,20 +57,17 @@ export default function TableGraph({ selectedGroup }) {
     }
   };
 
+  // Получение задач с сервера
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
     if (taskSearchTerm)
       params.append('title', '(?i).*' + taskSearchTerm + '.*');
-
-    if (selectedStatuses.length > 0) {
-      const transformedStatuses = selectedStatuses?.map(transformLabels);
-      params.append('status', transformedStatuses.join(','));
-    }
-
-    if (selectedPriorities.length > 0) {
-      const transformedPriorities = selectedPriorities?.map(transformLabels);
-      params.append('priority', transformedPriorities.join(','));
-    }
+    if (selectedStatuses.length > 0)
+      params.append('status', selectedStatuses.map(transformLabels).join(','));
+    if (selectedPriorities.length > 0)
+      params.append('priority', selectedPriorities.map(transformLabels).join(','));
+    if (selectedTags.length > 0)
+      params.append('tag', selectedTags.join(','));
 
     // Фильтр по дате создания
     if (createdAtFilter?.mode === 'exact') {
@@ -84,10 +85,7 @@ export default function TableGraph({ selectedGroup }) {
 
     // Фильтр по дедлайну
     if (deadlineFilter?.mode === 'exact') {
-      const date = new Date(deadlineFilter.exact);
-      date.setDate(date.getDate() - 1);
-      const result = date.toISOString().split('T')[0];
-      params.append('deadline_after', result);
+      params.append('deadline_after', deadlineFilter.exact);
       params.append('deadline_before', deadlineFilter.exact);
     }
     if (deadlineFilter?.mode === 'between') {
@@ -105,7 +103,7 @@ export default function TableGraph({ selectedGroup }) {
     params.append('group', selectedGroup);
     params.append('page', page);
     params.append('page_size', ITEMS_PER_PAGE);
-    console.log(`${SERVER}/api/task/?${params}`);
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${SERVER}/api/task/?${params}`, {
@@ -115,35 +113,27 @@ export default function TableGraph({ selectedGroup }) {
           'Content-Type': 'application/json',
         },
       });
-
       if (!response.ok) throw new Error('Ошибка загрузки задач');
       const data = await response.json();
-
       const results = data?.results?.map((task) => ({
         title: task.title,
-        deadline: task.deadline
-          ? new Date(task.deadline).toLocaleDateString()
-          : '-',
-        createdAt: task.created_at
-          ? new Date(task.created_at).toLocaleDateString()
-          : '-',
-        updatedAt: task.updated_at
-          ? new Date(task.updated_at).toLocaleDateString()
-          : '-',
+        deadline: task.deadline ? new Date(task.deadline).toLocaleDateString() : '-',
+        createdAt: task.created_at ? new Date(task.created_at).toLocaleDateString() : '-',
+        updatedAt: task.updated_at ? new Date(task.updated_at).toLocaleDateString() : '-',
         status: task.status,
         priority: task.priority,
         description: task.content || '',
         edges: task.related_tasks || [],
         taskId: task.task_id,
       }));
-
       setTasks(results || []);
-      setTotalPages(data.total_pages);
+      setTotalPages(data.total_pages || 1);
     } catch (error) {
       console.error('Ошибка:', error);
     }
   };
 
+  // Подписка на обновления
   useEffect(() => {
     fetchTasksFromServer();
   }, [
@@ -156,8 +146,28 @@ export default function TableGraph({ selectedGroup }) {
     sortField,
     sortOrder,
     selectedGroup,
+    selectedTags, // <-- Теперь отслеживаем теги тоже
   ]);
 
+  // Загрузка тегов
+  const handlerFilteredTags = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${SERVER}/api/tag/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      setFilteredTags(data.tags?.map((t) => t.name) || []);
+      setIsTagsModalOpenSearch(true);
+    } catch (err) {
+      console.error('Ошибка загрузки тегов:', err);
+    }
+  };
+
+  // Создание задачи
   const handleCreateTask = async (newTaskData) => {
     newTaskData.deadline = newTaskData.deadline + 'T00:00:00';
     try {
@@ -174,7 +184,7 @@ export default function TableGraph({ selectedGroup }) {
         }),
       });
       if (!response.ok) throw new Error('Ошибка при создании задачи');
-      await fetchTasksFromServer(); 
+      await fetchTasksFromServer();
       setIsCreatingTask(false);
     } catch (error) {
       console.error('Ошибка:', error);
@@ -182,27 +192,25 @@ export default function TableGraph({ selectedGroup }) {
     }
   };
 
+  // Клик по строке задачи
   const handleRowClick = (task) => {
     setSelectedTask(task);
   };
 
+  // Применить сортировку
   const handleApplySort = (field, order) => {
     setSortField(field);
     setSortOrder(order);
     setIsSortModalOpen(false);
   };
 
+  // Сброс сортировки
   const handleResetSort = () => {
     setSortField('');
     setSortOrder('none');
   };
 
-  const handleShowEdgesClick = (task, e) => {
-    e.stopPropagation();
-    setSelectedTaskForConnections(task);
-    setIsModalOpen(true);
-  };
-
+  // Сброс всех фильтров
   const handleResetFilters = () => {
     setSelectedStatuses([]);
     setSelectedPriorities([]);
@@ -210,8 +218,10 @@ export default function TableGraph({ selectedGroup }) {
     setDeadlineFilter(null);
     setCreatedAtFilter(null);
     setPage(1);
+    setSelectedTags([]);
   };
 
+  // Маппинг названий полей
   const getFieldLabel = (field) => {
     switch (field) {
       case 'title':
@@ -247,7 +257,7 @@ export default function TableGraph({ selectedGroup }) {
     <div className="table-graph-container">
       <div className="wrapper-paginator">
         <div className="d-flex align-items-center justify-content-between mb-2 gap-2 flex-wrap">
-          {/* Поиск только по названию задачи */}
+          {/* Поиск */}
           <div className="search-container-tables">
             <SearchBar
               TitleFind="Поиск по названию задачи"
@@ -259,6 +269,12 @@ export default function TableGraph({ selectedGroup }) {
 
           {/* Фильтры */}
           <div className="d-flex align-items-center gap-2 flex-wrap">
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={handlerFilteredTags}
+            >
+              Теги
+            </button>
             <FilterDropdown
               label="Приоритет"
               options={PRIORITY_OPTIONS}
@@ -327,7 +343,11 @@ export default function TableGraph({ selectedGroup }) {
                   <td>
                     <button
                       className="btn btn-sm btn-outline-primary"
-                      onClick={(e) => handleShowEdgesClick(row, e)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedTaskForConnections(row);
+                        setIsModalOpen(true);
+                      }}
                     >
                       Показать
                     </button>
@@ -372,35 +392,35 @@ export default function TableGraph({ selectedGroup }) {
 
       {/* Кнопки действий */}
       {selectedGroup && (
-      <div className="d-flex gap-2 mb-3 flex-wrap">
-        <button
-          className="btn btn-primary btn-sm"
-          onClick={() => setIsCreatingTask(true)}
-        >
-          + Новая задача
-        </button>
-        {/* Кнопка управления тегами */}
-        <button
-          className="btn btn-outline-secondary btn-sm"
-          onClick={() => setIsTagsModalOpen(true)}
-        >
-          Управление тегами
-        </button>
-        <button
-          className="btn btn-outline-primary btn-sm"
-          onClick={() => setIsSortModalOpen(true)}
-        >
-          Сортировать
-        </button>
-        <button
-          className="btn btn-outline-danger btn-sm"
-          onClick={handleResetSort}
-          disabled={!sortField}
-        >
-          Сбросить сортировку
-        </button>
-      </div>
+        <div className="d-flex gap-2 mb-3 flex-wrap">
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setIsCreatingTask(true)}
+          >
+            + Новая задача
+          </button>
+          <button
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => setIsTagsModalOpen(true)}
+          >
+            Управление тегами
+          </button>
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => setIsSortModalOpen(true)}
+          >
+            Сортировать
+          </button>
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={handleResetSort}
+            disabled={!sortField}
+          >
+            Сбросить сортировку
+          </button>
+        </div>
       )}
+
       {/* Информация о сортировке */}
       {sortField && sortOrder !== 'none' && (
         <div className="sort-info small text-muted ms-2">
@@ -433,22 +453,81 @@ export default function TableGraph({ selectedGroup }) {
         />
       )}
 
-      {
-        /* Модальное окно связей */
-        isModalOpen && selectedTaskForConnections && (
-          <ConnectionsModal
-            task={selectedTaskForConnections}
-            onClose={() => setIsModalOpen(false)}
-            allTasks={tasks}
-          />
-        )
-      }
-      {isTagsModalOpen && (
-        <TagsModal
-          isOpen={isTagsModalOpen}
-          onClose={() => setIsTagsModalOpen(false)}
-          setSelectedTask={setSelectedTask}
+      {/* Модальное окно связей */}
+      {isModalOpen && selectedTaskForConnections && (
+        <ConnectionsModal
+          task={selectedTaskForConnections}
+          onClose={() => setIsModalOpen(false)}
+          allTasks={tasks}
         />
+      )}
+
+      {/* Модальное окно управления тегами */}
+      {isTagsModalOpenSearch && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title">Фильтр по тегам</h4>
+              <button
+                id="modal-close-btn1"
+                onClick={() => setIsTagsModalOpenSearch(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              <input
+                type="text"
+                placeholder="Поиск по тегам..."
+                value={tagSearchTerm}
+                onChange={(e) => setTagSearchTerm(e.target.value)}
+                style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+              />
+              <div className="modal-tags-container">
+                <ul className="modal-tags-list">
+                  {filteredTags
+                    .filter(tag =>
+                      tag.toLowerCase().includes(tagSearchTerm.toLowerCase())
+                    )
+                    .map((tag, index) => (
+                      <li key={index}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={selectedTags.includes(tag)}
+                            onChange={() => {
+                              if (selectedTags.includes(tag)) {
+                                setSelectedTags(selectedTags.filter(t => t !== tag));
+                              } else {
+                                setSelectedTags([...selectedTags, tag]);
+                              }
+                            }}
+                          />
+                          <span>{tag}</span>
+                        </label>
+                      </li>
+                    ))}
+                  {filteredTags.length === 0 && <span>Нет подходящих тегов</span>}
+                </ul>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => setIsTagsModalOpenSearch(false)}
+              >
+                Готово
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isTagsModalOpen && (
+          <TagsModal
+            isOpen={isTagsModalOpen}
+            onClose={() => setIsTagsModalOpen(false)}
+            setSelectedTask={setSelectedTask}
+          />
       )}
     </div>
   );

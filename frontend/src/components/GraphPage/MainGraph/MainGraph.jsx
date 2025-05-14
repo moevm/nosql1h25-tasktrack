@@ -6,7 +6,7 @@ import ReactFlow, {
   useEdgesState,
   useReactFlow,
 } from 'react-flow-renderer';
-import './Graph.css';
+import './MainGraph.css';
 
 const initialNodes = [
   {
@@ -83,7 +83,7 @@ function GraphFlow() {
   );
 }
 
-export default function Graph() {
+export default function MainGraph() {
   return (
     <ReactFlowProvider>
       <GraphFlow />
