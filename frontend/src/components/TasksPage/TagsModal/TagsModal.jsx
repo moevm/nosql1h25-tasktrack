@@ -108,7 +108,14 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
           body: JSON.stringify({ name: editingTag.newName }),
         },
       );
-      if (!response.ok) throw new Error('Ошибка при обновлении тега');
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMessages = Object.entries(errorData)
+          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+          .join('. ');
+        setError(errorMessages);
+        return
+      }
       setEditingTag(null);
       fetchTags();
     } catch (err) {
