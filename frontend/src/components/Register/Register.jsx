@@ -10,32 +10,45 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-    const requestBody = {
-      email: email,
-      password: password,
-    };
-    try {
-      const response = await fetch(`${SERVER}/api/user/register/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-      });
+  e.preventDefault();
+  setError('');
+  setSuccess(false);
 
-      if (response.ok) {
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/login');
-        }, 1500);
+  const requestBody = {
+    email: email,
+    password: password,
+  };
+
+  try {
+    const response = await fetch(`${SERVER}/api/user/register/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.ok) {
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } else {
+      const errorData = await response.json();
+      console.error('Ошибка при выполнении запроса:', errorData);
+
+      if (typeof errorData === 'object') {
+        const messages = Object.entries(errorData)
+          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+          .join('\n');
+        setError(messages);
       } else {
-        const errorData = await response.json();
         setError(errorData.detail || 'Ошибка регистрации');
       }
-    } catch (err) {
-      setError('Ошибка подключения к серверу');
     }
-  };
+  } catch (err) {
+    console.error('Ошибка при выполнении запроса:', err);
+    setError('Ошибка подключения к серверу');
+  }
+};
 
   return (
     <div className="register-container">

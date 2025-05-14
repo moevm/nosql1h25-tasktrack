@@ -17,7 +17,7 @@ import {
 
 export default function TableGraph({ selectedGroup }) {
   const [tasks, setTasks] = useState([]);
-  const [taskSearchTerm, setTaskSearchTerm] = useState(''); // 🔍 Новое состояние
+  const [taskSearchTerm, setTaskSearchTerm] = useState(''); 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -174,7 +174,7 @@ export default function TableGraph({ selectedGroup }) {
         }),
       });
       if (!response.ok) throw new Error('Ошибка при создании задачи');
-      await fetchTasksFromServer(); // обновляем список
+      await fetchTasksFromServer(); 
       setIsCreatingTask(false);
     } catch (error) {
       console.error('Ошибка:', error);
@@ -201,14 +201,6 @@ export default function TableGraph({ selectedGroup }) {
     e.stopPropagation();
     setSelectedTaskForConnections(task);
     setIsModalOpen(true);
-  };
-
-  const handleDeleteConnection = (connectionIndex) => {
-    alert(connectionIndex);
-  };
-
-  const handleAddConnection = (connectionName, connectedTask) => {
-    alert('Добавили связь');
   };
 
   const handleResetFilters = () => {
@@ -379,6 +371,7 @@ export default function TableGraph({ selectedGroup }) {
       />
 
       {/* Кнопки действий */}
+      {selectedGroup && (
       <div className="d-flex gap-2 mb-3 flex-wrap">
         <button
           className="btn btn-primary btn-sm"
@@ -407,7 +400,7 @@ export default function TableGraph({ selectedGroup }) {
           Сбросить сортировку
         </button>
       </div>
-
+      )}
       {/* Информация о сортировке */}
       {sortField && sortOrder !== 'none' && (
         <div className="sort-info small text-muted ms-2">

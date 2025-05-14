@@ -76,7 +76,14 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
 
   // Добавить новую связь
   const handleAddConnection = async () => {
-    if (!connectionName || !selectedTaskId) return;
+    if (!connectionName) {
+      alert('Введите название связи');
+      return;
+    }
+    if (!selectedTaskId) {
+      alert('Выберите задачу для связи');
+      return;
+    }
 
     try {
       const response = await fetch(`${SERVER}/api/task/relationships/`, {

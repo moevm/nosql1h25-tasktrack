@@ -19,6 +19,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
   }, [isOpen]);
 
   const fetchTags = async () => {
+    setError(''); 
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${SERVER}/api/tag/`, {
@@ -53,7 +54,16 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
         },
         body: JSON.stringify({ name: newTagName }),
       });
-      if (!response.ok) throw new Error('Ошибка при создании тега');
+      if (!response.ok) {
+        const errorData = await response.json();  
+
+        const errorMessages = Object.entries(errorData)
+          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+          .join('. ');
+
+        setError(errorMessages);
+        return;
+      }
       setNewTagName('');
       fetchTags();
     } catch (err) {

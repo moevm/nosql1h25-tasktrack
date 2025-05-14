@@ -29,11 +29,16 @@ export default function LoginPage({ setToken }) {
         setToken(data.token);
         navigate('/tasks');
       } else {
-        const errorData = await response.json();
-        setError(errorData.detail || 'Ошибка входа');
+        const errorData = await response.json();  
+        const errorMessages = Object.entries(errorData)
+          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+          .join('. ');
+
+        setError(errorMessages);
       }
     } catch (err) {
-      setError('Ошибка подключения к серверу');
+      console.error('Ошибка при выполнении запроса:', err);
+      setError('Неправильный логин или пароль');
     }
   };
 

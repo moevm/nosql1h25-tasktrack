@@ -96,6 +96,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
             className={errors.deadline ? 'input-error' : ''}
+            required
           />
           {errors.deadline && (
             <span className="error-message">{errors.deadline}</span>
