@@ -45,7 +45,7 @@ export default function App() {
             element={<Navigate to={isAuthenticated ? '/tasks' : '/login'} />}
           />
           <Route path="/login" element={<LoginPage setToken={setToken} />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register setToken={setToken} />} />
           <Route
             path="/tasks"
             element={

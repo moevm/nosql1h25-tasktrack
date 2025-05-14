@@ -29,12 +29,18 @@ export default function LoginPage({ setToken }) {
         setToken(data.token);
         navigate('/tasks');
       } else {
-        const errorData = await response.json();  
-        const errorMessages = Object.entries(errorData)
-          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
-          .join('. ');
-
-        setError(errorMessages);
+        const errorData = await response.json();
+        console.error('Ошибка при выполнении запроса входа:', errorData);
+        if (typeof errorData === 'object') {
+          if ('error' in errorData) {
+            if (errorData.error === 'Invalid email or password') {
+              setError('Неправильный логин или пароль');
+              return
+            }        
+          }
+        } else {
+          setError(errorData || 'Ошибка входа');
+        }
       }
     } catch (err) {
       console.error('Ошибка при выполнении запроса:', err);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import { SERVER } from '../../Constants';
-export default function Register() {
+export default function Register({ setToken }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,19 +27,32 @@ export default function Register() {
     });
 
     if (response.ok) {
+      const data = await response.json();
+      setToken(data.token);
       setSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+      navigate('/tasks');
     } else {
       const errorData = await response.json();
       console.error('Ошибка при выполнении запроса:', errorData);
 
       if (typeof errorData === 'object') {
-        const messages = Object.entries(errorData)
-          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
-          .join('\n');
-        setError(messages);
+        if ('email' in errorData) {
+          if (errorData.email[0] === 'Enter a valid email address.') {
+            setError('Неверный формат электронной почты');
+            return
+          }
+          if (errorData.email[0] === 'User with this email already exists') {
+            setError('Электронная почта уже зарегистрирована');
+            return
+          }
+        }
+        if ('password' in errorData) {
+          if (errorData.password[0] === 'Ensure this field has at least 8 characters.') {
+            setError('Пароль должен содержать минимум 8 символов');
+            return
+          }
+        }
+
       } else {
         setError(errorData.detail || 'Ошибка регистрации');
       }
