@@ -35,25 +35,25 @@ function GraphFlow() {
     [setEdges],
   );
 
-  const handleContextMenu = (event) => {
-    event.preventDefault();
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const position = project({
-      x: event.clientX - bounds.left,
-      y: event.clientY - bounds.top,
-    });
+//   const handleContextMenu = (event) => {
+//     event.preventDefault();
+//     const bounds = event.currentTarget.getBoundingClientRect();
+//     const position = project({
+//       x: event.clientX - bounds.left,
+//       y: event.clientY - bounds.top,
+//     });
 
-    const newNode = {
-      id: `${+new Date()}`,
-      data: {
-        label: `Node ${nodes.length + 1}`,
-        description: 'Описание по умолчанию',
-      },
-      position,
-    };
+//     const newNode = {
+//       id: `${+new Date()}`,
+//       data: {
+//         label: `Node ${nodes.length + 1}`,
+//         description: 'Описание по умолчанию',
+//       },
+//       position,
+//     };
 
-    setNodes((nds) => [...nds, newNode]);
-  };
+//     setNodes((nds) => [...nds, newNode]);
+//   };
 
   const onNodeClick = (_, node) => {
     setSelectedNode(node);
@@ -61,7 +61,7 @@ function GraphFlow() {
 
   return (
     <div className="graph-wrapper">
-      <div className="flow-canvas" onContextMenu={handleContextMenu}>
+      <div className="flow-canvas" >
         <ReactFlow
           nodes={nodes}
           edges={edges}

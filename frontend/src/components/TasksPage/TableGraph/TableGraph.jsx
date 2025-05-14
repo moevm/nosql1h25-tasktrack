@@ -71,26 +71,22 @@ export default function TableGraph({ selectedGroup }) {
 
     // Фильтр по дате создания
     if (createdAtFilter?.mode === 'exact') {
-      const date = new Date(createdAtFilter.exact);
-      const result = date.toISOString().split('T')[0];
-      date.setDate(date.getDate() + 1);
-      const result2 = date.toISOString().split('T')[0];
-      params.append('created_after', result);
-      params.append('created_before', result2);
+      params.append('created_after', createdAtFilter.exact+ "T00:00:00");
+      params.append('created_before', createdAtFilter.exact + "T23:59:59");
     }
     if (createdAtFilter?.mode === 'between') {
-      params.append('created_after', createdAtFilter.start);
-      params.append('created_before', createdAtFilter.end);
+      params.append('created_after', createdAtFilter.start + "T00:00:00");
+      params.append('created_before', createdAtFilter.end + "T23:59:59");
     }
 
     // Фильтр по дедлайну
     if (deadlineFilter?.mode === 'exact') {
-      params.append('deadline_after', deadlineFilter.exact);
-      params.append('deadline_before', deadlineFilter.exact);
+      params.append('deadline_after', deadlineFilter.exact + "T00:00:00");
+      params.append('deadline_before', deadlineFilter.exact + "T23:59:59");
     }
     if (deadlineFilter?.mode === 'between') {
-      params.append('deadline_after', deadlineFilter.start);
-      params.append('deadline_before', deadlineFilter.end);
+      params.append('deadline_after', deadlineFilter.start + "T00:00:00");
+      params.append('deadline_before', deadlineFilter.end + "T23:59:59");
     }
 
     // Сортировка
