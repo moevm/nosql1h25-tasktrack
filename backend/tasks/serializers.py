@@ -52,17 +52,14 @@ class TaskSerializer(serializers.Serializer):
         return [name.lower().strip() for name in value if name.strip()]
 
     def validate_group_name(self, value):
-        from groups.models import Group
         normalized_name = value.lower().strip()
+        user = self.context['request'].user
+        group = user.groups.filter(name=normalized_name)
 
-        try:
-            group = Group.nodes.get(name=normalized_name)
-            if not self.context['request'].user.groups.is_connected(group):
-                raise serializers.ValidationError(
-                    "Группа не принадлежит пользователю")
-            return normalized_name
-        except Group.DoesNotExist:
+        if not group:
             raise serializers.ValidationError("Группа не найдена")
+
+        return normalized_name
 
     def create(self, validated_data):
         from groups.models import Group
