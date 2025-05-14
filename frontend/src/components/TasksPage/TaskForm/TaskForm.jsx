@@ -26,7 +26,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
     if (deadline) {
       const deadlineDate = new Date(deadline);
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
       if (deadlineDate <= today) {
         newErrors.deadline = 'Дата завершения не может быть прошедшей';
       }
@@ -49,7 +48,7 @@ const handleSubmit = (e) => {
   const newTask = {
     title,
     content,
-    deadline: formattedDeadline, // Теперь будет "2025-05-16T21:14:00"
+    deadline: formattedDeadline, 
     status,
     priority,
     notes: [],
