@@ -8,7 +8,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
   const [status, setStatus] = useState('todo');
   const [priority, setPriority] = useState('medium');
 
-  // Состояние для ошибок
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -28,8 +27,6 @@ const TaskForm = ({ onSubmit, onCancel }) => {
       const deadlineDate = new Date(deadline);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      deadlineDate.setHours(0, 0, 0, 0);
-      console.log(deadlineDate, today);
       if (deadlineDate <= today) {
         newErrors.deadline = 'Дата завершения не может быть прошедшей';
       }
@@ -39,20 +36,27 @@ const TaskForm = ({ onSubmit, onCancel }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    const newTask = {
-      title,
-      content,
-      deadline,
-      status,
-      priority,
-      notes: [],
-    };
+const handleSubmit = (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    onSubmit(newTask);
+  let formattedDeadline = null;
+
+  if (deadline) {
+    formattedDeadline = `${deadline}`;
+  }
+
+  const newTask = {
+    title,
+    content,
+    deadline: formattedDeadline, // Теперь будет "2025-05-16T21:14:00"
+    status,
+    priority,
+    notes: [],
   };
+
+  onSubmit(newTask);
+};
 
   return (
     <div className="modal-overlay">
@@ -92,7 +96,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
         <div className="form-group">
           <label>Дедлайн:</label>
           <input
-            type="date"
+            type="datetime-local"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
             className={errors.deadline ? 'input-error' : ''}
