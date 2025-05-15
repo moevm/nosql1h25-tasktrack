@@ -68,14 +68,12 @@ class TaskFilter:
 
         if 'created_before' in filters:
             created = cls._parse_datetime(filters['created_before'])
-            created = created - timedelta(hours=5)
             if created:
                 conditions.append("t.created_at <= $created_before")
                 params['created_before'] = created.timestamp()
 
         if 'created_after' in filters:
             created = cls._parse_datetime(filters['created_after'])
-            created = created - timedelta(hours=5)
             if created:
                 conditions.append("t.created_at >= $created_after")
                 params['created_after'] = created.timestamp()

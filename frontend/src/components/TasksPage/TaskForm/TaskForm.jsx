@@ -35,27 +35,27 @@ const TaskForm = ({ onSubmit, onCancel }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
-  let formattedDeadline = null;
+    let formattedDeadline = null;
 
-  if (deadline) {
-    formattedDeadline = `${deadline}`;
-  }
+    if (deadline) {
+      formattedDeadline = `${deadline}`;
+    }
 
-  const newTask = {
-    title,
-    content,
-    deadline: formattedDeadline, 
-    status,
-    priority,
-    notes: [],
+    const newTask = {
+      title,
+      content,
+      deadline: formattedDeadline,
+      status,
+      priority,
+      notes: [],
+    };
+
+    onSubmit(newTask);
   };
-
-  onSubmit(newTask);
-};
 
   return (
     <div className="modal-overlay">

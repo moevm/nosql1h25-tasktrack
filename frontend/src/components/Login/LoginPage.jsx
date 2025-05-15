@@ -35,8 +35,8 @@ export default function LoginPage({ setToken }) {
           if ('error' in errorData) {
             if (errorData.error === 'Invalid email or password') {
               setError('Неправильный логин или пароль');
-              return
-            }        
+              return;
+            }
           }
         } else {
           setError(errorData || 'Ошибка входа');

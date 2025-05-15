@@ -1,3 +1,21 @@
 .main-content {
   display: flex;
 }
+
+.no-group-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f8f9fa;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.no-group-selected h2 {
+  color: #6c757d;
+  font-size: 1.5rem;
+  font-weight: 500;
+}

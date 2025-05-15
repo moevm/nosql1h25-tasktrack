@@ -144,7 +144,8 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
   // Удаление исходящей связи
   const handleDeleteOutgoing = async (index) => {
     const edgeToDelete = filteredOutgoing[index];
-    if (!window.confirm(`Удалить связь с "${edgeToDelete.connectedTask}"?`)) return;
+    if (!window.confirm(`Удалить связь с "${edgeToDelete.connectedTask}"?`))
+      return;
 
     try {
       const response = await fetch(`${SERVER}/api/task/relationships/`, {
@@ -162,7 +163,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) throw new Error('Не удалось удалить исходящую связь');
 
       const updatedEdges = relatedToTasks.filter(
-        (e) => e.taskIdTo !== edgeToDelete.taskIdTo
+        (e) => e.taskIdTo !== edgeToDelete.taskIdTo,
       );
       setRelatedToTasks(updatedEdges);
     } catch (error) {
@@ -175,7 +176,9 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
   const handleDeleteIncoming = async (index) => {
     const edgeToDelete = filteredIncoming[index];
     if (
-      !window.confirm(`Удалить входящую связь от "${edgeToDelete.connectedTask}"?`)
+      !window.confirm(
+        `Удалить входящую связь от "${edgeToDelete.connectedTask}"?`,
+      )
     )
       return;
 
@@ -195,7 +198,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
       if (!response.ok) throw new Error('Не удалось удалить входящую связь');
 
       const updatedEdges = relatedFromTasks.filter(
-        (e) => e.taskIdFrom !== edgeToDelete.taskIdFrom
+        (e) => e.taskIdFrom !== edgeToDelete.taskIdFrom,
       );
       setRelatedFromTasks(updatedEdges);
     } catch (error) {
@@ -220,7 +223,9 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
               value={searchOutgoing}
               onChange={(e) => setSearchOutgoing(e.target.value)}
               placeholder={
-                searchModeOutgoing === 'task' ? 'По названию задачи' : 'По названию связи'
+                searchModeOutgoing === 'task'
+                  ? 'По названию задачи'
+                  : 'По названию связи'
               }
               className="cm-form-control cm-word-break"
             />
@@ -242,7 +247,9 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
               value={searchIncoming}
               onChange={(e) => setSearchIncoming(e.target.value)}
               placeholder={
-                searchModeIncoming === 'task' ? 'По названию задачи' : 'По названию связи'
+                searchModeIncoming === 'task'
+                  ? 'По названию задачи'
+                  : 'По названию связи'
               }
               className="cm-form-control cm-word-break"
             />

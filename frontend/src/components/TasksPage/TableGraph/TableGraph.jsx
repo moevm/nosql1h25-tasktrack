@@ -26,7 +26,8 @@ export default function TableGraph({ selectedGroup }) {
   const [deadlineFilter, setDeadlineFilter] = useState(null);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [selectedTaskForConnections, setSelectedTaskForConnections] = useState(null);
+  const [selectedTaskForConnections, setSelectedTaskForConnections] =
+    useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortField, setSortField] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
@@ -59,34 +60,58 @@ export default function TableGraph({ selectedGroup }) {
 
   // Получение задач с сервера
   const fetchTasksFromServer = async () => {
+    const shiftDateTime = (dateStr, hours) => {
+      const date = new Date(dateStr);
+      date.setHours(date.getHours() + hours);
+      return date.toISOString().slice(0, 19);
+    };
+
     const params = new URLSearchParams();
     if (taskSearchTerm)
       params.append('title', '(?i).*' + taskSearchTerm + '.*');
     if (selectedStatuses.length > 0)
       params.append('status', selectedStatuses.map(transformLabels).join(','));
     if (selectedPriorities.length > 0)
-      params.append('priority', selectedPriorities.map(transformLabels).join(','));
-    if (selectedTags.length > 0)
-      params.append('tag', selectedTags.join(','));
+      params.append(
+        'priority',
+        selectedPriorities.map(transformLabels).join(','),
+      );
+    if (selectedTags.length > 0) params.append('tag', selectedTags.join(','));
 
     // Фильтр по дате создания
     if (createdAtFilter?.mode === 'exact') {
-      params.append('created_after', createdAtFilter.exact+ "T00:00:00");
-      params.append('created_before', createdAtFilter.exact + "T23:59:59");
+      // params.append('created_after', (createdAtFilter.exact + 'T00:00:00'));
+      // params.append('created_before', (createdAtFilter.exact + 'T23:59:59'));
+      params.append(
+        'created_after',
+        shiftDateTime(createdAtFilter.exact + 'T00:00:00', -10),
+      );
+      params.append(
+        'created_before',
+        shiftDateTime(createdAtFilter.exact + 'T23:59:59', -10),
+      );
     }
     if (createdAtFilter?.mode === 'between') {
-      params.append('created_after', createdAtFilter.start + "T00:00:00");
-      params.append('created_before', createdAtFilter.end + "T23:59:59");
+      // params.append('created_after', createdAtFilter.start + 'T00:00:00');
+      // params.append('created_before', createdAtFilter.end + 'T23:59:59');
+      params.append(
+        'created_after',
+        shiftDateTime(createdAtFilter.start + 'T00:00:00', -10),
+      );
+      params.append(
+        'created_before',
+        shiftDateTime(createdAtFilter.end + 'T23:59:59', -10),
+      );
     }
 
     // Фильтр по дедлайну
     if (deadlineFilter?.mode === 'exact') {
-      params.append('deadline_after', deadlineFilter.exact + "T00:00:00");
-      params.append('deadline_before', deadlineFilter.exact + "T23:59:59");
+      params.append('deadline_after', deadlineFilter.exact + 'T00:00:00');
+      params.append('deadline_before', deadlineFilter.exact + 'T23:59:59');
     }
     if (deadlineFilter?.mode === 'between') {
-      params.append('deadline_after', deadlineFilter.start + "T00:00:00");
-      params.append('deadline_before', deadlineFilter.end + "T23:59:59");
+      params.append('deadline_after', deadlineFilter.start + 'T00:00:00');
+      params.append('deadline_before', deadlineFilter.end + 'T23:59:59');
     }
 
     // Сортировка
@@ -111,17 +136,35 @@ export default function TableGraph({ selectedGroup }) {
       });
       if (!response.ok) throw new Error('Ошибка загрузки задач');
       const data = await response.json();
-      const results = data?.results?.map((task) => ({
-        title: task.title,
-        deadline: task.deadline ? new Date(task.deadline).toLocaleDateString() : '-',
-        createdAt: task.created_at ? new Date(task.created_at).toLocaleDateString() : '-',
-        updatedAt: task.updated_at ? new Date(task.updated_at).toLocaleDateString() : '-',
-        status: task.status,
-        priority: task.priority,
-        description: task.content || '',
-        edges: task.related_tasks || [],
-        taskId: task.task_id,
-      }));
+      const results = data?.results?.map((task) => {
+        const formatDateTime = (dateString, shiftHours = 0) => {
+          if (!dateString) return '-';
+          const date = new Date(dateString);
+          if (shiftHours) {
+            date.setTime(date.getTime() + shiftHours * 60 * 60 * 1000);
+          }
+          return date.toLocaleString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        };
+
+        return {
+          title: task.title,
+          deadline: formatDateTime(task.deadline),
+          createdAt: formatDateTime(task.created_at, 8),
+          updatedAt: formatDateTime(task.updated_at, 8),
+          status: task.status,
+          priority: task.priority,
+          description: task.content || '',
+          edges: task.related_tasks || [],
+          taskId: task.task_id,
+        };
+      });
+      console.log(data);
       setTasks(results || []);
       setTotalPages(data.total_pages || 1);
     } catch (error) {
@@ -142,7 +185,7 @@ export default function TableGraph({ selectedGroup }) {
     sortField,
     sortOrder,
     selectedGroup,
-    selectedTags, // <-- Теперь отслеживаем теги тоже
+    selectedTags,
   ]);
 
   // Загрузка тегов
@@ -249,6 +292,51 @@ export default function TableGraph({ selectedGroup }) {
     }
   };
 
+  // Получить список активных фильтров
+  const getActiveFilters = () => {
+    const filters = [];
+
+    if (selectedStatuses.length > 0) {
+      filters.push(`Статус: ${selectedStatuses.join(', ')}`);
+    }
+
+    if (selectedPriorities.length > 0) {
+      filters.push(`Приоритет: ${selectedPriorities.join(', ')}`);
+    }
+
+    if (taskSearchTerm) {
+      filters.push(`Поиск: "${taskSearchTerm}"`);
+    }
+
+    if (createdAtFilter) {
+      let dateText = '';
+      if (createdAtFilter.mode === 'exact') {
+        dateText = `Дата создания: ${createdAtFilter.exact}`;
+      } else if (createdAtFilter.mode === 'between') {
+        dateText = `Дата создания: от ${createdAtFilter.start} до ${createdAtFilter.end}`;
+      }
+      filters.push(dateText);
+    }
+
+    if (deadlineFilter) {
+      let dateText = '';
+      if (deadlineFilter.mode === 'exact') {
+        dateText = `Дедлайн: ${deadlineFilter.exact}`;
+      } else if (deadlineFilter.mode === 'between') {
+        dateText = `Дедлайн: от ${deadlineFilter.start} до ${deadlineFilter.end}`;
+      }
+      filters.push(dateText);
+    }
+
+    if (selectedTags.length > 0) {
+      filters.push(`Теги: ${selectedTags.join(', ')}`);
+    }
+
+    return filters;
+  };
+
+  const activeFilters = getActiveFilters();
+
   return (
     <div className="table-graph-container">
       <div className="wrapper-paginator">
@@ -269,7 +357,7 @@ export default function TableGraph({ selectedGroup }) {
               className="btn btn-sm btn-outline-secondary"
               onClick={handlerFilteredTags}
             >
-              Теги
+              Фильтр по тегам
             </button>
             <FilterDropdown
               label="Приоритет"
@@ -387,7 +475,7 @@ export default function TableGraph({ selectedGroup }) {
       />
 
       {/* Кнопки действий */}
-      {selectedGroup && (
+      {
         <div className="d-flex gap-2 mb-3 flex-wrap">
           <button
             className="btn btn-primary btn-sm"
@@ -415,7 +503,7 @@ export default function TableGraph({ selectedGroup }) {
             Сбросить сортировку
           </button>
         </div>
-      )}
+      }
 
       {/* Информация о сортировке */}
       {sortField && sortOrder !== 'none' && (
@@ -482,8 +570,8 @@ export default function TableGraph({ selectedGroup }) {
               <div className="modal-tags-container">
                 <ul className="modal-tags-list">
                   {filteredTags
-                    .filter(tag =>
-                      tag.toLowerCase().includes(tagSearchTerm.toLowerCase())
+                    .filter((tag) =>
+                      tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
                     )
                     .map((tag, index) => (
                       <li key={index}>
@@ -493,17 +581,21 @@ export default function TableGraph({ selectedGroup }) {
                             checked={selectedTags.includes(tag)}
                             onChange={() => {
                               if (selectedTags.includes(tag)) {
-                                setSelectedTags(selectedTags.filter(t => t !== tag));
+                                setSelectedTags(
+                                  selectedTags.filter((t) => t !== tag),
+                                );
                               } else {
                                 setSelectedTags([...selectedTags, tag]);
                               }
                             }}
                           />
-                          <span className='tag-input-class'>{tag}</span>
+                          <span className="tag-input-class">{tag}</span>
                         </label>
                       </li>
                     ))}
-                  {filteredTags.length === 0 && <span>Нет подходящих тегов</span>}
+                  {filteredTags.length === 0 && (
+                    <span>Нет подходящих тегов</span>
+                  )}
                 </ul>
               </div>
             </div>
@@ -519,11 +611,24 @@ export default function TableGraph({ selectedGroup }) {
         </div>
       )}
       {isTagsModalOpen && (
-          <TagsModal
-            isOpen={isTagsModalOpen}
-            onClose={() => setIsTagsModalOpen(false)}
-            setSelectedTask={setSelectedTask}
-          />
+        <TagsModal
+          isOpen={isTagsModalOpen}
+          onClose={() => setIsTagsModalOpen(false)}
+          setSelectedTask={setSelectedTask}
+        />
+      )}
+      {/* Активные фильтры */}
+      {activeFilters.length > 0 && (
+        <div className="active-filters mt-3 p-2 bg-light rounded border">
+          <strong>Применённые фильтры:</strong>
+          <ul className="list-inline mb-0 mt-1">
+            {activeFilters.map((filter, index) => (
+              <li key={index} className="list-inline-item">
+                <span className="badge bg-primary text-white">{filter}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

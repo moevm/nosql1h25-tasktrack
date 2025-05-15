@@ -8,7 +8,7 @@ export default function Register({ setToken }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -51,7 +51,10 @@ export default function Register({ setToken }) {
             }
           }
           if ('password' in errorData) {
-            if (errorData.password[0] === 'Ensure this field has at least 8 characters.') {
+            if (
+              errorData.password[0] ===
+              'Ensure this field has at least 8 characters.'
+            ) {
               setError('Пароль должен содержать минимум 8 символов');
               return;
             }
@@ -91,7 +94,7 @@ export default function Register({ setToken }) {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Введите ваш пароль"
             required
-            disabled={isLoading} 
+            disabled={isLoading}
           />
 
           {error && <p className="error">{error}</p>}
@@ -102,7 +105,9 @@ export default function Register({ setToken }) {
           </button>
 
           {/* Индикатор загрузки */}
-          {isLoading && <div className="loading-indicator">Пожалуйста, подождите...</div>}
+          {isLoading && (
+            <div className="loading-indicator">Пожалуйста, подождите...</div>
+          )}
         </form>
       </div>
     </div>

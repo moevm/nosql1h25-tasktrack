@@ -19,7 +19,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
   }, [isOpen]);
 
   const fetchTags = async () => {
-    setError(''); 
+    setError('');
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${SERVER}/api/tag/`, {
@@ -55,7 +55,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
         body: JSON.stringify({ name: newTagName }),
       });
       if (!response.ok) {
-        const errorData = await response.json();  
+        const errorData = await response.json();
 
         const errorMessages = Object.entries(errorData)
           .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
@@ -114,7 +114,7 @@ export default function TagsModal({ isOpen, onClose, setSelectedTask }) {
           .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
           .join('. ');
         setError(errorMessages);
-        return
+        return;
       }
       setEditingTag(null);
       fetchTags();

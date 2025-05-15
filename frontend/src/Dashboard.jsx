@@ -18,7 +18,14 @@ export default function Dashboard() {
       />
 
       {isGraphMode && <MainGraph />}
-      {!isGraphMode && <TableGraph selectedGroup={selectedGroup} />}
+      {!isGraphMode && selectedGroup && (
+        <TableGraph selectedGroup={selectedGroup} />
+      )}
+      {!isGraphMode && !selectedGroup && (
+        <div className="no-group-selected">
+          <h2>Выберите группу для отображения задач</h2>
+        </div>
+      )}
     </div>
   );
 }

@@ -16,26 +16,25 @@ export default function GroupPanel({
 
   useEffect(() => {
     setTimeout(() => {
-const token = localStorage.getItem('token');
-    if (token) {
-      fetch(`${SERVER}/api/group/`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.groups) {
-            setAllGroups(data.groups || []);
-            setGroupList(data.groups || []);
-          }
+      const token = localStorage.getItem('token');
+      if (token) {
+        fetch(`${SERVER}/api/group/`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         })
-        .catch((error) => console.error('Ошибка при загрузке групп:', error));
-    }
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.groups) {
+              setAllGroups(data.groups || []);
+              setGroupList(data.groups || []);
+            }
+          })
+          .catch((error) => console.error('Ошибка при загрузке групп:', error));
+      }
     }, 0);
-    
   }, []);
 
   // Фильтруем группы при изменении searchQuery
