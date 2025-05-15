@@ -31,10 +31,19 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       })
         .then((res) => res.json())
         .then((data) => {
+          const adjustedNotes = (data.notes || []).map((note) => {
+            const date = new Date(note.created_at);
+            date.setHours(date.getHours() - 3);
+            return {
+              ...note,
+              created_at: date.toISOString(),
+            };
+          });
+
           setCurrentTask(data);
           setStatus(data.status);
           setPriority(data.priority);
-          setNotes(data.notes || []);
+          setNotes(adjustedNotes);
           setTags(data.tags || []);
         });
     } else {
@@ -90,7 +99,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       );
       if (!response.ok) throw new Error('Ошибка при добавлении заметки');
       const data = await response.json();
-
+      console.log('Добавленная заметка:', data);
       setNotes((prevNotes) => [
         ...prevNotes,
         {
@@ -254,7 +263,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const formatDate = (date, template = '') => {
     const localDate = new Date(date);
     if (template !== 'deadline') {
-      localDate.setHours(localDate.getHours() + 8); // прибавляем 8 часов
+      localDate.setHours(localDate.getHours() + 8);
     }
 
     return localDate.toLocaleString('ru-RU', {
