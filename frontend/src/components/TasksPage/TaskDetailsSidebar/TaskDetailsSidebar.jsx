@@ -458,7 +458,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
                               checked={tags.includes(tag)}
                               onChange={() => handleAddTag(tag)}
                             />
-                            <span>{tag}</span>
+                            <span className="tag-input-class">{tag}</span>
                           </label>
                         </li>
                       </div>

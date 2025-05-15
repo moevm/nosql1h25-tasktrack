@@ -19,7 +19,7 @@
   background: #ffffff;
   padding: 24px;
   border-radius: 12px;
-  width: 600px;
+  width: 500px;
   max-height: 90vh;
   overflow-y: visible;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -112,6 +112,8 @@
   padding: 12px 16px;
   margin-bottom: 10px;
   transition: all 0.2s ease-in-out;
+  
+  
 }
 
 .tags-modal-list-group-item:hover {
@@ -122,6 +124,8 @@
 .tags-modal-list-group-item span {
   font-weight: 500;
   color: #333;
+  max-width: 50%; /* или конкретно: 300px */
+  word-break: break-word; 
 }
 
 .tags-modal-list-group-item div .btn {

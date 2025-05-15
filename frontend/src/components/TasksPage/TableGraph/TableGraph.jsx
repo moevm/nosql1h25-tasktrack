@@ -499,7 +499,7 @@ export default function TableGraph({ selectedGroup }) {
                               }
                             }}
                           />
-                          <span>{tag}</span>
+                          <span className='tag-input-class'>{tag}</span>
                         </label>
                       </li>
                     ))}
