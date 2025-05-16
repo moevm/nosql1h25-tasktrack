@@ -17,7 +17,7 @@ export default function Dashboard() {
         selectedGroup={selectedGroup}
       />
 
-      {isGraphMode && <MainGraph />}
+      {isGraphMode && <MainGraph selectedGroup={selectedGroup} />}
       {!isGraphMode && selectedGroup && (
         <TableGraph selectedGroup={selectedGroup} />
       )}

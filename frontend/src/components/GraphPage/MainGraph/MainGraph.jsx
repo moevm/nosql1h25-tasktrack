@@ -1,92 +1,395 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactFlow, {
-  ReactFlowProvider,
   addEdge,
+  Controls,
+  MiniMap,
+  Background,
   useNodesState,
   useEdgesState,
-  useReactFlow,
-} from 'react-flow-renderer';
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+
+import SearchBar from '../../SearchBar/SearchBar';
+import FilterDropdown from '../../TasksPage/FilterDropdown/FilterDropdown';
+import DateFilterDropdown from '../../TasksPage/DateFilterDropdown/DateFilterDropdown';
+import SortModal from '../../TasksPage/SortModal/SortModal';
+import TagsModal from '../../TasksPage/TagsModal/TagsModal';
+import TaskDetailsSidebar from '../../TasksPage/TaskDetailsSidebar/TaskDetailsSidebar';
+import InteractiveTaskNode from '../InteractiveTaskNode/InteractiveTaskNode';
+import { SERVER } from '../../../Constants';
 import './MainGraph.css';
 
-const initialNodes = [
-  {
-    id: '1',
-    position: { x: 100, y: 100 },
-    data: { label: 'Node 1', description: 'Описание 1' },
-  },
-  {
-    id: '2',
-    position: { x: 100, y: 200 },
-    data: { label: 'Node 2', description: 'Описание 2' },
-  },
-];
+const nodeTypes = {
+  taskNode: InteractiveTaskNode,
+};
 
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+const MainGraph = ({ selectedGroup }) => {
+  const [tasks, setTasks] = useState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-function GraphFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [taskSearchTerm, setTaskSearchTerm] = useState('');
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
+  const [selectedPriorities, setSelectedPriorities] = useState([]);
+  const [createdAtFilter, setCreatedAtFilter] = useState(null);
+  const [deadlineFilter, setDeadlineFilter] = useState(null);
+  const [sortField, setSortField] = useState('');
+  const [sortOrder, setSortOrder] = useState('none');
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+  const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [filteredTags, setFilteredTags] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  const { project } = useReactFlow();
+  const ITEMS_PER_PAGE = 50;
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
-  );
+  const transformLabels = (labels) => {
+    switch (labels) {
+      case 'Сделать':
+        return 'todo';
+      case 'В процессе':
+        return 'in_progress';
+      case 'Завершена':
+        return 'done';
+      case 'Высокий':
+        return 'high';
+      case 'Средний':
+        return 'medium';
+      case 'Низкий':
+        return 'low';
+      default:
+        return labels;
+    }
+  };
 
-  //   const handleContextMenu = (event) => {
-  //     event.preventDefault();
-  //     const bounds = event.currentTarget.getBoundingClientRect();
-  //     const position = project({
-  //       x: event.clientX - bounds.left,
-  //       y: event.clientY - bounds.top,
-  //     });
+  const fetchTasksFromServer = async () => {
+    const params = new URLSearchParams();
+    if (taskSearchTerm)
+      params.append('title', '(?i).*' + taskSearchTerm + '.*');
+    if (selectedStatuses.length > 0)
+      params.append('status', selectedStatuses.map(transformLabels).join(','));
+    if (selectedPriorities.length > 0)
+      params.append(
+        'priority',
+        selectedPriorities.map(transformLabels).join(','),
+      );
+    if (selectedTags.length > 0) params.append('tag', selectedTags.join(','));
 
-  //     const newNode = {
-  //       id: `${+new Date()}`,
-  //       data: {
-  //         label: `Node ${nodes.length + 1}`,
-  //         description: 'Описание по умолчанию',
-  //       },
-  //       position,
-  //     };
+    if (createdAtFilter?.mode === 'exact') {
+      params.append('created_after', createdAtFilter.exact + 'T00:00:00');
+      params.append('created_before', createdAtFilter.exact + 'T23:59:59');
+    }
+    if (createdAtFilter?.mode === 'between') {
+      params.append('created_after', createdAtFilter.start + 'T00:00:00');
+      params.append('created_before', createdAtFilter.end + 'T23:59:59');
+    }
 
-  //     setNodes((nds) => [...nds, newNode]);
-  //   };
+    if (deadlineFilter?.mode === 'exact') {
+      params.append('deadline_after', deadlineFilter.exact + 'T00:00:00');
+      params.append('deadline_before', deadlineFilter.exact + 'T23:59:59');
+    }
+    if (deadlineFilter?.mode === 'between') {
+      params.append('deadline_after', deadlineFilter.start + 'T00:00:00');
+      params.append('deadline_before', deadlineFilter.end + 'T23:59:59');
+    }
 
-  const onNodeClick = (_, node) => {
-    setSelectedNode(node);
+    params.append('group', selectedGroup);
+    params.append('page', 1);
+    params.append('page_size', ITEMS_PER_PAGE);
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${SERVER}/api/task/?${params}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error('Ошибка загрузки задач');
+      const data = await response.json();
+
+      const mappedTasks = data.results.map((task) => ({
+        id: task.task_id,
+        title: task.title,
+        deadline: task.deadline
+          ? new Date(task.deadline).toLocaleDateString()
+          : null,
+        status: task.status,
+        priority: task.priority,
+        related_tasks: task.related_tasks || [],
+        createdAt: task.created_at,
+        taskId: task.task_id,
+        description: task.content || '',
+      }));
+
+      setTasks(mappedTasks);
+
+      const nodes = mappedTasks.map((task) => ({
+        id: task.id,
+        type: 'taskNode',
+        data: {
+          label: task.title,
+          deadline: task.deadline,
+          status: getFieldLabel(task.status),
+          priority: getFieldLabel(task.priority),
+          task,
+        },
+        position: { x: Math.random() * 400, y: Math.random() * 400 },
+      }));
+
+      const edges = mappedTasks.flatMap((task) =>
+        task.related_tasks.map((relatedId) =>
+          addEdge(
+            {
+              id: `e-${task.id}-${relatedId}`,
+              source: task.id,
+              target: relatedId,
+            },
+            [],
+          ),
+        ),
+      );
+
+      setNodes(nodes);
+      setEdges(edges);
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasksFromServer();
+  }, [
+    taskSearchTerm,
+    selectedStatuses,
+    selectedPriorities,
+    createdAtFilter,
+    deadlineFilter,
+    sortField,
+    sortOrder,
+    selectedGroup,
+    selectedTags,
+  ]);
+
+  const loadTags = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${SERVER}/api/tag/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      setFilteredTags(data.tags?.map((t) => t.name) || []);
+      setIsTagsModalOpen(true);
+    } catch (err) {
+      console.error('Ошибка загрузки тегов:', err);
+    }
+  };
+
+  const getFieldLabel = (field) => {
+    switch (field) {
+      case 'title':
+        return 'Название';
+      case 'createdAt':
+        return 'Дата создания';
+      case 'updatedAt':
+        return 'Дата обновления';
+      case 'deadline':
+        return 'Дата завершения';
+      case 'status':
+        return 'Статус';
+      case 'priority':
+        return 'Приоритет';
+      case 'todo':
+        return 'Сделать';
+      case 'in_progress':
+        return 'В процессе';
+      case 'done':
+        return 'Завершено';
+      case 'low':
+        return 'Низкий';
+      case 'medium':
+        return 'Средний';
+      case 'high':
+        return 'Высокий';
+      default:
+        return field;
+    }
+  };
+
+  const getActiveFilters = () => {
+    const filters = [];
+    if (selectedStatuses.length > 0) {
+      filters.push(`Статус: ${selectedStatuses.join(', ')}`);
+    }
+    if (selectedPriorities.length > 0) {
+      filters.push(`Приоритет: ${selectedPriorities.join(', ')}`);
+    }
+    if (taskSearchTerm) {
+      filters.push(`Поиск: "${taskSearchTerm}"`);
+    }
+    if (createdAtFilter) {
+      let dateText = '';
+      if (createdAtFilter.mode === 'exact') {
+        dateText = `Дата создания: ${createdAtFilter.exact}`;
+      } else if (createdAtFilter.mode === 'between') {
+        dateText = `Дата создания: от ${createdAtFilter.start} до ${createdAtFilter.end}`;
+      }
+      filters.push(dateText);
+    }
+    if (deadlineFilter) {
+      let dateText = '';
+      if (deadlineFilter.mode === 'exact') {
+        dateText = `Дедлайн: ${deadlineFilter.exact}`;
+      } else if (deadlineFilter.mode === 'between') {
+        dateText = `Дедлайн: от ${deadlineFilter.start} до ${deadlineFilter.end}`;
+      }
+      filters.push(dateText);
+    }
+    if (selectedTags.length > 0) {
+      filters.push(`Теги: ${selectedTags.join(', ')}`);
+    }
+    return filters;
+  };
+
+  const activeFilters = getActiveFilters();
+
+  const handleResetFilters = () => {
+    setTaskSearchTerm('');
+    setSelectedStatuses([]);
+    setSelectedPriorities([]);
+    setCreatedAtFilter(null);
+    setDeadlineFilter(null);
+    setSelectedTags([]);
+    setSortField('');
+    setSortOrder('none');
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
   };
 
   return (
-    <div className="graph-wrapper">
-      <div className="flow-canvas">
+    <div style={{ width: '100%', height: '100vh' }} className="graph-wrapper">
+      {/* Фильтры */}
+      <div
+        style={{
+          marginBottom: '10px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+        }}
+      >
+        <SearchBar
+          TitleFind="Поиск по названию"
+          searchQuery={taskSearchTerm}
+          handleSearchChange={(e) => setTaskSearchTerm(e.target.value)}
+        />
+        <FilterDropdown
+          label="Приоритет"
+          options={['Высокий', 'Средний', 'Низкий']}
+          selectedOptions={selectedPriorities}
+          onChange={setSelectedPriorities}
+        />
+        <FilterDropdown
+          label="Статус"
+          options={['Сделать', 'В процессе', 'Завершена']}
+          selectedOptions={selectedStatuses}
+          onChange={setSelectedStatuses}
+        />
+        <DateFilterDropdown
+          label="Дата создания"
+          onChange={setCreatedAtFilter}
+        />
+        <DateFilterDropdown label="Дедлайн" onChange={setDeadlineFilter} />
+        <button onClick={loadTags}>Фильтр по тегам</button>
+        <button
+          onClick={handleResetFilters}
+          style={{ backgroundColor: '#dc3545', color: '#fff' }}
+        >
+          Сбросить фильтры
+        </button>
+      </div>
+
+      {/* Активные фильтры */}
+      {activeFilters.length > 0 && (
+        <div style={{ marginBottom: '10px' }}>
+          <strong>Применённые фильтры:</strong>
+          <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+            {activeFilters.map((filter, i) => (
+              <li
+                key={i}
+                style={{ display: 'inline-block', marginRight: '10px' }}
+              >
+                <span
+                  style={{
+                    background: '#007bff',
+                    color: '#fff',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  {filter}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Граф */}
+      <div style={{ width: '100%', height: 'calc(100vh - 150px)' }}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
+          nodeTypes={nodeTypes}
           fitView
-        />
+          onNodeClick={(event, node) => {
+            setSelectedTask(node.data.task);
+          }}
+        >
+          <Background />
+          <MiniMap />
+          <Controls />
+        </ReactFlow>
       </div>
 
-      {selectedNode && (
-        <div className="sidebar">
-          <h3>{selectedNode.data.label}</h3>
-          <p>{selectedNode.data.description}</p>
-        </div>
+      {/* Боковая панель с деталями задачи */}
+      {selectedTask && (
+        <TaskDetailsSidebar
+          key={selectedTask.taskId || 'closed'}
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+          onTaskUpdate={fetchTasksFromServer}
+        />
+      )}
+
+      {/* Модалки */}
+      {isSortModalOpen && (
+        <SortModal
+          fields={[
+            { label: 'Название', value: 'title' },
+            { label: 'Дата создания', value: 'createdAt' },
+            { label: 'Дата завершения', value: 'deadline' },
+            { label: 'Статус', value: 'status' },
+            { label: 'Приоритет', value: 'priority' },
+          ]}
+          onApply={(field, order) => {
+            setSortField(field);
+            setSortOrder(order);
+            setIsSortModalOpen(false);
+          }}
+          onClose={() => setIsSortModalOpen(false)}
+        />
       )}
     </div>
   );
-}
+};
 
-export default function MainGraph() {
-  return (
-    <ReactFlowProvider>
-      <GraphFlow />
-    </ReactFlowProvider>
-  );
-}
+export default MainGraph;
