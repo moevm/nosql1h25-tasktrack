@@ -9,6 +9,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
   const [priority, setPriority] = useState('medium');
 
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false); // <-- Состояние блокировки
 
   const validateForm = () => {
     const newErrors = {};
@@ -37,7 +38,15 @@ const TaskForm = ({ onSubmit, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+
+    if (isSubmitting) return; // <-- Блокируем, если уже отправляется
+
+    if (!validateForm()) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(true); // <-- Активируем блокировку
 
     let formattedDeadline = null;
 
@@ -54,7 +63,11 @@ const TaskForm = ({ onSubmit, onCancel }) => {
       notes: [],
     };
 
-    onSubmit(newTask);
+    // Предполагается, что onSubmit — асинхронная операция (например, POST-запрос)
+    // Поэтому оборачиваем в Promise или вызываем async/await
+    Promise.resolve(onSubmit(newTask)).finally(() => {
+      setIsSubmitting(false); // <-- Снимаем блокировку после завершения
+    });
   };
 
   return (
@@ -70,6 +83,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             onChange={(e) => setTitle(e.target.value)}
             maxLength={50}
             required
+            disabled={isSubmitting} // <-- Блокировка полей при отправке
             className={errors.title ? 'input-error' : ''}
           />
           {errors.title && (
@@ -84,6 +98,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             maxLength={500}
+            disabled={isSubmitting}
             className={errors.content ? 'input-error' : ''}
           />
           {errors.content && (
@@ -98,6 +113,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             type="datetime-local"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
+            disabled={isSubmitting}
             className={errors.deadline ? 'input-error' : ''}
             required
           />
@@ -108,7 +124,11 @@ const TaskForm = ({ onSubmit, onCancel }) => {
 
         <div className="form-group">
           <label>Статус:</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            disabled={isSubmitting}
+          >
             <option value="todo">Сделать</option>
             <option value="in_progress">В процессе</option>
             <option value="done">Завершено</option>
@@ -120,6 +140,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
+            disabled={isSubmitting}
           >
             <option value="low">Низкий</option>
             <option value="medium">Средний</option>
@@ -128,10 +149,19 @@ const TaskForm = ({ onSubmit, onCancel }) => {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="save-button">
-            Сохранить
+          <button
+            type="submit"
+            className="save-button"
+            disabled={isSubmitting} // <-- Блокируем кнопку
+          >
+            {isSubmitting ? 'Сохранение...' : 'Сохранить'}
           </button>
-          <button type="button" onClick={onCancel} className="cancel-button">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="cancel-button"
+            disabled={isSubmitting}
+          >
             Отмена
           </button>
         </div>
