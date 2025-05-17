@@ -4,6 +4,7 @@
   { "email": "alice@example.com", "group_name": "Проекты" },
   { "email": "alice@example.com", "group_name": "Хобби" },
   { "email": "alice@example.com", "group_name": "Книги" },
+  
 
   { "email": "bob@example.com", "group_name": "Фитнес" },
   { "email": "bob@example.com", "group_name": "Финансы" },

@@ -3,727 +3,811 @@
     "group_name": "Учёба",
     "title": "Подготовиться к экзамену по математике",
     "content": "Повторить интегралы и дифференциальные уравнения",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Написать эссе по литературе",
     "content": "Тема: 'Образ героя в русской классике'",
-    "deadline": "2025-06-08T12:00:00Z",
+    "deadline": "2025-06-08T12:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Изучить новый курс по Python",
     "content": "Пройти первый модуль",
-    "deadline": "2025-06-10T14:00:00Z",
+    "deadline": "2025-06-10T14:00:00+00:00",
     "status": "done",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Подготовить презентацию по физике",
     "content": "Создать слайды о колебаниях",
-    "deadline": "2025-06-07T15:00:00Z",
+    "deadline": "2025-06-07T15:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Решить домашнее задание по химии",
     "content": "Задачи №1–5",
-    "deadline": "2025-06-06T16:00:00Z",
+    "deadline": "2025-06-06T16:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Сдать проект по информатике",
     "content": "Завершить второй этап разработки",
-    "deadline": "2025-06-09T17:00:00Z",
+    "deadline": "2025-06-09T17:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Прочитать главу учебника по биологии",
     "content": "Страницы 30–50",
-    "deadline": "2025-06-04T18:00:00Z",
+    "deadline": "2025-06-04T18:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Перепроверить лабораторную работу",
     "content": "Исправить ошибки и загрузить повторно",
-    "deadline": "2025-06-03T19:00:00Z",
+    "deadline": "2025-06-03T19:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Подготовить реферат по истории",
     "content": "Выбрать источник и составить план",
-    "deadline": "2025-06-11T11:00:00Z",
+    "deadline": "2025-06-11T11:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Учёба",
     "title": "Собраться на конференцию",
     "content": "Подготовить документы и доклад",
-    "deadline": "2025-06-12T09:00:00Z",
+    "deadline": "2025-06-12T09:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
-
   {
     "group_name": "Работа",
     "title": "Отправить отчет за квартал",
     "content": "Собрать данные и проверить статистику",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Встреча с командой",
     "content": "Обсудить цели следующего месяца",
-    "deadline": "2025-06-06T11:00:00Z",
+    "deadline": "2025-06-06T11:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Отредактировать презентацию для клиента",
     "content": "Добавить новые графики",
-    "deadline": "2025-06-07T13:00:00Z",
+    "deadline": "2025-06-07T13:00:00+00:00",
     "status": "done",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Провести собеседование с новым сотрудником",
     "content": "Проверить технические навыки",
-    "deadline": "2025-06-08T15:00:00Z",
+    "deadline": "2025-06-08T15:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Проверить почту и ответить клиентам",
     "content": "Не менее 10 писем",
-    "deadline": "2025-06-09T17:00:00Z",
+    "deadline": "2025-06-09T17:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Создать дорожную карту проекта",
     "content": "Срок до конца месяца",
-    "deadline": "2025-06-10T18:00:00Z",
+    "deadline": "2025-06-10T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Согласовать бюджет отдела",
     "content": "Обсудить с руководителем",
-    "deadline": "2025-06-11T10:00:00Z",
+    "deadline": "2025-06-11T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Выполнить аудит расходов",
     "content": "Проверить отчёт за прошлый месяц",
-    "deadline": "2025-06-12T12:00:00Z",
+    "deadline": "2025-06-12T12:00:00+00:00",
     "status": "done",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Подготовить документы для встречи",
     "content": "Сформировать PDF-пакет",
-    "deadline": "2025-06-13T14:00:00Z",
+    "deadline": "2025-06-13T14:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Работа",
     "title": "Созвон с партнерами",
     "content": "Обсудить условия сотрудничества",
-    "deadline": "2025-06-14T16:00:00Z",
+    "deadline": "2025-06-14T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
-
   {
     "group_name": "Проекты",
     "title": "Создать MVP приложения",
     "content": "Фронтенд + бэкенд базовая версия",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Написать техническое задание",
     "content": "Детализация функционала",
-    "deadline": "2025-06-06T11:00:00Z",
+    "deadline": "2025-06-06T11:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Провести тестирование API",
     "content": "Проверить все эндпоинты",
-    "deadline": "2025-06-07T13:00:00Z",
+    "deadline": "2025-06-07T13:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Собрать команду разработчиков",
     "content": "Назначить роли",
-    "deadline": "2025-06-08T15:00:00Z",
+    "deadline": "2025-06-08T15:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Создать дизайн интерфейса",
     "content": "UI/UX макеты",
-    "deadline": "2025-06-09T17:00:00Z",
+    "deadline": "2025-06-09T17:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Настроить CI/CD",
     "content": "Подключить GitHub Actions",
-    "deadline": "2025-06-10T18:00:00Z",
+    "deadline": "2025-06-10T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Запустить внутренний тестинг",
     "content": "Пригласить команду",
-    "deadline": "2025-06-11T10:00:00Z",
+    "deadline": "2025-06-11T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Анализ пользовательских данных",
     "content": "Получить метрики поведения",
-    "deadline": "2025-06-12T12:00:00Z",
+    "deadline": "2025-06-12T12:00:00+00:00",
     "status": "done",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Подготовить релизный чеклист",
     "content": "Список задач перед запуском",
-    "deadline": "2025-06-13T14:00:00Z",
+    "deadline": "2025-06-13T14:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Проекты",
     "title": "Создать страницу документации",
     "content": "Написать гайды для пользователей",
-    "deadline": "2025-06-14T16:00:00Z",
+    "deadline": "2025-06-14T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Прочитать первую главу романа",
     "content": "Роман '1984' Джорджа Оруэлла",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Заказать книгу на тему философии",
     "content": "Выбрать и купить книгу по списку рекомендаций",
-    "deadline": "2025-06-07T12:00:00Z",
+    "deadline": "2025-06-07T12:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Подготовить рецензию на прочитанное",
     "content": "Написать 500 слов о книге 'Мастер и Маргарита'",
-    "deadline": "2025-06-08T14:00:00Z",
+    "deadline": "2025-06-08T14:00:00+00:00",
     "status": "done",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Участвовать в книжном клубе",
     "content": "Обсудить роман 'Прощай, оружие!'",
-    "deadline": "2025-06-09T18:00:00Z",
+    "deadline": "2025-06-09T18:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Создать список желаемых книг",
     "content": "Собрать топ-10 книг на ближайший год",
-    "deadline": "2025-06-10T10:00:00Z",
+    "deadline": "2025-06-10T10:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Перечитать любимую книгу",
     "content": "'Гарри Поттер и философский камень'",
-    "deadline": "2025-06-11T13:00:00Z",
+    "deadline": "2025-06-11T13:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Сравнить два издания книги",
     "content": "Определить лучшее оформление и перевод",
-    "deadline": "2025-06-12T15:00:00Z",
+    "deadline": "2025-06-12T15:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Прослушать аудиокнигу",
     "content": "Книга 'Тонкое искусство заведомо не побеждать'",
-    "deadline": "2025-06-13T16:00:00Z",
+    "deadline": "2025-06-13T16:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Оформить подписку на литературный журнал",
     "content": "Подписаться на онлайн-версию журнала",
-    "deadline": "2025-06-14T11:00:00Z",
+    "deadline": "2025-06-14T11:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Книги",
     "title": "Посетить книжную ярмарку",
     "content": "Купить минимум две новые книги",
-    "deadline": "2025-06-15T17:00:00Z",
+    "deadline": "2025-06-15T17:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
-
   {
     "group_name": "Хобби",
     "title": "Сделать поделку своими руками",
     "content": "Использовать дерево и краски",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Сходить на мастер-класс по керамике",
     "content": "Записаться и оплатить участие",
-    "deadline": "2025-06-06T11:00:00Z",
+    "deadline": "2025-06-06T11:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Собрать пазл из 500 деталей",
     "content": "Тема — природа или картины",
-    "deadline": "2025-06-07T14:00:00Z",
+    "deadline": "2025-06-07T14:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Выучить новую песню на гитаре",
     "content": "Практиковаться 30 минут ежедневно",
-    "deadline": "2025-06-08T16:00:00Z",
+    "deadline": "2025-06-08T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Создать альбом с фотографиями",
     "content": "Добавить комментарии и даты",
-    "deadline": "2025-06-09T17:00:00Z",
+    "deadline": "2025-06-09T17:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Попробовать технику скетчинга",
     "content": "Нарисовать уличные виды города",
-    "deadline": "2025-06-10T12:00:00Z",
+    "deadline": "2025-06-10T12:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Сшить подарочный мешочек",
     "content": "Использовать ткань и декоративные ленты",
-    "deadline": "2025-06-11T15:00:00Z",
+    "deadline": "2025-06-11T15:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Собрать новый конструктор",
     "content": "Проверить комплектацию и начать сборку",
-    "deadline": "2025-06-12T10:00:00Z",
+    "deadline": "2025-06-12T10:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Попробовать технику оригами",
     "content": "Сделать фигурку животного",
-    "deadline": "2025-06-13T13:00:00Z",
+    "deadline": "2025-06-13T13:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "alice@example.com"
   },
   {
     "group_name": "Хобби",
     "title": "Посетить выставку ремесел",
     "content": "Купить что-то уникальное",
-    "deadline": "2025-06-14T16:00:00Z",
+    "deadline": "2025-06-14T16:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "alice@example.com"
   },
-
   {
     "group_name": "Путешествия",
     "title": "Забронировать билеты на самолёт",
     "content": "Направление — Санкт-Петербург",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Выбрать отель для отдыха",
     "content": "Бронирование через Booking.com",
-    "deadline": "2025-06-06T12:00:00Z",
+    "deadline": "2025-06-06T12:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Составить маршрут по городу",
     "content": "Добавить музеи, кафе и парки",
-    "deadline": "2025-06-07T14:00:00Z",
+    "deadline": "2025-06-07T14:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Посетить туристическое агентство",
     "content": "Узнать о горящих путёвках",
-    "deadline": "2025-06-08T16:00:00Z",
+    "deadline": "2025-06-08T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Собрать дорожную сумку",
     "content": "Проверить документы и одежду",
-    "deadline": "2025-06-09T18:00:00Z",
+    "deadline": "2025-06-09T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Сфотографировать достопримечательности",
     "content": "Сделать фотоальбом",
-    "deadline": "2025-06-10T10:00:00Z",
+    "deadline": "2025-06-10T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Написать отзыв об отеле",
     "content": "Опубликовать на сайте TripAdvisor",
-    "deadline": "2025-06-11T12:00:00Z",
+    "deadline": "2025-06-11T12:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Записаться на экскурсию",
     "content": "Выбрать тематическую прогулку",
-    "deadline": "2025-06-12T14:00:00Z",
+    "deadline": "2025-06-12T14:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Скачать карты офлайн",
     "content": "Google Maps без интернета",
-    "deadline": "2025-06-13T16:00:00Z",
+    "deadline": "2025-06-13T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Путешествия",
     "title": "Попробовать местную кухню",
     "content": "Записать рецепты и рестораны",
-    "deadline": "2025-06-14T18:00:00Z",
+    "deadline": "2025-06-14T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
-
   {
     "group_name": "Финансы",
     "title": "Составить бюджет на месяц",
     "content": "Отслеживание доходов и расходов",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Открыть накопительный счёт",
     "content": "Выбрать банк и оформить депозит",
-    "deadline": "2025-06-06T12:00:00Z",
+    "deadline": "2025-06-06T12:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Проверить кредитную историю",
     "content": "Через БКИ",
-    "deadline": "2025-06-07T14:00:00Z",
+    "deadline": "2025-06-07T14:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Посетить финансовый семинар",
     "content": "Узнать о инвестициях",
-    "deadline": "2025-06-08T16:00:00Z",
+    "deadline": "2025-06-08T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Списать долги",
     "content": "Оплатить все просрочки",
-    "deadline": "2025-06-09T18:00:00Z",
+    "deadline": "2025-06-09T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Проверить налоговые уведомления",
     "content": "Загрузить данные с портала Госуслуг",
-    "deadline": "2025-06-10T10:00:00Z",
+    "deadline": "2025-06-10T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Оформить страховку",
     "content": "ОСАГО или медицинская страховка",
-    "deadline": "2025-06-11T12:00:00Z",
+    "deadline": "2025-06-11T12:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Проанализировать инвестиции",
     "content": "Портфель акций и облигаций",
-    "deadline": "2025-06-12T14:00:00Z",
+    "deadline": "2025-06-12T14:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Погасить часть кредита",
     "content": "Досрочное погашение",
-    "deadline": "2025-06-13T16:00:00Z",
+    "deadline": "2025-06-13T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Финансы",
     "title": "Запросить справку о доходах",
     "content": "Для оформления ипотеки",
-    "deadline": "2025-06-14T18:00:00Z",
+    "deadline": "2025-06-14T18:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
-
   {
     "group_name": "Фитнес",
     "title": "Пойти на тренировку",
     "content": "Занятие в зале, 60 минут",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Составить план питания",
     "content": "На неделю, с подсчётом калорий",
-    "deadline": "2025-06-06T12:00:00Z",
+    "deadline": "2025-06-06T12:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Сделать замеры тела",
     "content": "Окружность талии, бёдер, вес",
-    "deadline": "2025-06-07T14:00:00Z",
+    "deadline": "2025-06-07T14:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Записаться на йогу",
     "content": "Группа начинающих",
-    "deadline": "2025-06-08T16:00:00Z",
+    "deadline": "2025-06-08T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Сделать кардио-тренировку",
     "content": "Бег на беговой дорожке 30 мин",
-    "deadline": "2025-06-09T18:00:00Z",
+    "deadline": "2025-06-09T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Пройти медкомиссию",
     "content": "Для занятий в спортзале",
-    "deadline": "2025-06-10T10:00:00Z",
+    "deadline": "2025-06-10T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Сменить программу тренировок",
     "content": "Добавить силовые упражнения",
-    "deadline": "2025-06-11T12:00:00Z",
+    "deadline": "2025-06-11T12:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Посетить массажиста",
     "content": "Расслабляющий массаж спины",
-    "deadline": "2025-06-12T14:00:00Z",
+    "deadline": "2025-06-12T14:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Проверить уровень сахара",
     "content": "Анализ крови",
-    "deadline": "2025-06-13T16:00:00Z",
+    "deadline": "2025-06-13T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Фитнес",
     "title": "Купить спортивную форму",
     "content": "Леггинсы и футболка",
-    "deadline": "2025-06-14T18:00:00Z",
+    "deadline": "2025-06-14T18:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
-
   {
     "group_name": "Кулинария",
     "title": "Приготовить новое блюдо",
     "content": "Суп том ям",
-    "deadline": "2025-06-05T10:00:00Z",
+    "deadline": "2025-06-05T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Купить продукты для недели",
     "content": "Список продуктов",
-    "deadline": "2025-06-06T12:00:00Z",
+    "deadline": "2025-06-06T12:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Сделать домашний хлеб",
     "content": "Использовать закваску",
-    "deadline": "2025-06-07T14:00:00Z",
+    "deadline": "2025-06-07T14:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Посетить кулинарный мастер-класс",
     "content": "Итальянская кухня",
-    "deadline": "2025-06-08T16:00:00Z",
+    "deadline": "2025-06-08T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Сварить домашнее варенье",
     "content": "Из смородины",
-    "deadline": "2025-06-09T18:00:00Z",
+    "deadline": "2025-06-09T18:00:00+00:00",
     "status": "todo",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Сделать десерт",
     "content": "Шоколадный фондан",
-    "deadline": "2025-06-10T10:00:00Z",
+    "deadline": "2025-06-10T10:00:00+00:00",
     "status": "in_progress",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Создать блог о еде",
     "content": "Заполнить первые статьи",
-    "deadline": "2025-06-11T12:00:00Z",
+    "deadline": "2025-06-11T12:00:00+00:00",
     "status": "done",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Заморозить заготовки",
     "content": "Овощи и полуфабрикаты",
-    "deadline": "2025-06-12T14:00:00Z",
+    "deadline": "2025-06-12T14:00:00+00:00",
     "status": "todo",
-    "priority": "low"
+    "priority": "low",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Изучить новые специи",
     "content": "Попробовать кардамон и куркуму",
-    "deadline": "2025-06-13T16:00:00Z",
+    "deadline": "2025-06-13T16:00:00+00:00",
     "status": "in_progress",
-    "priority": "high"
+    "priority": "high",
+    "user_email": "bob@example.com"
   },
   {
     "group_name": "Кулинария",
     "title": "Сделать сыр в домашних условиях",
     "content": "Моцарелла или маскарпоне",
-    "deadline": "2025-06-14T18:00:00Z",
+    "deadline": "2025-06-14T18:00:00+00:00",
     "status": "todo",
-    "priority": "medium"
+    "priority": "medium",
+    "user_email": "bob@example.com",
+    "created_at": "2022-06-14T18:00:00+00:00"
   }
 ]

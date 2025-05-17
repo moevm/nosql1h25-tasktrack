@@ -20,9 +20,12 @@ class Command(BaseCommand):
             raise CommandError(f'Ошибка при чтении файла: {e}')
         for entry in tags_data:
             try:
-                email = entry.pop('email')
+                email = entry.get('email')
                 name = entry.get('name').lower().strip()
                 user = Neo4jUser.nodes.get(email=email)
+                if bool(user.tags.filter(name=name)):
+                    self.stdout.write(self.style.SUCCESS(f"!Тег '{name}' пропущен!"))
+                    continue
                 tag = Tag(name=name).save()
                 user.tags.connect(tag)
                 self.stdout.write(self.style.SUCCESS(f"✔ Тег '{entry['name']}' создан для {entry['email']}"))

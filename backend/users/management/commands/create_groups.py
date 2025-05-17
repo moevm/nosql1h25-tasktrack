@@ -30,6 +30,7 @@ class Command(BaseCommand):
             email = entry.get('email')
             group_name = entry.get('group_name')
 
+
             if not email or not group_name:
                 self.stderr.write(self.style.WARNING(f"Invalid entry: {entry}"))
                 skipped += 1
@@ -41,8 +42,12 @@ class Command(BaseCommand):
                 self.stderr.write(self.style.WARNING(f"User not found: {email}"))
                 skipped += 1
                 continue
-
+            
             normalized_name = group_name.strip().lower()
+            
+            if bool(user.groups.filter(name=normalized_name)):
+                continue
+
             group = Group(name=normalized_name).save()
             user.groups.connect(group)
 
