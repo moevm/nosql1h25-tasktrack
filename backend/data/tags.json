@@ -1,0 +1,35 @@
+[
+  {
+    "email": "alice@example.com",
+    "name": "Important"
+  },
+  {
+    "email": "alice@example.com",
+    "name": "Work"
+  },
+  {
+    "email": "alice@example.com",
+    "name": "Personal"
+  },
+  {
+    "email": "alice@example.com",
+    "name": "Urgent"
+  },
+
+  {
+    "email": "bob@example.com",
+    "name": "Finance"
+  },
+  {
+    "email": "bob@example.com",
+    "name": "Shopping"
+  },
+  {
+    "email": "bob@example.com",
+    "name": "Health"
+  },
+  {
+    "email": "bob@example.com",
+    "name": "Travel"
+  }
+]
