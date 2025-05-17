@@ -46,7 +46,6 @@ services:
 
   frontend:
     build: ./frontend/
-    command: cp -r /app/build/. /static/
     volumes:
       - static:/static
 
