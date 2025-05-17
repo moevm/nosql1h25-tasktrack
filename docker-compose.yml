@@ -14,9 +14,6 @@ services:
     restart: unless-stopped
     environment:
       - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
-    ports:
-      - "7687:7687"
-      - "7474:7474"
     volumes:
       - neo4j_data:/data
     healthcheck:
@@ -37,8 +34,6 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=task_track.settings
       - PYTHONUNBUFFERED=1
-    ports:
-      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -58,7 +53,7 @@ services:
   gateway:
     build: ./nginx/
     ports:
-      - 9000:80
+      - "127.0.0.1:9000:80"
     depends_on:
       - backend
     volumes:
