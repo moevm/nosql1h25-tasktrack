@@ -121,7 +121,8 @@ export default function TableGraph({ selectedGroup }) {
     }
 
     // Группа
-    params.append('group', selectedGroup);
+    if (selectedGroup)
+      params.append('group', selectedGroup);
     params.append('page', page);
     params.append('page_size', ITEMS_PER_PAGE);
 
@@ -406,13 +407,7 @@ export default function TableGraph({ selectedGroup }) {
             </tr>
           </thead>
           <tbody>
-            {tasks.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="text-center">
-                  В группе нет заданий
-                </td>
-              </tr>
-            ) : (
+            {
               tasks?.map((row, i) => (
                 <tr
                   key={i}
@@ -445,7 +440,7 @@ export default function TableGraph({ selectedGroup }) {
                   <td>{row.group}</td>
                 </tr>
               ))
-            )}
+            }
           </tbody>
         </table>
 

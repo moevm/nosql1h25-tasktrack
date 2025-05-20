@@ -54,9 +54,14 @@ export default function GroupPanel({
     setIsGraphMode(!isGraphMode);
   };
 
-  const handleGroupClick = (groupName) => {
-    setSelectedGroup(groupName);
-  };
+  const handleGroupClick = useCallback(
+    (groupName) => {
+      setSelectedGroup((prevSelected) =>
+        prevSelected === groupName ? null : groupName,
+      );
+    },
+    [setSelectedGroup],
+  );
 
   const handleAddGroup = () => {
     const newGroupName = prompt('Введите название новой группы:');
