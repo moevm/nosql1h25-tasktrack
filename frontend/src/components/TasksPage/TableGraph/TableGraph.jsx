@@ -162,6 +162,7 @@ export default function TableGraph({ selectedGroup }) {
           description: task.content || '',
           edges: task.related_tasks || [],
           taskId: task.task_id,
+          group: task.group?.name || '-',
         };
       });
       console.log(data);
@@ -287,6 +288,8 @@ export default function TableGraph({ selectedGroup }) {
         return 'Средний';
       case 'high':
         return 'Высокий';
+      case 'books':
+        return 'Книги';
       default:
         return field;
     }
@@ -399,6 +402,7 @@ export default function TableGraph({ selectedGroup }) {
               <th>Связи</th>
               <th>Статус</th>
               <th>Приоритет</th>
+              <th>Группа</th>
             </tr>
           </thead>
           <tbody>
@@ -438,6 +442,7 @@ export default function TableGraph({ selectedGroup }) {
                   </td>
                   <td>{getFieldLabel(row.status)}</td>
                   <td>{getFieldLabel(row.priority)}</td>
+                  <td>{row.group}</td>
                 </tr>
               ))
             )}
