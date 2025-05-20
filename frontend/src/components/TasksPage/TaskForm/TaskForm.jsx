@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TaskForm.css';
+import { SERVER } from '../../../Constants';
 
 const TaskForm = ({ onSubmit, onCancel }) => {
   const [title, setTitle] = useState('');
@@ -7,9 +8,28 @@ const TaskForm = ({ onSubmit, onCancel }) => {
   const [deadline, setDeadline] = useState('');
   const [status, setStatus] = useState('todo');
   const [priority, setPriority] = useState('medium');
-
+  const [group, setGroup] = useState('');
+  const [groups, setGroups] = useState([]);
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false); // <-- Состояние блокировки
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    fetch(`${SERVER}/api/group/`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.groups) {
+          setGroups(data.groups.map((g) => g.name));
+        }
+      })
+      .catch((err) => console.error('Ошибка загрузки групп:', err));
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -39,14 +59,14 @@ const TaskForm = ({ onSubmit, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return; // <-- Блокируем, если уже отправляется
+    if (isSubmitting) return;
 
     if (!validateForm()) {
       setIsSubmitting(false);
       return;
     }
 
-    setIsSubmitting(true); // <-- Активируем блокировку
+    setIsSubmitting(true);
 
     let formattedDeadline = null;
 
@@ -61,12 +81,11 @@ const TaskForm = ({ onSubmit, onCancel }) => {
       status,
       priority,
       notes: [],
+      group_name: group,
     };
 
-    // Предполагается, что onSubmit — асинхронная операция (например, POST-запрос)
-    // Поэтому оборачиваем в Promise или вызываем async/await
     Promise.resolve(onSubmit(newTask)).finally(() => {
-      setIsSubmitting(false); // <-- Снимаем блокировку после завершения
+      setIsSubmitting(false);
     });
   };
 
@@ -83,12 +102,10 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             onChange={(e) => setTitle(e.target.value)}
             maxLength={50}
             required
-            disabled={isSubmitting} // <-- Блокировка полей при отправке
+            disabled={isSubmitting}
             className={errors.title ? 'input-error' : ''}
           />
-          {errors.title && (
-            <span className="error-message">{errors.title}</span>
-          )}
+          {errors.title && <span className="error-message">{errors.title}</span>}
           <div className="char-counter">{title.length}/50</div>
         </div>
 
@@ -101,9 +118,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             disabled={isSubmitting}
             className={errors.content ? 'input-error' : ''}
           />
-          {errors.content && (
-            <span className="error-message">{errors.content}</span>
-          )}
+          {errors.content && <span className="error-message">{errors.content}</span>}
           <div className="char-counter">{content.length}/500</div>
         </div>
 
@@ -117,9 +132,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             className={errors.deadline ? 'input-error' : ''}
             required
           />
-          {errors.deadline && (
-            <span className="error-message">{errors.deadline}</span>
-          )}
+          {errors.deadline && <span className="error-message">{errors.deadline}</span>}
         </div>
 
         <div className="form-group">
@@ -148,11 +161,28 @@ const TaskForm = ({ onSubmit, onCancel }) => {
           </select>
         </div>
 
+        <div className="form-group">
+          <label>Группа:</label>
+          <select
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            disabled={isSubmitting}
+            required
+          >
+            <option value="">-- Выберите группу --</option>
+            {groups.map((groupName, index) => (
+              <option key={index} value={groupName}>
+                {groupName}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="form-actions">
           <button
             type="submit"
             className="save-button"
-            disabled={isSubmitting} // <-- Блокируем кнопку
+            disabled={isSubmitting}
           >
             {isSubmitting ? 'Сохранение...' : 'Сохранить'}
           </button>

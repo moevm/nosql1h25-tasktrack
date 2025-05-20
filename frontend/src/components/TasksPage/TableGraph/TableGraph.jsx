@@ -219,10 +219,7 @@ export default function TableGraph({ selectedGroup }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...newTaskData,
-          group_name: selectedGroup,
-        }),
+        body: JSON.stringify(newTaskData),
       });
       if (!response.ok) throw new Error('Ошибка при создании задачи');
       await fetchTasksFromServer();
