@@ -61,28 +61,7 @@ const MainGraph = ({ selectedGroup }) => {
       setIsAltPressed(true);
       setCreationHint('Выберите связь для удаления');
     }
-  };
 
-  const handleKeyUp = (e) => {
-    if (!e.altKey && isAltPressed) {
-      setIsAltPressed(false);
-      setCreationHint('');
-
-    }
-  };
-
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
-
-  return () => {
-    window.removeEventListener('keydown', handleKeyDown);
-    window.removeEventListener('keyup', handleKeyUp);
-  };
-}, [isAltPressed]);
-
-  // Обработка нажатия Ctrl/Cmd
-  useEffect(() => {
-  const handleKeyDown = (e) => {
     if ((e.ctrlKey || e.metaKey) && !isCtrlPressed) {
       setIsCtrlPressed(true);
       setEdgeCreationMode(true);
@@ -91,7 +70,12 @@ const MainGraph = ({ selectedGroup }) => {
   };
 
   const handleKeyUp = (e) => {
-    if (!e.ctrlKey && !e.metaKey && isCtrlPressed) {
+    if (!e.altKey && isAltPressed) {
+      setIsAltPressed(false);
+      setCreationHint('');
+    }
+
+    if ((!e.ctrlKey && !e.metaKey) && isCtrlPressed) {
       setIsCtrlPressed(false);
       setEdgeCreationMode(false);
       setCreationHint('');
@@ -105,8 +89,7 @@ const MainGraph = ({ selectedGroup }) => {
     window.removeEventListener('keydown', handleKeyDown);
     window.removeEventListener('keyup', handleKeyUp);
   };
-}, [isCtrlPressed]);
-
+}, [isAltPressed, isCtrlPressed]);
   // Логика выбора задач при клике
   const onNodeClick = (event, node) => {
     if (edgeCreationMode) {
