@@ -509,6 +509,12 @@ const MainGraph = ({ selectedGroup }) => {
 >
   + Новая задача
 </button>
+<button
+  className="btn btn-outline-secondary btn-sm"
+  onClick={() => setIsTagsModalOpen(true)}
+>
+  Управление тегами
+</button>
       </div>
 
       {/* Активные фильтры */}
@@ -747,6 +753,13 @@ const MainGraph = ({ selectedGroup }) => {
   <TaskForm
     onSubmit={handleCreateTask}
     onCancel={() => setIsCreatingTask(false)}
+  />
+)}
+{isTagsModalOpen && (
+  <TagsModal
+    isOpen={isTagsModalOpen}
+    onClose={() => setIsTagsModalOpen(false)}
+    setSelectedTask={setSelectedTask}
   />
 )}
 
