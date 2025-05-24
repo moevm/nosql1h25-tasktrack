@@ -63,36 +63,26 @@ const MainGraph = ({ selectedGroup }) => {
     }
   };
 
-  const generateLayoutedElements = (nodes, edges) => {
-    const dagreGraph = new dagre.graphlib.Graph();
-    dagreGraph.setDefaultEdgeLabel(() => ({}));
-    dagreGraph.setGraph({ rankdir: 'TB' }); // TB = top to bottom, LR = left to right
+  const generateRandomLayoutedElements = (nodes, edges) => {
+  const spacingX = 250; // расстояние между нодами по X
+  const spacingY = 250; // расстояние между нодами по Y
+  const columns = Math.ceil(Math.sqrt(nodes.length)); // примерно квадратная сетка
 
-    // Добавляем ноды с фиксированным размером
-    nodes.forEach((node) => {
-      dagreGraph.setNode(node.id, { width: 200, height: 80 });
-    });
+  const layoutedNodes = nodes.map((node, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
 
-    // Добавляем связи
-    edges.forEach((edge) => {
-      dagreGraph.setEdge(edge.source, edge.target);
-    });
+    return {
+      ...node,
+      position: {
+        x: col * spacingX + Math.random() * 40 - 20, // немного шума
+        y: row * spacingY + Math.random() * 40 - 20,
+      },
+    };
+  });
 
-    // Выполняем вычисления расположения
-    dagre.layout(dagreGraph);
-
-    // Обновляем позиции нодов из рассчитанных dagre
-    const layoutedNodes = nodes.map((node) => {
-      const nodeWithPosition = dagreGraph.node(node.id);
-      node.position = {
-        x: nodeWithPosition.x - nodeWithPosition.width / 2,
-        y: nodeWithPosition.y - nodeWithPosition.height / 2,
-      };
-      return node;
-    });
-
-    return { nodes: layoutedNodes, edges };
-  };
+  return { nodes: layoutedNodes, edges };
+};
 
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
@@ -183,7 +173,7 @@ const MainGraph = ({ selectedGroup }) => {
         ),
       );
 
-      const { nodes: layoutedNodes, edges: layoutedEdges } = generateLayoutedElements(
+      const { nodes: layoutedNodes, edges: layoutedEdges } = generateRandomLayoutedElements(
         initialNodes,
         initialEdges
       );
@@ -384,6 +374,8 @@ const MainGraph = ({ selectedGroup }) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
+          minZoom={0.3}
+          maxZoom={2.5}
           fitView
           onNodeClick={(event, node) => {
             setSelectedTask(node.data.task);
