@@ -45,6 +45,70 @@ const MainGraph = ({ selectedGroup }) => {
   const [filteredTags, setFilteredTags] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
 
+  const [isCtrlPressed, setIsCtrlPressed] = useState(false);
+  const [edgeCreationMode, setEdgeCreationMode] = useState(false);
+  const [selectedSourceTask, setSelectedSourceTask] = useState(null);
+  const [connectionName, setConnectionName] = useState('');
+  const [isConnectionModalOpen, setIsConnectionModalOpen] = useState(false);
+
+  const [creationHint, setCreationHint] = useState('');
+
+  // Обработка нажатия Ctrl/Cmd
+  useEffect(() => {
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && !isCtrlPressed) {
+      setIsCtrlPressed(true);
+      setEdgeCreationMode(true);
+      setCreationHint('Выберите две задачи для создания связи');
+    }
+  };
+
+  const handleKeyUp = (e) => {
+    if (!e.ctrlKey && !e.metaKey && isCtrlPressed) {
+      setIsCtrlPressed(false);
+      setEdgeCreationMode(false);
+      setCreationHint('');
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+  };
+}, [isCtrlPressed]);
+
+  // Логика выбора задач при клике
+  const onNodeClick = (event, node) => {
+    if (edgeCreationMode) {
+      if (!selectedSourceTask) {
+        // Выбрали первую задачу
+        setSelectedSourceTask(node);
+        setCreationHint('Теперь выберите вторую задачу');
+      } else {
+        // Выбрали вторую задачу
+        const sourceId = selectedSourceTask.id;
+        const targetId = node.id;
+
+        if (sourceId === targetId) {
+          alert('Нельзя создать связь саму с собой');
+          resetEdgeCreation();
+          return;
+        }
+
+        // Переход к вводу имени связи
+        setEdgeCreationMode(false);
+        setIsConnectionModalOpen(true);
+        setSelectedSourceTask({ sourceId, targetId });
+      }
+    } else {
+      // Обычный клик — открытие деталей задачи
+      setSelectedTask(node.data.task);
+    }
+  };
+
   const ITEMS_PER_PAGE = 50;
 
   const transformLabels = (labels) => {
@@ -175,7 +239,7 @@ const MainGraph = ({ selectedGroup }) => {
             style: {
               stroke: '#f39c12', // цвет линии
               strokeWidth: 10.5, // толщина линии
-            }
+            },
           };
           initialEdges.push(edge);
         });
@@ -307,6 +371,11 @@ const MainGraph = ({ selectedGroup }) => {
     setSelectedTask(task);
   };
 
+  const resetEdgeCreation = () => {
+    setEdgeCreationMode(false);
+    setSelectedSourceTask(null);
+  };
+
   return (
     <div style={{ width: '100%', height: '100vh' }} className="graph-wrapper">
       {/* Фильтры */}
@@ -390,13 +459,11 @@ const MainGraph = ({ selectedGroup }) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes} // <-- добавляем это
+          edgeTypes={edgeTypes}
           minZoom={0.3}
           maxZoom={2.5}
           fitView
-          onNodeClick={(event, node) => {
-            setSelectedTask(node.data.task);
-          }}
+          onNodeClick={onNodeClick} // <-- здесь
         >
           <svg>
             <defs>
@@ -448,6 +515,81 @@ const MainGraph = ({ selectedGroup }) => {
           onClose={() => setIsSortModalOpen(false)}
         />
       )}
+      {isConnectionModalOpen && (
+        <div className="modal-overlay-graph-edges">
+          <div className="modal-content-graph-edges">
+            <h3>Введите название связи</h3>
+            <input
+              type="text"
+              value={connectionName}
+              onChange={(e) => setConnectionName(e.target.value)}
+              placeholder="Название связи"
+            />
+            <div style={{ marginTop: '10px' }}>
+              <button
+                onClick={async () => {
+                  const { sourceId, targetId } = selectedSourceTask;
+                  try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(
+                      `${SERVER}/api/task/relationships/`,
+                      {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          task_id_from: sourceId,
+                          task_id_to: targetId,
+                          title: connectionName,
+                        }),
+                      },
+                    );
+                    if (response.ok) {
+                      const newEdge = {
+                        id: `e-${sourceId}-${targetId}`,
+                        source: sourceId,
+                        target: targetId,
+                        label: connectionName,
+                        type: 'default',
+                        style: { stroke: '#f39c12', strokeWidth: 2 },
+                      };
+                      setEdges((eds) => addEdge(newEdge, eds));
+                    } else {
+                      alert('Ошибка при создании связи');
+                    }
+                  } catch (err) {
+                    console.error('Ошибка:', err);
+                    alert('Не удалось создать связь');
+                  } finally {
+                    resetEdgeCreation();
+                    setConnectionName('');
+                    setIsConnectionModalOpen(false);
+                  }
+                }}
+              >
+                Создать
+              </button>
+              <button
+                onClick={() => {
+                  resetEdgeCreation();
+                  setConnectionName('');
+                  setIsConnectionModalOpen(false);
+                }}
+                style={{ marginLeft: '10px' }}
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {creationHint && (
+  <div className="creation-hint">
+    {creationHint}
+  </div>
+)}
     </div>
   );
 };
