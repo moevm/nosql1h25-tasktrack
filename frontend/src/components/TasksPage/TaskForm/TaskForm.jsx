@@ -105,7 +105,9 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             disabled={isSubmitting}
             className={errors.title ? 'input-error' : ''}
           />
-          {errors.title && <span className="error-message">{errors.title}</span>}
+          {errors.title && (
+            <span className="error-message">{errors.title}</span>
+          )}
           <div className="char-counter">{title.length}/50</div>
         </div>
 
@@ -118,7 +120,9 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             disabled={isSubmitting}
             className={errors.content ? 'input-error' : ''}
           />
-          {errors.content && <span className="error-message">{errors.content}</span>}
+          {errors.content && (
+            <span className="error-message">{errors.content}</span>
+          )}
           <div className="char-counter">{content.length}/500</div>
         </div>
 
@@ -132,7 +136,9 @@ const TaskForm = ({ onSubmit, onCancel }) => {
             className={errors.deadline ? 'input-error' : ''}
             required
           />
-          {errors.deadline && <span className="error-message">{errors.deadline}</span>}
+          {errors.deadline && (
+            <span className="error-message">{errors.deadline}</span>
+          )}
         </div>
 
         <div className="form-group">
@@ -179,11 +185,7 @@ const TaskForm = ({ onSubmit, onCancel }) => {
         </div>
 
         <div className="form-actions">
-          <button
-            type="submit"
-            className="save-button"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="save-button" disabled={isSubmitting}>
             {isSubmitting ? 'Сохранение...' : 'Сохранить'}
           </button>
           <button

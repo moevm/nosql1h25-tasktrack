@@ -18,9 +18,7 @@ export default function Dashboard() {
       />
 
       {isGraphMode && <MainGraph selectedGroup={selectedGroup} />}
-      {!isGraphMode && (
-        <TableGraph selectedGroup={selectedGroup} />
-      )}
+      {!isGraphMode && <TableGraph selectedGroup={selectedGroup} />}
     </div>
   );
 }

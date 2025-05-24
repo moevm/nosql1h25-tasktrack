@@ -332,7 +332,7 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
             value={connectionName}
             onChange={(e) => setConnectionName(e.target.value)}
             placeholder="Введите название связи..."
-            maxLength={50}
+            maxLength={20}
             className="cm-form-control cm-word-break"
           />
         </div>

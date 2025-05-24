@@ -121,8 +121,7 @@ export default function TableGraph({ selectedGroup }) {
     }
 
     // Группа
-    if (selectedGroup)
-      params.append('group', selectedGroup);
+    if (selectedGroup) params.append('group', selectedGroup);
     params.append('page', page);
     params.append('page_size', ITEMS_PER_PAGE);
 
@@ -404,40 +403,38 @@ export default function TableGraph({ selectedGroup }) {
             </tr>
           </thead>
           <tbody>
-            {
-              tasks?.map((row, i) => (
-                <tr
-                  key={i}
-                  className="table-row"
-                  onClick={() => handleRowClick(row)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td>
-                    {row.title.length > 40
-                      ? row.title.slice(0, 40) + '...'
-                      : row.title}
-                  </td>
-                  <td>{row.deadline}</td>
-                  <td>{row.createdAt}</td>
-                  <td>{row.updatedAt}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedTaskForConnections(row);
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      Показать
-                    </button>
-                  </td>
-                  <td>{getFieldLabel(row.status)}</td>
-                  <td>{getFieldLabel(row.priority)}</td>
-                  <td>{row.group}</td>
-                </tr>
-              ))
-            }
+            {tasks?.map((row, i) => (
+              <tr
+                key={i}
+                className="table-row"
+                onClick={() => handleRowClick(row)}
+                style={{ cursor: 'pointer' }}
+              >
+                <td>
+                  {row.title.length > 40
+                    ? row.title.slice(0, 40) + '...'
+                    : row.title}
+                </td>
+                <td>{row.deadline}</td>
+                <td>{row.createdAt}</td>
+                <td>{row.updatedAt}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedTaskForConnections(row);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Показать
+                  </button>
+                </td>
+                <td>{getFieldLabel(row.status)}</td>
+                <td>{getFieldLabel(row.priority)}</td>
+                <td>{row.group}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
 

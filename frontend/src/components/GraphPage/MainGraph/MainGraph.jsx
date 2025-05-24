@@ -8,7 +8,6 @@ import ReactFlow, {
   useEdgesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import dagre from 'dagre';
 
 import SearchBar from '../../SearchBar/SearchBar';
 import FilterDropdown from '../../TasksPage/FilterDropdown/FilterDropdown';
@@ -18,10 +17,14 @@ import TagsModal from '../../TasksPage/TagsModal/TagsModal';
 import TaskDetailsSidebar from '../../TasksPage/TaskDetailsSidebar/TaskDetailsSidebar';
 import InteractiveTaskNode from '../InteractiveTaskNode/InteractiveTaskNode';
 import { SERVER } from '../../../Constants';
+import CustomEdge from '../CustomEdge/CustomEdge';
 import './MainGraph.css';
 
 const nodeTypes = {
   taskNode: InteractiveTaskNode,
+};
+const edgeTypes = {
+  default: CustomEdge,
 };
 
 const MainGraph = ({ selectedGroup }) => {
@@ -64,25 +67,25 @@ const MainGraph = ({ selectedGroup }) => {
   };
 
   const generateRandomLayoutedElements = (nodes, edges) => {
-  const spacingX = 250; // расстояние между нодами по X
-  const spacingY = 250; // расстояние между нодами по Y
-  const columns = Math.ceil(Math.sqrt(nodes.length)); // примерно квадратная сетка
+    const spacingX = 250; // расстояние между нодами по X
+    const spacingY = 250; // расстояние между нодами по Y
+    const columns = Math.ceil(Math.sqrt(nodes.length)); // примерно квадратная сетка
 
-  const layoutedNodes = nodes.map((node, index) => {
-    const col = index % columns;
-    const row = Math.floor(index / columns);
+    const layoutedNodes = nodes.map((node, index) => {
+      const col = index % columns;
+      const row = Math.floor(index / columns);
 
-    return {
-      ...node,
-      position: {
-        x: col * spacingX + Math.random() * 40 - 20, // немного шума
-        y: row * spacingY + Math.random() * 40 - 20,
-      },
-    };
-  });
+      return {
+        ...node,
+        position: {
+          x: col * spacingX + Math.random() * 40 - 20, // немного шума
+          y: row * spacingY + Math.random() * 40 - 20,
+        },
+      };
+    });
 
-  return { nodes: layoutedNodes, edges };
-};
+    return { nodes: layoutedNodes, edges };
+  };
 
   const fetchTasksFromServer = async () => {
     const params = new URLSearchParams();
@@ -114,8 +117,7 @@ const MainGraph = ({ selectedGroup }) => {
       params.append('deadline_after', deadlineFilter.start + 'T00:00:00');
       params.append('deadline_before', deadlineFilter.end + 'T23:59:59');
     }
-    if (selectedGroup)
-      params.append('group', selectedGroup);
+    if (selectedGroup) params.append('group', selectedGroup);
     params.append('page_size', 99999999999);
 
     try {
@@ -138,14 +140,14 @@ const MainGraph = ({ selectedGroup }) => {
           : null,
         status: task.status,
         priority: task.priority,
-        related_tasks: task.related_tasks || [],
+        related_tasks: task.related_from_tasks || [],
         createdAt: task.created_at,
         taskId: task.task_id,
         group: task.group.name,
         description: task.content || '',
       }));
       setTasks(mappedTasks);
-      
+
       const initialNodes = mappedTasks.map((task) => ({
         id: task.id,
         type: 'taskNode',
@@ -160,23 +162,30 @@ const MainGraph = ({ selectedGroup }) => {
         position: { x: 0, y: 0 },
       }));
 
-      const initialEdges = mappedTasks.flatMap((task) =>
-        task.related_tasks.map((relatedId) =>
-          addEdge(
-            {
-              id: `e-${task.id}-${relatedId}`,
-              source: task.id,
-              target: relatedId,
-            },
-            [],
-          ),
-        ),
-      );
+      const initialEdges = [];
+      mappedTasks.forEach((task) => {
+        console.log(task);
+        task.related_tasks.forEach((relatedTask) => {
+          const edge = {
+            id: `e-${task.id}-${relatedTask.task_id}`,
+            source: relatedTask.task_id,
+            target: task.id,
+            label: relatedTask.relationship?.title || 'Связь',
+            type: 'default',
+            style: {
+              stroke: '#f39c12', // цвет линии
+              strokeWidth: 10.5, // толщина линии
+            }
+          };
+          initialEdges.push(edge);
+        });
+      });
 
-      const { nodes: layoutedNodes, edges: layoutedEdges } = generateRandomLayoutedElements(
-        initialNodes,
-        initialEdges
-      );
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        generateRandomLayoutedElements(initialNodes, initialEdges);
+
+      console.log(layoutedEdges);
+
       setNodes(layoutedNodes);
       setEdges(layoutedEdges);
     } catch (error) {
@@ -314,9 +323,14 @@ const MainGraph = ({ selectedGroup }) => {
           searchQuery={taskSearchTerm}
           handleSearchChange={(e) => setTaskSearchTerm(e.target.value)}
         />
-        <button style={{
-          marginLeft: '10px',
-        }} onClick={loadTags}>Фильтр по тегам</button>
+        <button
+          style={{
+            marginLeft: '10px',
+          }}
+          onClick={loadTags}
+        >
+          Фильтр по тегам
+        </button>
         <FilterDropdown
           label="Приоритет"
           options={['Высокий', 'Средний', 'Низкий']}
@@ -376,6 +390,7 @@ const MainGraph = ({ selectedGroup }) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes} // <-- добавляем это
           minZoom={0.3}
           maxZoom={2.5}
           fitView
@@ -383,6 +398,22 @@ const MainGraph = ({ selectedGroup }) => {
             setSelectedTask(node.data.task);
           }}
         >
+          <svg>
+            <defs>
+              <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerUnits="strokeWidth"
+                markerWidth="3"
+                markerHeight="3"
+                orient="auto"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#555" />
+              </marker>
+            </defs>
+          </svg>
           <Background />
           <MiniMap />
           <Controls />
