@@ -8,6 +8,7 @@ import ReactFlow, {
   useEdgesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import dagre from 'dagre';
 
 import SearchBar from '../../SearchBar/SearchBar';
 import FilterDropdown from '../../TasksPage/FilterDropdown/FilterDropdown';
@@ -60,6 +61,37 @@ const MainGraph = ({ selectedGroup }) => {
       default:
         return labels;
     }
+  };
+
+  const generateLayoutedElements = (nodes, edges) => {
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({ rankdir: 'TB' }); // TB = top to bottom, LR = left to right
+
+    // Добавляем ноды с фиксированным размером
+    nodes.forEach((node) => {
+      dagreGraph.setNode(node.id, { width: 200, height: 80 });
+    });
+
+    // Добавляем связи
+    edges.forEach((edge) => {
+      dagreGraph.setEdge(edge.source, edge.target);
+    });
+
+    // Выполняем вычисления расположения
+    dagre.layout(dagreGraph);
+
+    // Обновляем позиции нодов из рассчитанных dagre
+    const layoutedNodes = nodes.map((node) => {
+      const nodeWithPosition = dagreGraph.node(node.id);
+      node.position = {
+        x: nodeWithPosition.x - nodeWithPosition.width / 2,
+        y: nodeWithPosition.y - nodeWithPosition.height / 2,
+      };
+      return node;
+    });
+
+    return { nodes: layoutedNodes, edges };
   };
 
   const fetchTasksFromServer = async () => {
@@ -122,10 +154,9 @@ const MainGraph = ({ selectedGroup }) => {
         group: task.group.name,
         description: task.content || '',
       }));
-
       setTasks(mappedTasks);
       
-      const nodes = mappedTasks.map((task) => ({
+      const initialNodes = mappedTasks.map((task) => ({
         id: task.id,
         type: 'taskNode',
         data: {
@@ -136,10 +167,10 @@ const MainGraph = ({ selectedGroup }) => {
           group: task.group,
           task,
         },
-        position: { x: Math.random() * 400, y: Math.random() * 400 },
+        position: { x: 0, y: 0 },
       }));
 
-      const edges = mappedTasks.flatMap((task) =>
+      const initialEdges = mappedTasks.flatMap((task) =>
         task.related_tasks.map((relatedId) =>
           addEdge(
             {
@@ -152,8 +183,12 @@ const MainGraph = ({ selectedGroup }) => {
         ),
       );
 
-      setNodes(nodes);
-      setEdges(edges);
+      const { nodes: layoutedNodes, edges: layoutedEdges } = generateLayoutedElements(
+        initialNodes,
+        initialEdges
+      );
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
     } catch (error) {
       console.error('Ошибка:', error);
     }
