@@ -6,6 +6,7 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
+  MarkerType
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -524,6 +525,7 @@ const MainGraph = ({ selectedGroup }) => {
               value={connectionName}
               onChange={(e) => setConnectionName(e.target.value)}
               placeholder="Название связи"
+              maxLength={20}
             />
             <div style={{ marginTop: '10px' }}>
               <button
@@ -554,6 +556,7 @@ const MainGraph = ({ selectedGroup }) => {
                         label: connectionName,
                         type: 'default',
                         style: { stroke: '#f39c12', strokeWidth: 2 },
+                        markerEnd: { type: MarkerType.ArrowClosed },
                       };
                       setEdges((eds) => addEdge(newEdge, eds));
                     } else {

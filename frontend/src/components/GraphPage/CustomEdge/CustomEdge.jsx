@@ -1,5 +1,5 @@
 import React from 'react';
-import { EdgeProps, getBezierPath } from 'reactflow';
+import { EdgeProps, getBezierPath, MarkerType } from 'reactflow';
 
 const CustomEdge = ({
   id,
