@@ -92,10 +92,9 @@ const MainGraph = ({ selectedGroup }) => {
       params.append('deadline_after', deadlineFilter.start + 'T00:00:00');
       params.append('deadline_before', deadlineFilter.end + 'T23:59:59');
     }
-
-    params.append('group', selectedGroup);
-    params.append('page', 1);
-    params.append('page_size', ITEMS_PER_PAGE);
+    if (selectedGroup)
+      params.append('group', selectedGroup);
+    params.append('page_size', 99999999999);
 
     try {
       const token = localStorage.getItem('token');
@@ -109,7 +108,6 @@ const MainGraph = ({ selectedGroup }) => {
 
       if (!response.ok) throw new Error('Ошибка загрузки задач');
       const data = await response.json();
-
       const mappedTasks = data.results.map((task) => ({
         id: task.task_id,
         title: task.title,
@@ -121,11 +119,12 @@ const MainGraph = ({ selectedGroup }) => {
         related_tasks: task.related_tasks || [],
         createdAt: task.created_at,
         taskId: task.task_id,
+        group: task.group.name,
         description: task.content || '',
       }));
 
       setTasks(mappedTasks);
-
+      
       const nodes = mappedTasks.map((task) => ({
         id: task.id,
         type: 'taskNode',
@@ -134,6 +133,7 @@ const MainGraph = ({ selectedGroup }) => {
           deadline: task.deadline,
           status: getFieldLabel(task.status),
           priority: getFieldLabel(task.priority),
+          group: task.group,
           task,
         },
         position: { x: Math.random() * 400, y: Math.random() * 400 },

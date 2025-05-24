@@ -18,7 +18,8 @@ const InteractiveTaskNode = ({ data }) => {
       <br />
       <small>Дедлайн: {data.deadline || 'Нет'}</small> <br />
       <small>Статус: {data.status || 'Нет'}</small> <br />
-      <small>Приоритет: {data.priority || 'Нет'}</small>
+      <small>Приоритет: {data.priority || 'Нет'}</small> <br />
+      <small>Группа: {data.group || 'Нет'}</small>
       <br />
     </div>
   );
