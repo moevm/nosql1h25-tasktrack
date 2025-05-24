@@ -29,6 +29,10 @@ const edgeTypes = {
 };
 
 const MainGraph = ({ selectedGroup }) => {
+
+  const [isTagsModalOpenSearch, setIsTagsModalOpenSearch] = useState(false);
+  const [tagSearchTerm, setTagSearchTerm] = useState('');
+
   const [tasks, setTasks] = useState([]);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -141,8 +145,8 @@ const MainGraph = ({ selectedGroup }) => {
   };
 
   const generateRandomLayoutedElements = (nodes, edges) => {
-    const spacingX = 250; // расстояние между нодами по X
-    const spacingY = 250; // расстояние между нодами по Y
+    const spacingX = 550; // расстояние между нодами по X
+    const spacingY = 550; // расстояние между нодами по Y
     const columns = Math.ceil(Math.sqrt(nodes.length)); // примерно квадратная сетка
 
     const layoutedNodes = nodes.map((node, index) => {
@@ -320,21 +324,21 @@ const MainGraph = ({ selectedGroup }) => {
   ]);
 
   const loadTags = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const res = await fetch(`${SERVER}/api/tag/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await res.json();
-      setFilteredTags(data.tags?.map((t) => t.name) || []);
-      setIsTagsModalOpen(true);
-    } catch (err) {
-      console.error('Ошибка загрузки тегов:', err);
-    }
-  };
+  const token = localStorage.getItem('token');
+  try {
+    const res = await fetch(`${SERVER}/api/tag/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
+    setFilteredTags(data.tags?.map((t) => t.name) || []);
+    setIsTagsModalOpenSearch(true); // Открываем модалку фильтрации по тегам
+  } catch (err) {
+    console.error('Ошибка загрузки тегов:', err);
+  }
+};
 
   const getFieldLabel = (field) => {
     switch (field) {
@@ -640,6 +644,69 @@ const MainGraph = ({ selectedGroup }) => {
       {creationHint && (
   <div className="creation-hint">
     {creationHint}
+  </div>
+)}
+{isTagsModalOpenSearch && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h4 className="modal-title">Фильтр по тегам</h4>
+        <button
+          id="modal-close-btn1"
+          onClick={() => setIsTagsModalOpenSearch(false)}
+        >
+          &times;
+        </button>
+      </div>
+      <div className="modal-body">
+        <input
+          type="text"
+          placeholder="Поиск по тегам..."
+          value={tagSearchTerm}
+          onChange={(e) => setTagSearchTerm(e.target.value)}
+          style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+        />
+        <div className="modal-tags-container">
+          <ul className="modal-tags-list">
+            {filteredTags
+              .filter((tag) =>
+                tag.toLowerCase().includes(tagSearchTerm.toLowerCase())
+              )
+              .map((tag, index) => (
+                <li key={index}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedTags.includes(tag)}
+                      onChange={() => {
+                        if (selectedTags.includes(tag)) {
+                          setSelectedTags(
+                            selectedTags.filter((t) => t !== tag)
+                          );
+                        } else {
+                          setSelectedTags([...selectedTags, tag]);
+                        }
+                      }}
+                    />
+                    <span className="tag-input-class">{tag}</span>
+                  </label>
+                </li>
+              ))}
+            {filteredTags.length === 0 && (
+              <span>Нет подходящих тегов</span>
+            )}
+          </ul>
+        </div>
+      </div>
+      <div className="modal-footer">
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => setIsTagsModalOpenSearch(false)}
+        >
+          Готово
+        </button>
+      </div>
+    </div>
   </div>
 )}
     </div>
