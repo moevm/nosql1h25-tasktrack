@@ -314,6 +314,9 @@ const MainGraph = ({ selectedGroup }) => {
           searchQuery={taskSearchTerm}
           handleSearchChange={(e) => setTaskSearchTerm(e.target.value)}
         />
+        <button style={{
+          marginLeft: '10px',
+        }} onClick={loadTags}>Фильтр по тегам</button>
         <FilterDropdown
           label="Приоритет"
           options={['Высокий', 'Средний', 'Низкий']}
@@ -331,7 +334,6 @@ const MainGraph = ({ selectedGroup }) => {
           onChange={setCreatedAtFilter}
         />
         <DateFilterDropdown label="Дедлайн" onChange={setDeadlineFilter} />
-        <button onClick={loadTags}>Фильтр по тегам</button>
         <button
           onClick={handleResetFilters}
           style={{ backgroundColor: '#dc3545', color: '#fff' }}
