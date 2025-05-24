@@ -51,8 +51,34 @@ const MainGraph = ({ selectedGroup }) => {
   const [selectedSourceTask, setSelectedSourceTask] = useState(null);
   const [connectionName, setConnectionName] = useState('');
   const [isConnectionModalOpen, setIsConnectionModalOpen] = useState(false);
+  const [isAltPressed, setIsAltPressed] = useState(false);
 
   const [creationHint, setCreationHint] = useState('');
+
+  useEffect(() => {
+  const handleKeyDown = (e) => {
+    if (e.altKey && !isAltPressed) {
+      setIsAltPressed(true);
+      setCreationHint('Выберите связь для удаления');
+    }
+  };
+
+  const handleKeyUp = (e) => {
+    if (!e.altKey && isAltPressed) {
+      setIsAltPressed(false);
+      setCreationHint('');
+
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('keyup', handleKeyUp);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+  };
+}, [isAltPressed]);
 
   // Обработка нажатия Ctrl/Cmd
   useEffect(() => {
@@ -257,6 +283,44 @@ const MainGraph = ({ selectedGroup }) => {
       console.error('Ошибка:', error);
     }
   };
+
+  const onEdgeClick = async (event, edge) => {
+  if (isAltPressed) {
+    const confirmed = window.confirm(
+      'Вы уверены, что хотите удалить эту связь?'
+    );
+    if (!confirmed) return;
+
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${SERVER}/api/task/relationships/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          task_id_from: edge.source,
+          task_id_to: edge.target,
+        }),
+      });
+
+      if (response.ok) {
+        // Удалить ребро из состояния
+        setEdges((edges) => edges.filter((e) => e.id !== edge.id));
+        setCreationHint('Связь успешно удалена');
+      } else {
+        alert('Ошибка при удалении связи');
+      }
+    } catch (err) {
+      console.error('Ошибка:', err);
+      alert('Не удалось удалить связь');
+    }
+  } else {
+    // Можно расширить функционал, например, открывать модалку с деталями связи
+  }
+};
 
   useEffect(() => {
     fetchTasksFromServer();
@@ -464,7 +528,8 @@ const MainGraph = ({ selectedGroup }) => {
           minZoom={0.3}
           maxZoom={2.5}
           fitView
-          onNodeClick={onNodeClick} // <-- здесь
+          onNodeClick={onNodeClick} 
+          onEdgeClick={onEdgeClick} 
         >
           <svg>
             <defs>
@@ -555,7 +620,8 @@ const MainGraph = ({ selectedGroup }) => {
                         target: targetId,
                         label: connectionName,
                         type: 'default',
-                        style: { stroke: '#f39c12', strokeWidth: 2 },
+                        style: { stroke: '#f39c12', strokeWidth: 10.5 },
+                        markerStart: { type: MarkerType.ArrowClosed },
                         markerEnd: { type: MarkerType.ArrowClosed },
                       };
                       setEdges((eds) => addEdge(newEdge, eds));
