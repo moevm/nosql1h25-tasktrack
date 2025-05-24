@@ -10,6 +10,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
+
+import TaskForm from '../../TasksPage/TaskForm/TaskForm';
 import SearchBar from '../../SearchBar/SearchBar';
 import FilterDropdown from '../../TasksPage/FilterDropdown/FilterDropdown';
 import DateFilterDropdown from '../../TasksPage/DateFilterDropdown/DateFilterDropdown';
@@ -58,6 +60,7 @@ const MainGraph = ({ selectedGroup }) => {
   const [isAltPressed, setIsAltPressed] = useState(false);
 
   const [creationHint, setCreationHint] = useState('');
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   useEffect(() => {
   const handleKeyDown = (e) => {
@@ -371,6 +374,31 @@ const MainGraph = ({ selectedGroup }) => {
     }
   };
 
+  const handleCreateTask = async (newTaskData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${SERVER}/api/task/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newTaskData),
+    });
+
+    if (response.ok) {
+      // После успешного создания задачи — обновляем список
+      fetchTasksFromServer();
+      setIsCreatingTask(false);
+    } else {
+      alert('Ошибка при создании задачи');
+    }
+  } catch (error) {
+    console.error('Ошибка:', error);
+    alert('Не удалось создать задачу');
+  }
+};
+
   const getActiveFilters = () => {
     const filters = [];
     if (selectedStatuses.length > 0) {
@@ -475,6 +503,12 @@ const MainGraph = ({ selectedGroup }) => {
         >
           Сбросить фильтры
         </button>
+        <button
+  className="btn btn-primary btn-sm"
+  onClick={() => setIsCreatingTask(true)}
+>
+  + Новая задача
+</button>
       </div>
 
       {/* Активные фильтры */}
@@ -709,6 +743,13 @@ const MainGraph = ({ selectedGroup }) => {
     </div>
   </div>
 )}
+{isCreatingTask && (
+  <TaskForm
+    onSubmit={handleCreateTask}
+    onCancel={() => setIsCreatingTask(false)}
+  />
+)}
+
     </div>
   );
 };
