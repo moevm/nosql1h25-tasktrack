@@ -21,23 +21,31 @@ def create_jwt_token(user):
 
 
 class RegisterAPIView(APIView):
+
     def post(self, request):
         serializer = Neo4jUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token = create_jwt_token(user)
         return Response({
-                'user': serializer.data,
-                'token': token
-            }, status=status.HTTP_201_CREATED)
+            'user': serializer.data,
+            'token': token
+        }, status=status.HTTP_201_CREATED)
 
 
 class LoginAPIView(APIView):
+
+    def get_or_none(self, model, **kwargs):
+        try:
+            return model.nodes.get(**kwargs)
+        except model.DoesNotExist:
+            return None
+
     def post(self, request):
         email = request.data.get('email', '').lower().strip()
         password = request.data.get('password', '')
 
-        user = Neo4jUser.nodes.filter(email=email).first()
+        user = self.get_or_none(Neo4jUser, email=email)
         if not user or not user.check_password(password):
             return Response(
                 {'error': 'Invalid email or password'},

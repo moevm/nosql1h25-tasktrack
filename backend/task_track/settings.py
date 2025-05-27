@@ -49,9 +49,6 @@ ROOT_URLCONF = 'task_track.urls'
 WSGI_APPLICATION = 'task_track.wsgi.application'
 
 
-DATABASES = {}
-
-
 # Настройки Neo4jfrom
 config.DATABASE_URL = os.getenv('DJANGO_DATABASE_URL')
 config.AUTO_INSTALL_LABELS = True
@@ -79,6 +76,12 @@ TEMPLATES = [
         },
     },
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [],
+}
 
 
 STATIC_URL = '/static/'
