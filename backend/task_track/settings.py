@@ -12,9 +12,9 @@ DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+# ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'groups.apps.GroupConfig',
     'tags.apps.TagsConfig',
     'tasks.apps.TasksConfig',
+    'dump.apps.DumpConfig',
     'corsheaders',
 ]
 
@@ -82,3 +83,12 @@ TEMPLATES = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+NEO4J_URI = os.getenv('NEO4J_URI')
+
+NEO4J_USER = os.getenv('NEO4J_USER')
+
+NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
+
+NEO4J_DUMP_DIR = BASE_DIR / 'dump_data'

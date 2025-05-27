@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/tag/', include('tags.urls')),
     path('api/task/', include('tasks.urls')),
     path('api/task/<str:task_id>/note/', include('notes.urls')),
+    path('api/database/', include('dump.urls')),
 ]

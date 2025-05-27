@@ -2,6 +2,7 @@
 volumes:
   static:
   media:
+  dump_data:
   neo4j_data:
 
 
@@ -34,6 +35,8 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=task_track.settings
       - PYTHONUNBUFFERED=1
+    volumes:
+      - dump_data:/app/dump_data
     depends_on:
       db:
         condition: service_healthy
@@ -58,3 +61,4 @@ services:
     volumes:
       - static:/static
       - media:/media
+      - dump_data:/app/dump_data
