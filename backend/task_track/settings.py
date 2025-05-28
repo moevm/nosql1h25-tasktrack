@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'groups.apps.GroupConfig',
     'tags.apps.TagsConfig',
     'tasks.apps.TasksConfig',
+    'history',
     'dump.apps.DumpConfig',
     'corsheaders',
 ]
