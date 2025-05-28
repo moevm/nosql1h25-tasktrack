@@ -13,6 +13,8 @@ import {
 
 import './UserProfile.css';
 
+import { SERVER } from '../../Constants.js';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,10 +30,11 @@ function parseJwt(token) {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
-      window.atob(base64)
+      window
+        .atob(base64)
         .split('')
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .join(''),
     );
 
     return JSON.parse(jsonPayload);
@@ -48,7 +51,6 @@ export default function UserProfile() {
   const [selectedY, setSelectedY] = useState('');
   const [taskCount, setTaskCount] = useState(120);
   const [connectionCount, setConnectionCount] = useState(200);
-
 
   const groups = [
     { name: 'Группа A', taskCount: 120, type: 'Тип 1' },
@@ -71,45 +73,81 @@ export default function UserProfile() {
   }, []);
 
   const handleExport = () => {
-  const token = localStorage.getItem('token'); // Получаем токен для авторизации
-
-  fetch('http://localhost:8000/api/database/dump/', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`, // Передаём токен, если требуется аутентификация
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Ошибка при получении данных');
-      }
-      return response.json();
+    const token = localStorage.getItem('token');
+    fetch(`${SERVER}/api/database/dump/`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .then((data) => {
-      // Преобразуем JSON в строку
-      const jsonString = JSON.stringify(data, null, 2);
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Ошибка при получении данных');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const jsonString = JSON.stringify(data, null, 2);
 
-      // Создаём Blob с данными
-      const blob = new Blob([jsonString], { type: 'application/json' });
+        const blob = new Blob([jsonString], { type: 'application/json' });
 
-      // Создаём ссылку для скачивания
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'database_dump.json'; // Имя файла при скачивании
-      link.click();
-
-      // Очищаем объект URL
-      URL.revokeObjectURL(url);
-    })
-    .catch((error) => {
-      console.error('Ошибка экспорта:', error);
-      alert('Не удалось загрузить данные.');
-    });
-};
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'database_dump.json';
+        link.click();
+        URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Ошибка экспорта:', error);
+        alert('Не удалось загрузить данные.');
+      });
+  };
 
   const handleImport = () => {
-    console.log('Импортировать данные...');
+    const token = localStorage.getItem('token');
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return alert('Файл не выбран');
+
+      if (!file.name.endsWith('.json')) {
+        return alert('Пожалуйста, выберите JSON-файл');
+      }
+
+      const formData = new FormData();
+      formData.append('restore_file', file);
+
+      try {
+        const response = await fetch(
+          `${SERVER}/api/database/dump/`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Импорт успешен:', result);
+        alert('Файл успешно загружен');
+      } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Не удалось загрузить файл');
+      }
+    };
+
+    input.click();
   };
 
   const handleChangeEmail = () => {
@@ -123,7 +161,6 @@ export default function UserProfile() {
   const handleBuildGraph = () => {
     console.log('Построить график...');
   };
-
 
   const chartData = {
     labels: [
@@ -249,7 +286,6 @@ export default function UserProfile() {
           </button>
         </div>
       </div>
-
 
       <div className="chart-container" style={{ marginTop: '30px' }}>
         <h5>График</h5>
