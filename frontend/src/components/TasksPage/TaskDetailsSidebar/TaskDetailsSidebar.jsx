@@ -3,7 +3,79 @@ import EditTaskModal from '../EditTaskModal/EditTaskModal';
 import './TaskDetailsSidebar.css';
 import { SERVER } from '../../../Constants';
 
-
+const getFieldLabel = (field) => {
+    switch (field) {
+      case 'title':
+        return 'Название';
+      case 'createdAt':
+        return 'Дата создания';
+      case 'updatedAt':
+        return 'Дата обновления';
+      case 'deadline':
+        return 'Дата завершения';
+      case 'status':
+        return 'Статус';
+      case 'priority':
+        return 'Приоритет';
+      case 'todo':
+        return 'Сделать';
+      case 'in_progress':
+        return 'В процессе';
+      case 'done':
+        return 'Завершено';
+      case 'low':
+        return 'Низкий';
+      case 'medium':
+        return 'Средний';
+      case 'high':
+        return 'Высокий';
+      case 'books':
+        return 'Книги';
+      case 'notes':
+        return 'Заметки';
+      case 'tags':
+        return 'Теги';
+      case 'note_id':
+        return 'ID заметки';
+      case 'text':
+        return 'Текст заметки';
+      case 'created_at':
+        return 'Дата создания заметки';
+      case 'changed_field':
+        return 'Измененное поле';
+      case 'change_type_display':
+        return 'Тип изменения';
+      case 'value':
+        return 'Новое значение';
+      case 'changed_at':
+        return 'Дата изменения';
+      case 'task_id':
+        return 'ID задачи';
+      case 'task':
+        return 'Задача';
+      case 'update':
+        return 'Обновление';
+      case 'delete':
+        return 'Удаление';
+      case 'create':
+        return 'Создание';
+      case 'add':
+        return 'Добавление';
+      case 'remove':
+        return 'Удаление';
+      case 'edit':
+        return 'Редактирование';
+      case 'content':
+        return 'Содержание';
+      case 'group':
+        return 'Группа';
+      case 'group_id':
+        return 'ID группы';
+      default:
+        return field;
+    }
+  };
+  
 export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const [animationState, setAnimationState] = useState('closing');
   const [currentTask, setCurrentTask] = useState(null);
@@ -302,78 +374,7 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     });
   };
 
-  const getFieldLabel = (field) => {
-    switch (field) {
-      case 'title':
-        return 'Название';
-      case 'createdAt':
-        return 'Дата создания';
-      case 'updatedAt':
-        return 'Дата обновления';
-      case 'deadline':
-        return 'Дата завершения';
-      case 'status':
-        return 'Статус';
-      case 'priority':
-        return 'Приоритет';
-      case 'todo':
-        return 'Сделать';
-      case 'in_progress':
-        return 'В процессе';
-      case 'done':
-        return 'Завершено';
-      case 'low':
-        return 'Низкий';
-      case 'medium':
-        return 'Средний';
-      case 'high':
-        return 'Высокий';
-      case 'books':
-        return 'Книги';
-      case 'notes':
-        return 'Заметки';
-      case 'tags':
-        return 'Теги';
-      case 'note_id':
-        return 'ID заметки';
-      case 'text':
-        return 'Текст заметки';
-      case 'created_at':
-        return 'Дата создания заметки';
-      case 'changed_field':
-        return 'Измененное поле';
-      case 'change_type_display':
-        return 'Тип изменения';
-      case 'value':
-        return 'Новое значение';
-      case 'changed_at':
-        return 'Дата изменения';
-      case 'task_id':
-        return 'ID задачи';
-      case 'task':
-        return 'Задача';
-      case 'update':
-        return 'Обновление';
-      case 'delete':
-        return 'Удаление';
-      case 'create':
-        return 'Создание';
-      case 'add':
-        return 'Добавление';
-      case 'remove':
-        return 'Удаление';
-      case 'edit':
-        return 'Редактирование';
-      case 'content':
-        return 'Содержание';
-      case 'group':
-        return 'Группа';
-      case 'group_id':
-        return 'ID группы';
-      default:
-        return field;
-    }
-  };
+  
   return (
     <div
       className={`task-details-sidebar ${animationState}`}
