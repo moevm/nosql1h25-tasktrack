@@ -98,21 +98,14 @@ class Task(neomodel.StructuredNode):
         return result
 
     def delete(self):
-        from history.models import TaskHistory
-
-        TaskHistory(
-            changed_field='task',
-            change_type='delete',
-            old_value=str(self)
-        ).save()
-
         query = """
         MATCH (task:Task {task_id: $task_id})
         OPTIONAL MATCH (task)-[:HAS_TAG]->(tag:Tag)
         OPTIONAL MATCH (task)-[:HAS_NOTE]->(note:Note)
         OPTIONAL MATCH (task)-[rel:RELATED_TO]-(other:Task)
+        OPTIONAL MATCH (task)-[:HISTORY]-(history:TaskHistory)
         DELETE rel
-        DETACH DELETE note, task
+        DETACH DELETE note, task, history
         """
         neomodel.db.cypher_query(query, {'task_id': self.task_id})
 
