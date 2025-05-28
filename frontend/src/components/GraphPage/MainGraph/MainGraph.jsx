@@ -6,10 +6,9 @@ import ReactFlow, {
   Background,
   useNodesState,
   useEdgesState,
-  MarkerType
+  MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-
 
 import TaskForm from '../../TasksPage/TaskForm/TaskForm';
 import SearchBar from '../../SearchBar/SearchBar';
@@ -31,7 +30,6 @@ const edgeTypes = {
 };
 
 const MainGraph = ({ selectedGroup }) => {
-
   const [isTagsModalOpenSearch, setIsTagsModalOpenSearch] = useState(false);
   const [tagSearchTerm, setTagSearchTerm] = useState('');
 
@@ -63,40 +61,40 @@ const MainGraph = ({ selectedGroup }) => {
   const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (e.altKey && !isAltPressed) {
-      setIsAltPressed(true);
-      setCreationHint('Выберите связь для удаления');
-    }
+    const handleKeyDown = (e) => {
+      if (e.altKey && !isAltPressed) {
+        setIsAltPressed(true);
+        setCreationHint('Выберите связь для удаления');
+      }
 
-    if ((e.ctrlKey || e.metaKey) && !isCtrlPressed) {
-      setIsCtrlPressed(true);
-      setEdgeCreationMode(true);
-      setCreationHint('Выберите две задачи для создания связи');
-    }
-  };
+      if ((e.ctrlKey || e.metaKey) && !isCtrlPressed) {
+        setIsCtrlPressed(true);
+        setEdgeCreationMode(true);
+        setCreationHint('Выберите две задачи для создания связи');
+      }
+    };
 
-  const handleKeyUp = (e) => {
-    if (!e.altKey && isAltPressed) {
-      setIsAltPressed(false);
-      setCreationHint('');
-    }
+    const handleKeyUp = (e) => {
+      if (!e.altKey && isAltPressed) {
+        setIsAltPressed(false);
+        setCreationHint('');
+      }
 
-    if ((!e.ctrlKey && !e.metaKey) && isCtrlPressed) {
-      setIsCtrlPressed(false);
-      setEdgeCreationMode(false);
-      setCreationHint('');
-    }
-  };
+      if (!e.ctrlKey && !e.metaKey && isCtrlPressed) {
+        setIsCtrlPressed(false);
+        setEdgeCreationMode(false);
+        setCreationHint('');
+      }
+    };
 
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
-  return () => {
-    window.removeEventListener('keydown', handleKeyDown);
-    window.removeEventListener('keyup', handleKeyUp);
-  };
-}, [isAltPressed, isCtrlPressed]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [isAltPressed, isCtrlPressed]);
   // Логика выбора задач при клике
   const onNodeClick = (event, node) => {
     if (edgeCreationMode) {
@@ -275,42 +273,42 @@ const MainGraph = ({ selectedGroup }) => {
   };
 
   const onEdgeClick = async (event, edge) => {
-  if (isAltPressed) {
-    const confirmed = window.confirm(
-      'Вы уверены, что хотите удалить эту связь?'
-    );
-    if (!confirmed) return;
+    if (isAltPressed) {
+      const confirmed = window.confirm(
+        'Вы уверены, что хотите удалить эту связь?',
+      );
+      if (!confirmed) return;
 
-    try {
-      const token = localStorage.getItem('token');
+      try {
+        const token = localStorage.getItem('token');
 
-      const response = await fetch(`${SERVER}/api/task/relationships/`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          task_id_from: edge.source,
-          task_id_to: edge.target,
-        }),
-      });
+        const response = await fetch(`${SERVER}/api/task/relationships/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            task_id_from: edge.source,
+            task_id_to: edge.target,
+          }),
+        });
 
-      if (response.ok) {
-        // Удалить ребро из состояния
-        setEdges((edges) => edges.filter((e) => e.id !== edge.id));
-        setCreationHint('Связь успешно удалена');
-      } else {
-        alert('Ошибка при удалении связи');
+        if (response.ok) {
+          // Удалить ребро из состояния
+          setEdges((edges) => edges.filter((e) => e.id !== edge.id));
+          setCreationHint('Связь успешно удалена');
+        } else {
+          alert('Ошибка при удалении связи');
+        }
+      } catch (err) {
+        console.error('Ошибка:', err);
+        alert('Не удалось удалить связь');
       }
-    } catch (err) {
-      console.error('Ошибка:', err);
-      alert('Не удалось удалить связь');
+    } else {
+      // Можно расширить функционал, например, открывать модалку с деталями связи
     }
-  } else {
-    // Можно расширить функционал, например, открывать модалку с деталями связи
-  }
-};
+  };
 
   useEffect(() => {
     fetchTasksFromServer();
@@ -327,21 +325,21 @@ const MainGraph = ({ selectedGroup }) => {
   ]);
 
   const loadTags = async () => {
-  const token = localStorage.getItem('token');
-  try {
-    const res = await fetch(`${SERVER}/api/tag/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await res.json();
-    setFilteredTags(data.tags?.map((t) => t.name) || []);
-    setIsTagsModalOpenSearch(true); // Открываем модалку фильтрации по тегам
-  } catch (err) {
-    console.error('Ошибка загрузки тегов:', err);
-  }
-};
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${SERVER}/api/tag/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      setFilteredTags(data.tags?.map((t) => t.name) || []);
+      setIsTagsModalOpenSearch(true); // Открываем модалку фильтрации по тегам
+    } catch (err) {
+      console.error('Ошибка загрузки тегов:', err);
+    }
+  };
 
   const getFieldLabel = (field) => {
     switch (field) {
@@ -375,29 +373,29 @@ const MainGraph = ({ selectedGroup }) => {
   };
 
   const handleCreateTask = async (newTaskData) => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${SERVER}/api/task/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newTaskData),
-    });
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${SERVER}/api/task/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTaskData),
+      });
 
-    if (response.ok) {
-      // После успешного создания задачи — обновляем список
-      fetchTasksFromServer();
-      setIsCreatingTask(false);
-    } else {
-      alert('Ошибка при создании задачи');
+      if (response.ok) {
+        // После успешного создания задачи — обновляем список
+        fetchTasksFromServer();
+        setIsCreatingTask(false);
+      } else {
+        alert('Ошибка при создании задачи');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось создать задачу');
     }
-  } catch (error) {
-    console.error('Ошибка:', error);
-    alert('Не удалось создать задачу');
-  }
-};
+  };
 
   const getActiveFilters = () => {
     const filters = [];
@@ -504,17 +502,17 @@ const MainGraph = ({ selectedGroup }) => {
           Сбросить фильтры
         </button>
         <button
-  className="btn btn-primary btn-sm"
-  onClick={() => setIsCreatingTask(true)}
->
-  + Новая задача
-</button>
-<button
-  className="btn btn-outline-secondary btn-sm"
-  onClick={() => setIsTagsModalOpen(true)}
->
-  Управление тегами
-</button>
+          className="btn btn-primary btn-sm"
+          onClick={() => setIsCreatingTask(true)}
+        >
+          + Новая задача
+        </button>
+        <button
+          className="btn btn-outline-secondary btn-sm"
+          onClick={() => setIsTagsModalOpen(true)}
+        >
+          Управление тегами
+        </button>
       </div>
 
       {/* Активные фильтры */}
@@ -555,8 +553,8 @@ const MainGraph = ({ selectedGroup }) => {
           minZoom={0.3}
           maxZoom={2.5}
           fitView
-          onNodeClick={onNodeClick} 
-          onEdgeClick={onEdgeClick} 
+          onNodeClick={onNodeClick}
+          onEdgeClick={onEdgeClick}
         >
           <svg>
             <defs>
@@ -681,88 +679,83 @@ const MainGraph = ({ selectedGroup }) => {
           </div>
         </div>
       )}
-      {creationHint && (
-  <div className="creation-hint">
-    {creationHint}
-  </div>
-)}
-{isTagsModalOpenSearch && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h4 className="modal-title">Фильтр по тегам</h4>
-        <button
-          id="modal-close-btn1"
-          onClick={() => setIsTagsModalOpenSearch(false)}
-        >
-          &times;
-        </button>
-      </div>
-      <div className="modal-body">
-        <input
-          type="text"
-          placeholder="Поиск по тегам..."
-          value={tagSearchTerm}
-          onChange={(e) => setTagSearchTerm(e.target.value)}
-          style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-        />
-        <div className="modal-tags-container">
-          <ul className="modal-tags-list">
-            {filteredTags
-              .filter((tag) =>
-                tag.toLowerCase().includes(tagSearchTerm.toLowerCase())
-              )
-              .map((tag, index) => (
-                <li key={index}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selectedTags.includes(tag)}
-                      onChange={() => {
-                        if (selectedTags.includes(tag)) {
-                          setSelectedTags(
-                            selectedTags.filter((t) => t !== tag)
-                          );
-                        } else {
-                          setSelectedTags([...selectedTags, tag]);
-                        }
-                      }}
-                    />
-                    <span className="tag-input-class">{tag}</span>
-                  </label>
-                </li>
-              ))}
-            {filteredTags.length === 0 && (
-              <span>Нет подходящих тегов</span>
-            )}
-          </ul>
+      {creationHint && <div className="creation-hint">{creationHint}</div>}
+      {isTagsModalOpenSearch && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title">Фильтр по тегам</h4>
+              <button
+                id="modal-close-btn1"
+                onClick={() => setIsTagsModalOpenSearch(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              <input
+                type="text"
+                placeholder="Поиск по тегам..."
+                value={tagSearchTerm}
+                onChange={(e) => setTagSearchTerm(e.target.value)}
+                style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+              />
+              <div className="modal-tags-container">
+                <ul className="modal-tags-list">
+                  {filteredTags
+                    .filter((tag) =>
+                      tag.toLowerCase().includes(tagSearchTerm.toLowerCase()),
+                    )
+                    .map((tag, index) => (
+                      <li key={index}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={selectedTags.includes(tag)}
+                            onChange={() => {
+                              if (selectedTags.includes(tag)) {
+                                setSelectedTags(
+                                  selectedTags.filter((t) => t !== tag),
+                                );
+                              } else {
+                                setSelectedTags([...selectedTags, tag]);
+                              }
+                            }}
+                          />
+                          <span className="tag-input-class">{tag}</span>
+                        </label>
+                      </li>
+                    ))}
+                  {filteredTags.length === 0 && (
+                    <span>Нет подходящих тегов</span>
+                  )}
+                </ul>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => setIsTagsModalOpenSearch(false)}
+              >
+                Готово
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="modal-footer">
-        <button
-          className="btn btn-sm btn-outline-secondary"
-          onClick={() => setIsTagsModalOpenSearch(false)}
-        >
-          Готово
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{isCreatingTask && (
-  <TaskForm
-    onSubmit={handleCreateTask}
-    onCancel={() => setIsCreatingTask(false)}
-  />
-)}
-{isTagsModalOpen && (
-  <TagsModal
-    isOpen={isTagsModalOpen}
-    onClose={() => setIsTagsModalOpen(false)}
-    setSelectedTask={setSelectedTask}
-  />
-)}
-
+      )}
+      {isCreatingTask && (
+        <TaskForm
+          onSubmit={handleCreateTask}
+          onCancel={() => setIsCreatingTask(false)}
+        />
+      )}
+      {isTagsModalOpen && (
+        <TagsModal
+          isOpen={isTagsModalOpen}
+          onClose={() => setIsTagsModalOpen(false)}
+          setSelectedTask={setSelectedTask}
+        />
+      )}
     </div>
   );
 };

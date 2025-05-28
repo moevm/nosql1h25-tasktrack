@@ -12,9 +12,9 @@ DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
