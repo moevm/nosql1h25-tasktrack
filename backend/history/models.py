@@ -19,7 +19,7 @@ class TaskHistory(neomodel.StructuredNode):
 
     @classmethod
     def get_fields(cls):
-        return ['title', 'content', 'deadline', 'status', 'priority']
+        return ['title', 'content', 'deadline', 'status', 'priority', 'tags']
 
     def __str__(self):
         return f"{self.changed_at}: {self.change_type} on {self.changed_field}"

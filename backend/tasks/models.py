@@ -69,7 +69,15 @@ class Task(neomodel.StructuredNode):
 
         for field in fields_to_track:
             old_value = getattr(old_task, field, None)
-            new_value = getattr(self, field)
+
+            if (hasattr(self.__class__, field) and isinstance(getattr(self.__class__, field), neomodel.RelationshipDefinition)):
+                related_objects = getattr(self, field).all()
+                new_value = [str(obj)
+                             for obj in related_objects] if related_objects else []
+                new_value = ', '.join(sorted(new_value)) if new_value else ''
+                old_task = None
+            else:
+                new_value = getattr(self, field)
 
             if old_value != new_value:
                 history_entry = TaskHistory(
