@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import EditTaskModal from '../EditTaskModal/EditTaskModal';
 import './TaskDetailsSidebar.css';
 import { SERVER } from '../../../Constants';
@@ -75,7 +75,7 @@ const getFieldLabel = (field) => {
         return field;
     }
   };
-  
+
 export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const [animationState, setAnimationState] = useState('closing');
   const [currentTask, setCurrentTask] = useState(null);
@@ -90,6 +90,13 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [history, setHistory] = useState([]);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [historyFilters, setHistoryFilters] = useState({
+  field: '',
+  changeType: '',
+  value: '',
+  dateFrom: '',
+  dateTo: '',
+});
 
   const taskId = task?.taskId;
   const token = localStorage.getItem('token');
@@ -214,6 +221,47 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       alert('Не удалось добавить заметку.');
     }
   };
+
+  const filteredHistory = useMemo(() => {
+  return history.filter((change) => {
+    const fieldMatch =
+      !historyFilters.field ||
+      getFieldLabel(change.changed_field)
+        .toLowerCase()
+        .includes(historyFilters.field.toLowerCase());
+
+    const changeTypeMatch =
+      !historyFilters.changeType ||
+      getFieldLabel(change.change_type_display)
+        .toLowerCase()
+        .includes(historyFilters.changeType.toLowerCase());
+
+    const valueMatch =
+      !historyFilters.value ||
+      getFieldLabel(change.value)
+        .toLowerCase()
+        .includes(historyFilters.value.toLowerCase());
+
+    const dateMatch = () => {
+      if (!historyFilters.dateFrom && !historyFilters.dateTo) return true;
+      const changeDate = new Date(change.changed_at);
+      const dateFrom = historyFilters.dateFrom
+        ? new Date(historyFilters.dateFrom)
+        : null;
+      const dateTo = historyFilters.dateTo
+        ? new Date(historyFilters.dateTo)
+        : null;
+
+      if (dateFrom && changeDate < dateFrom) return false;
+      if (dateTo && changeDate > new Date(dateTo.setHours(23, 59, 59, 999)))
+        return false;
+
+      return true;
+    };
+
+    return fieldMatch && changeTypeMatch && valueMatch && dateMatch();
+  });
+}, [history, historyFilters]);
 
   // Фильтрация тегов по поиску
   const filteredTags = allTags.filter((tag) =>
@@ -611,19 +659,54 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
           &times;
         </button>
       </div>
+      {/* Форма фильтрации */}
+<div className="task-details-sidebar__filters">
+  <div className="filter-group">
+    <label>Поле:</label>
+    <input
+      type="text"
+      value={historyFilters.field}
+      onChange={(e) =>
+        setHistoryFilters({ ...historyFilters, field: e.target.value })
+      }
+    />
+  </div>
+  <div className="filter-group">
+    <label>Тип изменения:</label>
+    <input
+      type="text"
+      value={historyFilters.changeType}
+      onChange={(e) =>
+        setHistoryFilters({ ...historyFilters, changeType: e.target.value })
+      }
+    />
+  </div>
+  <div className="filter-group">
+    <label>Значение:</label>
+    <input
+      type="text"
+      value={historyFilters.value}
+      onChange={(e) =>
+        setHistoryFilters({ ...historyFilters, value: e.target.value })
+      }
+    />
+  </div>
+  
+
+</div>
       <div className="task-details-sidebar__modal-body">
         {history.length > 0 ? (
           <ul className="task-details-sidebar__history-list">
-            {history.map((change, index) => (
-              <li key={index} className="task-details-sidebar__history-item">
-                <strong>{formatDate(change.changed_at)}</strong>
-                <p>
-                  Поле: <strong>{getFieldLabel(change.changed_field)}</strong><br />
-                  Тип изменения: {getFieldLabel(change.change_type_display)}<br />
-                  Новое значение: <em>{getFieldLabel(change.value)}</em>
-                </p>
-              </li>
-            ))}
+            {filteredHistory.map((change, index) => (
+  <li key={index} className="task-details-sidebar__history-item">
+    <strong>{formatDate(change.changed_at)}</strong>
+    <p>
+      Поле: <strong>{getFieldLabel(change.changed_field)}</strong><br />
+      Тип изменения: {getFieldLabel(change.change_type_display)}<br />
+      Новое значение: <em>{getFieldLabel(change.value)}</em>
+    </p>
+  </li>
+))}
           </ul>
         ) : (
           <p>Нет записей об изменениях.</p>

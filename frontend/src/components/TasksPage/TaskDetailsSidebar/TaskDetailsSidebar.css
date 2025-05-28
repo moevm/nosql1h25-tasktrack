@@ -422,3 +422,21 @@ select {
   text-align: right;
 }
 
+.task-details-sidebar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  flex: 1 1 150px;
+}
+
+.filter-group input {
+  padding: 6px;
+  font-size: 14px;
+}
