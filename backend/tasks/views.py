@@ -167,11 +167,11 @@ class TaskRelationsAPIView(APIView):
         task_from = self._get_task(user, task_id_from)
         task_to = self._get_task(user, task_id_to)
 
-        if task_from.group.single() != task_to.group.single():
-            raise ValidationError(
-                {'error': 'Tasks must be in the same group'},
-                code=status.HTTP_400_BAD_REQUEST
-            )
+        # if task_from.group.single() != task_to.group.single():
+        #     raise ValidationError(
+        #         {'error': 'Tasks must be in the same group'},
+        #         code=status.HTTP_400_BAD_REQUEST
+        #     )
         return task_from, task_to
 
     def _check_relation_exists(self, task_id_from, task_id_to):
