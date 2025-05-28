@@ -80,9 +80,11 @@ class TaskSerializer(serializers.Serializer):
     def _relations_tags(self, task, validated_data):
         from tags.serializers import TagSerializer
 
+        user = self.context['request'].user
+
         if 'tag_names' in validated_data:
             for name in validated_data['tag_names']:
-                tag = Tag.nodes.get_or_none(name=name)
+                tag = user.tags.get_or_none(name=name)
                 if tag is None:
                     serializer = TagSerializer(data={
                         'name': name
@@ -119,16 +121,17 @@ class TaskSerializer(serializers.Serializer):
     def _update_tags(self, task, tag_names):
         from tags.serializers import TagSerializer
 
+        user = self.context['request'].user
         current_tags = {tag.name for tag in task.tags.all()}
         new_tags = {name.lower().strip() for name in tag_names}
 
         for tag_name in current_tags - new_tags:
-            tag = Tag.nodes.get(name=tag_name)
+            tag = user.tags.get(name=tag_name)
             task.tags.disconnect(tag)
             tag.tasks.disconnect(task)
 
         for tag_name in new_tags - current_tags:
-            tag = Tag.nodes.get_or_none(name=tag_name)
+            tag = user.tags.get_or_none(name=tag_name)
             if tag is None:
                 serializer = TagSerializer(data={
                     'name': tag_name
