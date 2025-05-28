@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -23,16 +23,32 @@ ChartJS.register(
   Legend,
 );
 
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      window.atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error('Ошибка при разборе JWT', e);
+    return null;
+  }
+}
+
 export default function UserProfile() {
-  const [email, setEmail] = useState('user@example.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedX, setSelectedX] = useState('');
   const [selectedY, setSelectedY] = useState('');
   const [taskCount, setTaskCount] = useState(120);
   const [connectionCount, setConnectionCount] = useState(200);
 
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const groups = [
     { name: 'Группа A', taskCount: 120, type: 'Тип 1' },
@@ -40,9 +56,57 @@ export default function UserProfile() {
     { name: 'Группа C', taskCount: 150, type: 'Тип 3' },
   ];
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded = parseJwt(token);
+      if (decoded && decoded.email) {
+        setEmail(decoded.email);
+      } else {
+        setEmail('Неизвестный пользователь');
+      }
+    } else {
+      setEmail('Токен отсутствует');
+    }
+  }, []);
+
   const handleExport = () => {
-    setShowExportModal(true);
-  };
+  const token = localStorage.getItem('token'); // Получаем токен для авторизации
+
+  fetch('http://localhost:8000/api/database/dump/', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`, // Передаём токен, если требуется аутентификация
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Преобразуем JSON в строку
+      const jsonString = JSON.stringify(data, null, 2);
+
+      // Создаём Blob с данными
+      const blob = new Blob([jsonString], { type: 'application/json' });
+
+      // Создаём ссылку для скачивания
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'database_dump.json'; // Имя файла при скачивании
+      link.click();
+
+      // Очищаем объект URL
+      URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error('Ошибка экспорта:', error);
+      alert('Не удалось загрузить данные.');
+    });
+};
 
   const handleImport = () => {
     console.log('Импортировать данные...');
@@ -60,18 +124,6 @@ export default function UserProfile() {
     console.log('Построить график...');
   };
 
-  const handleGroupSelect = (group) => {
-    setSelectedGroup(group);
-    setShowExportModal(false);
-  };
-
-  const handleResetGroup = () => {
-    setSelectedGroup(null);
-  };
-
-  const handleExportData = () => {
-    console.log(`Экспортировать данные группы: ${selectedGroup.name}`);
-  };
 
   const chartData = {
     labels: [
@@ -117,7 +169,7 @@ export default function UserProfile() {
             <p>
               Почта пользователя: <strong>{email}</strong>
             </p>
-            <div className="button-group">
+            {/* <div className="button-group">
               <button
                 className="btn btn-sm btn-outline-primary"
                 onClick={handleChangeEmail}
@@ -130,7 +182,7 @@ export default function UserProfile() {
               >
                 Изменить пароль
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -198,54 +250,6 @@ export default function UserProfile() {
         </div>
       </div>
 
-      {showExportModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h5>Выберите группу для экспорта</h5>
-            <ul>
-              {groups.map((group, index) => (
-                <li key={index} onClick={() => handleGroupSelect(group)}>
-                  <strong>{group.name}</strong> - Задания: {group.taskCount},
-                  Тип: {group.type}
-                </li>
-              ))}
-            </ul>
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={() => setShowExportModal(false)}
-            >
-              Закрыть
-            </button>
-          </div>
-        </div>
-      )}
-
-      {selectedGroup && (
-        <div className="selected-group-info">
-          <h5>Информация о выбранной группе</h5>
-          <p>
-            <strong>Группа:</strong> {selectedGroup.name}
-          </p>
-          <p>
-            <strong>Количество заданий:</strong> {selectedGroup.taskCount}
-          </p>
-          <p>
-            <strong>Тип группы:</strong> {selectedGroup.type}
-          </p>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={handleResetGroup}
-          >
-            Сбросить
-          </button>
-          <button
-            className="btn btn-sm btn-outline-success ml-2"
-            onClick={handleExportData}
-          >
-            Экспортировать
-          </button>
-        </div>
-      )}
 
       <div className="chart-container" style={{ marginTop: '30px' }}>
         <h5>График</h5>
