@@ -12,7 +12,6 @@ import {
 } from 'chart.js';
 
 import './UserProfile.css';
-
 import { SERVER } from '../../Constants.js';
 
 ChartJS.register(
@@ -51,6 +50,7 @@ export default function UserProfile() {
   const [selectedY, setSelectedY] = useState('');
   const [taskCount, setTaskCount] = useState(120);
   const [connectionCount, setConnectionCount] = useState(200);
+  const [notification, setNotification] = useState('');
 
   const groups = [
     { name: 'Группа A', taskCount: 120, type: 'Тип 1' },
@@ -123,16 +123,13 @@ export default function UserProfile() {
       formData.append('restore_file', file);
 
       try {
-        const response = await fetch(
-          `${SERVER}/api/database/dump/`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: formData,
+        const response = await fetch(`${SERVER}/api/database/dump/`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+          body: formData,
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -140,7 +137,17 @@ export default function UserProfile() {
 
         const result = await response.json();
         console.log('Импорт успешен:', result);
-        alert('Файл успешно загружен');
+
+        // Установка уведомления
+        setNotification('Данные успешно загружены.');
+
+        // Очистка токена
+        localStorage.removeItem('token');
+
+        // Отображение уведомления на 3 секунды, затем редирект
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
       } catch (error) {
         console.error('Ошибка:', error);
         alert('Не удалось загрузить файл');
@@ -200,26 +207,17 @@ export default function UserProfile() {
 
   return (
     <div className="user-settings-container">
+      {/* Уведомление */}
+      {notification && (
+        <div className="notification-toast show">{notification}</div>
+      )}
+
       <div className="user-settings-content">
         <div className="user-info">
           <div className="email-info">
             <p>
               Почта пользователя: <strong>{email}</strong>
             </p>
-            {/* <div className="button-group">
-              <button
-                className="btn btn-sm btn-outline-primary"
-                onClick={handleChangeEmail}
-              >
-                Изменить почту
-              </button>
-              <button
-                className="btn btn-sm btn-outline-warning"
-                onClick={handleChangePassword}
-              >
-                Изменить пароль
-              </button>
-            </div> */}
           </div>
         </div>
 
