@@ -27,7 +27,10 @@ export default function LoginPage({ setToken }) {
       if (response.ok) {
         const data = await response.json();
         setToken(data.token);
-        navigate('/tasks');
+        setTimeout(() => {
+          navigate('/tasks');
+        }, 10);
+        
       } else {
         const errorData = await response.json();
         console.error('Ошибка при выполнении запроса входа:', errorData);

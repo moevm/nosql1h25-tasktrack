@@ -9,6 +9,7 @@ export default function GroupPanel({
   isGraphMode,
   setSelectedGroup,
   selectedGroup,
+  onGroupChange
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [allGroups, setAllGroups] = useState([]);
@@ -139,6 +140,7 @@ export default function GroupPanel({
           setAllGroups(updatedGroups);
           setGroupList(updatedGroups);
           if (selectedGroup === groupItem.name) setSelectedGroup(trimmedName);
+          if (onGroupChange) onGroupChange();
         })
         .catch(console.error);
     }
@@ -168,6 +170,7 @@ export default function GroupPanel({
         if (selectedGroup === groupItem.name) {
           setSelectedGroup(null);
         }
+        if (onGroupChange) onGroupChange();
       })
       .catch(console.error);
     setGroupList((prev) => prev.filter((g) => g.name !== groupItem.name));

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import SearchBar from '../../SearchBar/SearchBar';
 import FilterDropdown from '../FilterDropdown/FilterDropdown';
 import DateFilterDropdown from '../DateFilterDropdown/DateFilterDropdown';
@@ -15,7 +15,8 @@ import {
   PRIORITY_OPTIONS,
 } from '../../../Constants';
 
-export default function TableGraph({ selectedGroup }) {
+const TableGraph = forwardRef((props, ref) => {
+  const { selectedGroup } = props;
   const [tasks, setTasks] = useState([]);
   const [taskSearchTerm, setTaskSearchTerm] = useState('');
   const [page, setPage] = useState(1);
@@ -233,6 +234,9 @@ export default function TableGraph({ selectedGroup }) {
   const handleRowClick = (task) => {
     setSelectedTask(task);
   };
+  useImperativeHandle(ref, () => ({
+    fetchTasksFromServer,
+  }));
 
   // Применить сортировку
   const handleApplySort = (field, order) => {
@@ -626,4 +630,5 @@ export default function TableGraph({ selectedGroup }) {
       )}
     </div>
   );
-}
+})
+export default TableGraph;

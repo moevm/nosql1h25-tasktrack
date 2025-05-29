@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import ReactFlow, {
   addEdge,
   Controls,
@@ -28,8 +28,8 @@ const nodeTypes = {
 const edgeTypes = {
   default: CustomEdge,
 };
-
-const MainGraph = ({ selectedGroup }) => {
+const MainGraph = forwardRef((props, ref) => {
+  const { selectedGroup } = props;
   const [isTagsModalOpenSearch, setIsTagsModalOpenSearch] = useState(false);
   const [tagSearchTerm, setTagSearchTerm] = useState('');
 
@@ -271,6 +271,9 @@ const MainGraph = ({ selectedGroup }) => {
       console.error('Ошибка:', error);
     }
   };
+  useImperativeHandle(ref, () => ({
+      fetchTasksFromServer,
+    }));
 
   const onEdgeClick = async (event, edge) => {
     if (isAltPressed) {
@@ -758,6 +761,6 @@ const MainGraph = ({ selectedGroup }) => {
       )}
     </div>
   );
-};
+});
 
 export default MainGraph;
