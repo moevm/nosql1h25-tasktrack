@@ -4,77 +4,77 @@ import './TaskDetailsSidebar.css';
 import { SERVER } from '../../../Constants';
 
 const getFieldLabel = (field) => {
-    switch (field) {
-      case 'title':
-        return 'Название';
-      case 'createdAt':
-        return 'Дата создания';
-      case 'updatedAt':
-        return 'Дата обновления';
-      case 'deadline':
-        return 'Дата завершения';
-      case 'status':
-        return 'Статус';
-      case 'priority':
-        return 'Приоритет';
-      case 'todo':
-        return 'Сделать';
-      case 'in_progress':
-        return 'В процессе';
-      case 'done':
-        return 'Завершено';
-      case 'low':
-        return 'Низкий';
-      case 'medium':
-        return 'Средний';
-      case 'high':
-        return 'Высокий';
-      case 'books':
-        return 'Книги';
-      case 'notes':
-        return 'Заметки';
-      case 'tags':
-        return 'Теги';
-      case 'note_id':
-        return 'ID заметки';
-      case 'text':
-        return 'Текст заметки';
-      case 'created_at':
-        return 'Дата создания заметки';
-      case 'changed_field':
-        return 'Измененное поле';
-      case 'change_type_display':
-        return 'Тип изменения';
-      case 'value':
-        return 'Новое значение';
-      case 'changed_at':
-        return 'Дата изменения';
-      case 'task_id':
-        return 'ID задачи';
-      case 'task':
-        return 'Задача';
-      case 'update':
-        return 'Обновление';
-      case 'delete':
-        return 'Удаление';
-      case 'create':
-        return 'Создание';
-      case 'add':
-        return 'Добавление';
-      case 'remove':
-        return 'Удаление';
-      case 'edit':
-        return 'Редактирование';
-      case 'content':
-        return 'Содержание';
-      case 'group':
-        return 'Группа';
-      case 'group_id':
-        return 'ID группы';
-      default:
-        return field;
-    }
-  };
+  switch (field) {
+    case 'title':
+      return 'Название';
+    case 'createdAt':
+      return 'Дата создания';
+    case 'updatedAt':
+      return 'Дата обновления';
+    case 'deadline':
+      return 'Дата завершения';
+    case 'status':
+      return 'Статус';
+    case 'priority':
+      return 'Приоритет';
+    case 'todo':
+      return 'Сделать';
+    case 'in_progress':
+      return 'В процессе';
+    case 'done':
+      return 'Завершено';
+    case 'low':
+      return 'Низкий';
+    case 'medium':
+      return 'Средний';
+    case 'high':
+      return 'Высокий';
+    case 'books':
+      return 'Книги';
+    case 'notes':
+      return 'Заметки';
+    case 'tags':
+      return 'Теги';
+    case 'note_id':
+      return 'ID заметки';
+    case 'text':
+      return 'Текст заметки';
+    case 'created_at':
+      return 'Дата создания заметки';
+    case 'changed_field':
+      return 'Измененное поле';
+    case 'change_type_display':
+      return 'Тип изменения';
+    case 'value':
+      return 'Новое значение';
+    case 'changed_at':
+      return 'Дата изменения';
+    case 'task_id':
+      return 'ID задачи';
+    case 'task':
+      return 'Задача';
+    case 'update':
+      return 'Обновление';
+    case 'delete':
+      return 'Удаление';
+    case 'create':
+      return 'Создание';
+    case 'add':
+      return 'Добавление';
+    case 'remove':
+      return 'Удаление';
+    case 'edit':
+      return 'Редактирование';
+    case 'content':
+      return 'Содержание';
+    case 'group':
+      return 'Группа';
+    case 'group_id':
+      return 'ID группы';
+    default:
+      return field;
+  }
+};
 
 export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const [animationState, setAnimationState] = useState('closing');
@@ -91,39 +91,39 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   const [history, setHistory] = useState([]);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [historyFilters, setHistoryFilters] = useState({
-  field: '',
-  changeType: '',
-  value: '',
-  dateFrom: '',
-  dateTo: '',
-});
+    field: '',
+    changeType: '',
+    value: '',
+    dateFrom: '',
+    dateTo: '',
+  });
 
   const taskId = task?.taskId;
   const token = localStorage.getItem('token');
 
   const fetchHistory = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(
-      `${SERVER}/api/task/${currentTask.task_id}/history`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${SERVER}/api/task/${currentTask.task_id}/history`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      }
-    );
+      );
 
-    if (!response.ok) throw new Error('Ошибка при загрузке истории');
+      if (!response.ok) throw new Error('Ошибка при загрузке истории');
 
-    const data = await response.json();
-    setHistory(data.results || []);
-    setIsHistoryModalOpen(true); // Открыть модальное окно
-  } catch (error) {
-    console.error('Ошибка:', error);
-    alert('Не удалось загрузить историю изменений.');
-  }
-};
+      const data = await response.json();
+      setHistory(data.results || []);
+      setIsHistoryModalOpen(true); // Открыть модальное окно
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Не удалось загрузить историю изменений.');
+    }
+  };
 
   // Загрузка данных задачи
   useEffect(() => {
@@ -223,45 +223,45 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
   };
 
   const filteredHistory = useMemo(() => {
-  return history.filter((change) => {
-    const fieldMatch =
-      !historyFilters.field ||
-      getFieldLabel(change.changed_field)
-        .toLowerCase()
-        .includes(historyFilters.field.toLowerCase());
+    return history.filter((change) => {
+      const fieldMatch =
+        !historyFilters.field ||
+        getFieldLabel(change.changed_field)
+          .toLowerCase()
+          .includes(historyFilters.field.toLowerCase());
 
-    const changeTypeMatch =
-      !historyFilters.changeType ||
-      getFieldLabel(change.change_type_display)
-        .toLowerCase()
-        .includes(historyFilters.changeType.toLowerCase());
+      const changeTypeMatch =
+        !historyFilters.changeType ||
+        getFieldLabel(change.change_type_display)
+          .toLowerCase()
+          .includes(historyFilters.changeType.toLowerCase());
 
-    const valueMatch =
-      !historyFilters.value ||
-      getFieldLabel(change.value)
-        .toLowerCase()
-        .includes(historyFilters.value.toLowerCase());
+      const valueMatch =
+        !historyFilters.value ||
+        getFieldLabel(change.value)
+          .toLowerCase()
+          .includes(historyFilters.value.toLowerCase());
 
-    const dateMatch = () => {
-      if (!historyFilters.dateFrom && !historyFilters.dateTo) return true;
-      const changeDate = new Date(change.changed_at);
-      const dateFrom = historyFilters.dateFrom
-        ? new Date(historyFilters.dateFrom)
-        : null;
-      const dateTo = historyFilters.dateTo
-        ? new Date(historyFilters.dateTo)
-        : null;
+      const dateMatch = () => {
+        if (!historyFilters.dateFrom && !historyFilters.dateTo) return true;
+        const changeDate = new Date(change.changed_at);
+        const dateFrom = historyFilters.dateFrom
+          ? new Date(historyFilters.dateFrom)
+          : null;
+        const dateTo = historyFilters.dateTo
+          ? new Date(historyFilters.dateTo)
+          : null;
 
-      if (dateFrom && changeDate < dateFrom) return false;
-      if (dateTo && changeDate > new Date(dateTo.setHours(23, 59, 59, 999)))
-        return false;
+        if (dateFrom && changeDate < dateFrom) return false;
+        if (dateTo && changeDate > new Date(dateTo.setHours(23, 59, 59, 999)))
+          return false;
 
-      return true;
-    };
+        return true;
+      };
 
-    return fieldMatch && changeTypeMatch && valueMatch && dateMatch();
-  });
-}, [history, historyFilters]);
+      return fieldMatch && changeTypeMatch && valueMatch && dateMatch();
+    });
+  }, [history, historyFilters]);
 
   // Фильтрация тегов по поиску
   const filteredTags = allTags.filter((tag) =>
@@ -422,7 +422,6 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
     });
   };
 
-  
   return (
     <div
       className={`task-details-sidebar ${animationState}`}
@@ -556,12 +555,9 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
         <button className="add-note-button" onClick={handleAddNote}>
           Добавить заметку
         </button>
-        <button
-  className="history-button"
-  onClick={fetchHistory}
->
-  История изменений
-</button>
+        <button className="history-button" onClick={fetchHistory}>
+          История изменений
+        </button>
 
         <button className="add-tag-button" onClick={() => setIsModalOpen(true)}>
           Добавить тег
@@ -646,83 +642,97 @@ export default function TaskDetailsSidebar({ task, onClose, onTaskUpdate }) {
       )}
 
       {/* Модальное окно истории изменений */}
-{/* Модальное окно истории изменений */}
-{isHistoryModalOpen && (
-  <div className="task-details-sidebar__modal-overlay">
-    <div className="task-details-sidebar__modal-content">
-      <div className="task-details-sidebar__modal-header">
-        <h4>История изменений</h4>
-        <button
-          onClick={() => setIsHistoryModalOpen(false)}
-          className="task-details-sidebar__close-button"
-        >
-          &times;
-        </button>
-      </div>
-      {/* Форма фильтрации */}
-<div className="task-details-sidebar__filters">
-  <div className="filter-group">
-    <label>Поле:</label>
-    <input
-      type="text"
-      value={historyFilters.field}
-      onChange={(e) =>
-        setHistoryFilters({ ...historyFilters, field: e.target.value })
-      }
-    />
-  </div>
-  <div className="filter-group">
-    <label>Тип изменения:</label>
-    <input
-      type="text"
-      value={historyFilters.changeType}
-      onChange={(e) =>
-        setHistoryFilters({ ...historyFilters, changeType: e.target.value })
-      }
-    />
-  </div>
-  <div className="filter-group">
-    <label>Значение:</label>
-    <input
-      type="text"
-      value={historyFilters.value}
-      onChange={(e) =>
-        setHistoryFilters({ ...historyFilters, value: e.target.value })
-      }
-    />
-  </div>
-  
-
-</div>
-      <div className="task-details-sidebar__modal-body">
-        {history.length > 0 ? (
-          <ul className="task-details-sidebar__history-list">
-            {filteredHistory.map((change, index) => (
-  <li key={index} className="task-details-sidebar__history-item">
-    <strong>{formatDate(change.changed_at)}</strong>
-    <p>
-      Поле: <strong>{getFieldLabel(change.changed_field)}</strong><br />
-      Тип изменения: {getFieldLabel(change.change_type_display)}<br />
-      Новое значение: <em>{getFieldLabel(change.value)}</em>
-    </p>
-  </li>
-))}
-          </ul>
-        ) : (
-          <p>Нет записей об изменениях.</p>
-        )}
-      </div>
-      <div className="task-details-sidebar__modal-footer">
-        <button
-          onClick={() => setIsHistoryModalOpen(false)}
-          className="btn btn-sm btn-outline-secondary"
-        >
-          Закрыть
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      {/* Модальное окно истории изменений */}
+      {isHistoryModalOpen && (
+        <div className="task-details-sidebar__modal-overlay">
+          <div className="task-details-sidebar__modal-content">
+            <div className="task-details-sidebar__modal-header">
+              <h4>История изменений</h4>
+              <button
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="task-details-sidebar__close-button"
+              >
+                &times;
+              </button>
+            </div>
+            {/* Форма фильтрации */}
+            <div className="task-details-sidebar__filters">
+              <div className="filter-group">
+                <label>Поле:</label>
+                <input
+                  type="text"
+                  value={historyFilters.field}
+                  onChange={(e) =>
+                    setHistoryFilters({
+                      ...historyFilters,
+                      field: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="filter-group">
+                <label>Тип изменения:</label>
+                <input
+                  type="text"
+                  value={historyFilters.changeType}
+                  onChange={(e) =>
+                    setHistoryFilters({
+                      ...historyFilters,
+                      changeType: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="filter-group">
+                <label>Значение:</label>
+                <input
+                  type="text"
+                  value={historyFilters.value}
+                  onChange={(e) =>
+                    setHistoryFilters({
+                      ...historyFilters,
+                      value: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div className="task-details-sidebar__modal-body">
+              {history.length > 0 ? (
+                <ul className="task-details-sidebar__history-list">
+                  {filteredHistory.map((change, index) => (
+                    <li
+                      key={index}
+                      className="task-details-sidebar__history-item"
+                    >
+                      <strong>{formatDate(change.changed_at)}</strong>
+                      <p>
+                        Поле:{' '}
+                        <strong>{getFieldLabel(change.changed_field)}</strong>
+                        <br />
+                        Тип изменения:{' '}
+                        {getFieldLabel(change.change_type_display)}
+                        <br />
+                        Новое значение: <em>{getFieldLabel(change.value)}</em>
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Нет записей об изменениях.</p>
+              )}
+            </div>
+            <div className="task-details-sidebar__modal-footer">
+              <button
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="btn btn-sm btn-outline-secondary"
+              >
+                Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,9 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import SearchBar from '../../SearchBar/SearchBar';
 import FilterDropdown from '../FilterDropdown/FilterDropdown';
 import DateFilterDropdown from '../DateFilterDropdown/DateFilterDropdown';
@@ -630,5 +635,5 @@ const TableGraph = forwardRef((props, ref) => {
       )}
     </div>
   );
-})
+});
 export default TableGraph;

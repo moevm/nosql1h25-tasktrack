@@ -9,7 +9,7 @@ export default function GroupPanel({
   isGraphMode,
   setSelectedGroup,
   selectedGroup,
-  onGroupChange
+  onGroupChange,
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [allGroups, setAllGroups] = useState([]);

@@ -40,51 +40,53 @@ export default function EditTaskModal({ task, onClose, onSave }) {
   };
 
   const handleSubmit = async () => {
-  if (!validate()) return;
+    if (!validate()) return;
 
-  try {
-    const token = localStorage.getItem('token');
-    
-    // Создаем объект обновления только с изменёнными полями
-    const updateData = {};
-    
-    if (title !== task.title) {
-      updateData.title = title;
-    }
-    
-    if (description !== task.content) {
-      updateData.content = description;
-    }
+    try {
+      const token = localStorage.getItem('token');
 
-    const originalDeadlineDate = task.deadline ? task.deadline.split('T')[0] : '';
-    if (deadline !== originalDeadlineDate) {
-      updateData.deadline = `${deadline}T00:00:00`;
-    }
+      // Создаем объект обновления только с изменёнными полями
+      const updateData = {};
 
-    if (Object.keys(updateData).length === 0) {
+      if (title !== task.title) {
+        updateData.title = title;
+      }
+
+      if (description !== task.content) {
+        updateData.content = description;
+      }
+
+      const originalDeadlineDate = task.deadline
+        ? task.deadline.split('T')[0]
+        : '';
+      if (deadline !== originalDeadlineDate) {
+        updateData.deadline = `${deadline}T00:00:00`;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        onClose();
+        return;
+      }
+
+      const response = await fetch(`${SERVER}/api/task/${task.task_id}/`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) throw new Error('Ошибка при обновлении задачи');
+
+      const updatedTask = await response.json();
+      onSave(updatedTask); // Передаем обновленную задачу обратно
       onClose();
-      return;
+    } catch (error) {
+      console.error(error);
+      alert('Не удалось сохранить изменения');
     }
-
-    const response = await fetch(`${SERVER}/api/task/${task.task_id}/`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updateData),
-    });
-
-    if (!response.ok) throw new Error('Ошибка при обновлении задачи');
-
-    const updatedTask = await response.json();
-    onSave(updatedTask); // Передаем обновленную задачу обратно
-    onClose();
-  } catch (error) {
-    console.error(error);
-    alert('Не удалось сохранить изменения');
-  }
-};
+  };
 
   return (
     <div className="modal-overlay-edit-task" onClick={onClose}>

@@ -1,4 +1,9 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import ReactFlow, {
   addEdge,
   Controls,
@@ -272,8 +277,8 @@ const MainGraph = forwardRef((props, ref) => {
     }
   };
   useImperativeHandle(ref, () => ({
-      fetchTasksFromServer,
-    }));
+    fetchTasksFromServer,
+  }));
 
   const onEdgeClick = async (event, edge) => {
     if (isAltPressed) {
@@ -624,8 +629,8 @@ const MainGraph = forwardRef((props, ref) => {
               <button
                 onClick={async () => {
                   if (connectionName == '') {
-                    alert("Название не может быть пустым!")
-                    return
+                    alert('Название не может быть пустым!');
+                    return;
                   }
                   const { sourceId, targetId } = selectedSourceTask;
                   try {

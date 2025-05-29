@@ -23,15 +23,14 @@ export default function Dashboard() {
         isGraphMode={isGraphMode}
         setSelectedGroup={setSelectedGroup}
         selectedGroup={selectedGroup}
-        onGroupChange={handleGroupChange} 
+        onGroupChange={handleGroupChange}
       />
 
-      {isGraphMode && <MainGraph selectedGroup={selectedGroup} ref={tableGraphRef} />}
+      {isGraphMode && (
+        <MainGraph selectedGroup={selectedGroup} ref={tableGraphRef} />
+      )}
       {!isGraphMode && (
-        <TableGraph
-          selectedGroup={selectedGroup}
-          ref={tableGraphRef} 
-        />
+        <TableGraph selectedGroup={selectedGroup} ref={tableGraphRef} />
       )}
     </div>
   );
