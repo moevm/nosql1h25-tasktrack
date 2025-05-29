@@ -623,6 +623,10 @@ const MainGraph = forwardRef((props, ref) => {
             <div style={{ marginTop: '10px' }}>
               <button
                 onClick={async () => {
+                  if (connectionName == '') {
+                    alert("Название не может быть пустым!")
+                    return
+                  }
                   const { sourceId, targetId } = selectedSourceTask;
                   try {
                     const token = localStorage.getItem('token');
