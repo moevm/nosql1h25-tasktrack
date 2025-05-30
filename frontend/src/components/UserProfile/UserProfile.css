@@ -233,7 +233,6 @@
   transform: translateY(0);
 }
 
-
 .modal-overlay-user {
   position: fixed;
   top: 0;
@@ -247,7 +246,8 @@
   z-index: 1050;
 }
 
-.loading-modal, .result-modal {
+.loading-modal,
+.result-modal {
   background: white;
   padding: 20px;
   border-radius: 8px;

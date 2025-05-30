@@ -346,13 +346,13 @@ const ConnectionsModal = ({ task, onClose, allTasks }) => {
             >
               <option value="">Выберите задачу</option>
               {allTasks
-  .filter((t) => t.taskId !== task.taskId)
-  .sort((a, b) => a.title.localeCompare(b.title)) // Сортировка по алфавиту
-  .map((t) => (
-    <option key={t.taskId} value={t.taskId}>
-      {t.title}
-    </option>
-  ))}
+                .filter((t) => t.taskId !== task.taskId)
+                .sort((a, b) => a.title.localeCompare(b.title)) // Сортировка по алфавиту
+                .map((t) => (
+                  <option key={t.taskId} value={t.taskId}>
+                    {t.title}
+                  </option>
+                ))}
             </select>
           </div>
         </div>

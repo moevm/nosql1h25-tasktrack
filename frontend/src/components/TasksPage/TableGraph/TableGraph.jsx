@@ -355,14 +355,14 @@ const TableGraph = forwardRef((props, ref) => {
           {/* Поиск */}
           <div className="search-container-tables">
             <SearchBar
-            TitleFind="Поиск по названию задачи"
-            searchQuery={taskSearchTerm}
-            handleSearchChange={(e) => {
-              setTaskSearchTerm(e.target.value);
-              setPage(1); // Сброс страницы
-            }}
-            handleSearchSubmit={fetchTasksFromServer}
-          />
+              TitleFind="Поиск по названию задачи"
+              searchQuery={taskSearchTerm}
+              handleSearchChange={(e) => {
+                setTaskSearchTerm(e.target.value);
+                setPage(1); // Сброс страницы
+              }}
+              handleSearchSubmit={fetchTasksFromServer}
+            />
           </div>
 
           {/* Фильтры */}
@@ -388,21 +388,21 @@ const TableGraph = forwardRef((props, ref) => {
               selectedOptions={selectedStatuses}
               onChange={(values) => {
                 setSelectedStatuses(values);
-                setPage(1); 
+                setPage(1);
               }}
             />
             <DateFilterDropdown
               label="Дата создания"
               onChange={(filter) => {
                 setCreatedAtFilter(filter);
-                setPage(1); 
+                setPage(1);
               }}
             />
             <DateFilterDropdown
               label="Дата завершения"
               onChange={(filter) => {
                 setDeadlineFilter(filter);
-                setPage(1); 
+                setPage(1);
               }}
             />
             <button
@@ -650,13 +650,12 @@ const TableGraph = forwardRef((props, ref) => {
             ))}
           </ul>
           {totalTasks > 0 && (
-    <span className="small text-muted">
-      Найдено задач: <strong>{totalTasks}</strong>
-    </span>)}
+            <span className="small text-muted">
+              Найдено задач: <strong>{totalTasks}</strong>
+            </span>
+          )}
         </div>
       )}
-      
-      
     </div>
   );
 });
