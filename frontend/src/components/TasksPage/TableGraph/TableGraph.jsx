@@ -43,6 +43,7 @@ const TableGraph = forwardRef((props, ref) => {
   const [tagSearchTerm, setTagSearchTerm] = useState('');
   const [filteredTags, setFilteredTags] = useState([]);
   const [isTagsModalOpen, setIsTagsModalOpen] = useState(false);
+  const [totalTasks, setTotalTasks] = useState(0);
 
   // Трансформация меток для API
   const transformLabels = (labels) => {
@@ -174,6 +175,7 @@ const TableGraph = forwardRef((props, ref) => {
       console.log(data);
       setTasks(results || []);
       setTotalPages(data.total_pages || 1);
+      setTotalTasks(data.count || 0);
     } catch (error) {
       console.error('Ошибка:', error);
     }
@@ -353,11 +355,14 @@ const TableGraph = forwardRef((props, ref) => {
           {/* Поиск */}
           <div className="search-container-tables">
             <SearchBar
-              TitleFind="Поиск по названию задачи"
-              searchQuery={taskSearchTerm}
-              handleSearchChange={(e) => setTaskSearchTerm(e.target.value)}
-              handleSearchSubmit={fetchTasksFromServer}
-            />
+            TitleFind="Поиск по названию задачи"
+            searchQuery={taskSearchTerm}
+            handleSearchChange={(e) => {
+              setTaskSearchTerm(e.target.value);
+              setPage(1); // Сброс страницы
+            }}
+            handleSearchSubmit={fetchTasksFromServer}
+          />
           </div>
 
           {/* Фильтры */}
@@ -372,21 +377,33 @@ const TableGraph = forwardRef((props, ref) => {
               label="Приоритет"
               options={PRIORITY_OPTIONS}
               selectedOptions={selectedPriorities}
-              onChange={setSelectedPriorities}
+              onChange={(values) => {
+                setSelectedPriorities(values);
+                setPage(1);
+              }}
             />
             <FilterDropdown
               label="Статус"
               options={STATUS_OPTIONS}
               selectedOptions={selectedStatuses}
-              onChange={setSelectedStatuses}
+              onChange={(values) => {
+                setSelectedStatuses(values);
+                setPage(1); 
+              }}
             />
             <DateFilterDropdown
               label="Дата создания"
-              onChange={setCreatedAtFilter}
+              onChange={(filter) => {
+                setCreatedAtFilter(filter);
+                setPage(1); 
+              }}
             />
             <DateFilterDropdown
               label="Дата завершения"
-              onChange={setDeadlineFilter}
+              onChange={(filter) => {
+                setDeadlineFilter(filter);
+                setPage(1); 
+              }}
             />
             <button
               className="btn btn-sm btn-outline-danger"
@@ -590,6 +607,7 @@ const TableGraph = forwardRef((props, ref) => {
                               } else {
                                 setSelectedTags([...selectedTags, tag]);
                               }
+                              setPage(1);
                             }}
                           />
                           <span className="tag-input-class">{tag}</span>
@@ -631,8 +649,14 @@ const TableGraph = forwardRef((props, ref) => {
               </li>
             ))}
           </ul>
+          {totalTasks > 0 && (
+    <span className="small text-muted">
+      Найдено задач: <strong>{totalTasks}</strong>
+    </span>)}
         </div>
       )}
+      
+      
     </div>
   );
 });
