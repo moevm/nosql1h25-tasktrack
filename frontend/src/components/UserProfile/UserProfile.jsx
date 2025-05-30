@@ -51,6 +51,8 @@ export default function UserProfile() {
   const [taskCount, setTaskCount] = useState(120);
   const [connectionCount, setConnectionCount] = useState(200);
   const [notification, setNotification] = useState('');
+const [isLoading, setIsLoading] = useState(false); // Для индикации загрузки
+const [importResult, setImportResult] = useState(null); // Результат импорта
 
   const groups = [
     { name: 'Группа A', taskCount: 120, type: 'Тип 1' },
@@ -105,57 +107,84 @@ export default function UserProfile() {
   };
 
   const handleImport = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return alert('Файл не выбран');
+
+    if (!file.name.endsWith('.json')) {
+      return alert('Пожалуйста, выберите JSON-файл');
+    }
+
     const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('restore_file', file);
 
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
+    try {
+      // Читаем файл для подсчёта объектов и отправки
+      const fileText = await file.text();
 
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return alert('Файл не выбран');
-
-      if (!file.name.endsWith('.json')) {
-        return alert('Пожалуйста, выберите JSON-файл');
-      }
-
-      const formData = new FormData();
-      formData.append('restore_file', file);
-
+      let jsonData;
       try {
-        const response = await fetch(`${SERVER}/api/database/dump/`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('Импорт успешен:', result);
-
-        // Установка уведомления
-        setNotification('Данные успешно загружены.');
-
-        // Очистка токена
-        localStorage.removeItem('token');
-
-        // Отображение уведомления на 3 секунды, затем редирект
-        setTimeout(() => {
-          window.location.href = '/login';
-        }, 1500);
-      } catch (error) {
-        console.error('Ошибка:', error);
-        alert('Не удалось загрузить файл');
+        jsonData = JSON.parse(fileText);
+      } catch (e) {
+        throw new Error('Файл содержит некорректный JSON.');
       }
-    };
 
-    input.click();
+      // Подсчёт примерного количества объектов
+      const countObjects = (obj) => {
+        if (Array.isArray(obj)) {
+          return obj.reduce((sum, item) => sum + countObjects(item), 0);
+        } else if (typeof obj === 'object' && obj !== null) {
+          return 1 + Object.values(obj).reduce((sum, val) => sum + countObjects(val), 0);
+        }
+        return 0;
+      };
+
+      const total_objects = countObjects(jsonData);
+
+      // Устанавливаем статус "загрузка"
+      setIsLoading(true);
+      setImportResult(null);
+
+      const start = Date.now(); // Начинаем отсчёт времени
+
+      // Отправляем данные
+      const response = await fetch(`${SERVER}/api/database/dump/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const duration = ((Date.now() - start) / 1000).toFixed(2); // Время в секундах
+
+      if (!response.ok) {
+        throw new Error('Ошибка сервера при импорте данных');
+      }
+
+      // Сохраняем результат
+      setImportResult({
+        success: true,
+        count: total_objects,
+        time: duration,
+      });
+    } catch (error) {
+      setImportResult({
+        success: false,
+        message: error.message || 'Не удалось загрузить файл.',
+      });
+    } finally {
+      setIsLoading(false); // Скрываем индикатор загрузки
+    }
   };
+
+  input.click();
+};
 
   const handleChangeEmail = () => {
     console.log('Изменить email...');
@@ -289,6 +318,55 @@ export default function UserProfile() {
         <h5>График</h5>
         <Line data={chartData} />
       </div>
+      {/* Индикатор загрузки */}
+{isLoading && (
+  <div className="modal-overlay-user">
+    <div className="loading-modal">
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Загрузка...</span>
+      </div>
+      <p>Идёт загрузка данных...</p>
+    </div>
+  </div>
+)}
+
+{/* Модальное окно результата */}
+{importResult && (
+  <div className="modal-overlay-user">
+    <div className="result-modal">
+      {importResult.success ? (
+        <>
+          <h5>✅ Импорт успешно завершён</h5>
+          <p>Добавлено объектов: <strong>{importResult.count}</strong></p>
+          <p>Время импорта: <strong>{importResult.time} сек.</strong></p>
+          <button
+        className="btn btn-primary mt-3"
+        onClick={() => {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }}
+      >
+        ОК
+      </button>
+        </>
+      ) : (
+        <>
+          <h5>❌ Ошибка импорта</h5>
+          <p>{importResult.message}</p>
+          <button
+        className="btn btn-primary mt-3"
+        onClick={() => {
+          setImportResult(null)
+        }}
+      >
+        ОК
+      </button>
+        </>
+      )}
+      
+    </div>
+  </div>
+)}
     </div>
   );
 }
